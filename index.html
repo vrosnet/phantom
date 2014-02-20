@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Phantom : Asynchronous type-safe Scala DSL for Cassandra" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Phantom</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/newzly/phantom">View on GitHub</a>
+
+          <h1 id="project_title">Phantom</h1>
+          <h2 id="project_tagline">Asynchronous type-safe Scala DSL for Cassandra</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/newzly/phantom/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/newzly/phantom/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="phantom" class="anchor" href="#phantom"><span class="octicon octicon-link"></span></a>phantom</h1>
+
+<p>Asynchronous Scala DSL for Cassandra</p>
+
+<p><a href="https://travis-ci.org/newzly/phantom"><img src="https://travis-ci.org/newzly/phantom.png?branch=develop" alt="Build Status"></a></p>
+
+<h1>
+<a name="thrift-idl-definitions" class="anchor" href="#thrift-idl-definitions"><span class="octicon octicon-link"></span></a>Thrift IDL definitions</h1>
+
+<pre lang="thrift"><code>namespace java com.newzly.phantom.sample.ExampleModel
+
+stuct Model {
+  1: required i32 id,
+  2: required string name,
+  3: required Map&lt;string, string&gt; props,
+  4: required i32 timestamp
+  5: optional i32 test
+}
+</code></pre>
+
+<h1>
+<a name="data-modeling-with-phantom" class="anchor" href="#data-modeling-with-phantom"><span class="octicon octicon-link"></span></a>Data modeling with phantom</h1>
+
+<div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">java.util.</span><span class="o">{</span> <span class="nc">UUID</span><span class="o">,</span> <span class="nc">Date</span> <span class="o">}</span>
+<span class="k">import</span> <span class="nn">com.datastax.driver.core.Row</span>
+<span class="k">import</span> <span class="nn">com.newzly.phantom.sample.ExampleModel</span>
+<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">ClusteringOrder</span> <span class="k">with</span> <span class="nc">Ascending</span>
+  <span class="k">object</span> <span class="nc">name</span> <span class="k">extends</span> <span class="nc">PrimitiveColumn</span><span class="o">[</span><span class="kt">String</span><span class="o">](</span><span class="k">this</span><span class="o">)</span>
+  <span class="k">object</span> <span class="nc">props</span> <span class="k">extends</span> <span class="nc">MapColumn</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">](</span><span class="k">this</span><span class="o">)</span>
+  <span class="k">object</span> <span class="nc">test</span> <span class="k">extends</span> <span class="nc">OptionalIntColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">fromRow</span><span class="o">(</span><span class="n">row</span><span class="k">:</span> <span class="kt">Row</span><span class="o">)</span><span class="k">:</span> <span class="kt">ExampleModel</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nc">ExampleModel</span><span class="o">(</span><span class="n">id</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">name</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">props</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">timestamp</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">test</span><span class="o">(</span><span class="n">row</span><span class="o">));</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+
+</pre></div>
+
+<h1>
+<a name="querying-with-phantom" class="anchor" href="#querying-with-phantom"><span class="octicon octicon-link"></span></a>Querying with Phantom</h1>
+
+<p>The query syntax is inspired by the Foursquare Rogue library and aims to replicate CQL 3 as much as possible.</p>
+
+<div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
+
+<span class="k">object</span> <span class="nc">ExampleRecord</span> <span class="k">extends</span> <span class="nc">ExampleRecord</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">val</span> <span class="n">tableName</span> <span class="k">=</span> <span class="s">"examplerecord"</span>
+
+  <span class="c1">// now define a session, which is a Cluster connection.</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">session</span> <span class="k">=</span> <span class="nc">SomeCassandraClient</span><span class="o">.</span><span class="n">session</span><span class="o">;</span>
+
+  <span class="k">def</span> <span class="n">getRecordsByName</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">fetch</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">getOneRecordByName</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampelRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">one</span><span class="o">()</span>
+  <span class="o">}</span>
+
+  <span class="c1">// preserving order in Cassandra is not the simplest thing, but:</span>
+  <span class="k">def</span> <span class="n">getRecordPage</span><span class="o">(</span><span class="n">start</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">limit</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">skip</span><span class="o">(</span><span class="n">start</span><span class="o">).</span><span class="n">limit</span><span class="o">(</span><span class="mi">10</span><span class="o">).</span><span class="n">fetch</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<h1>
+<a name="large-record-sets" class="anchor" href="#large-record-sets"><span class="octicon octicon-link"></span></a>Large record sets</h1>
+
+<p>Phantom comes packed with CQL rows asynchronous lazy iterators to help you deal with billions of records.</p>
+
+<p>Usage is trivial:</p>
+
+<div class="highlight highlight-scala"><pre><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">fetchEnumerator</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span>
+   <span class="n">item</span> <span class="k">=&gt;</span> <span class="n">println</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="n">toString</span><span class="o">)</span>
+<span class="o">}</span>
+</pre></div>
+
+<h1>
+<a name="batch-statements" class="anchor" href="#batch-statements"><span class="octicon octicon-link"></span></a>Batch statements</h1>
+
+<p>phantom also brrings in support for batch statements. To use them, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/iteratee/IterateeBigTest.scala">IterateeBigTest.scala</a></p>
+
+<p>We have tested with 10,000 statements per batch, and 1000 batches processed simulatenously.</p>
+
+<h1>
+<a name="maintainers" class="anchor" href="#maintainers"><span class="octicon octicon-link"></span></a>Maintainers</h1>
+
+<p>Phantom was developed at newzly as an in-house project.
+All Cassandra integration at newzly goes through Phantom.</p>
+
+<ul>
+<li>Sorin Chiprian <a href="mailto:sorin.chiprian@newzly.com">sorin.chiprian@newzly.com</a>
+</li>
+<li>Flavian Alexandru <a href="mailto:flavian@newzly.com">flavian@newzly.com</a>
+</li>
+</ul><h1>
+<a name="pre-newzly-fork" class="anchor" href="#pre-newzly-fork"><span class="octicon octicon-link"></span></a>Pre newzly fork</h1>
+
+<p>Special thanks to Viktor Taranenko from WhiskLabs, who gave us the original idea.</p>
+
+<h1>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h1>
+
+<p>Copyright 2013 WhiskLabs, Copyright 2013 - 2014 newzly ltd.</p>
+
+<h1>
+<a name="contributions" class="anchor" href="#contributions"><span class="octicon octicon-link"></span></a>Contributions</h1>
+
+<p>Contributions are most welcome! </p>
+
+<p>To contribute, simply submit a "Pull request" via GitHub.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Phantom maintained by <a href="https://github.com/newzly">newzly</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
