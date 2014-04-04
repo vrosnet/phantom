@@ -6,7 +6,7 @@ Asynchronous Scala DSL for Cassandra
 Using phantom
 =============
 
-The current version is: ```val phantomVersion = 0.1.5-SNAPSHOT```.
+The current version is: ```val phantomVersion = 0.3.0```.
 Phantom is published to Maven Central and it's actively and avidly developed.
 
 
@@ -34,18 +34,6 @@ libraryDependencies ++= Seq(
 )
 ```
 
-Basic models
-======================
-
-```scala
-case class ExampleModel (
-  id: Int,
-  name: String,
-  props: Map[String, String],
-  timestamp: Int,
-  test: Option[Int]
-)
-```
 
 Data modeling with phantom
 ==========================
@@ -56,6 +44,14 @@ import java.util.{ UUID, Date }
 import com.datastax.driver.core.Row
 import com.newzly.phantom.sample.ExampleModel
 import com.newzly.phantom.Implicits._
+
+case class ExampleModel (
+  id: Int,
+  name: String,
+  props: Map[String, String],
+  timestamp: Int,
+  test: Option[Int]
+)
 
 sealed class ExampleRecord private() extends CassandraTable[ExampleRecord, ExampleModel] {
 
@@ -283,9 +279,30 @@ Usage is trivial:
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
+import org.joda.time.DateTime
 import com.newzly.phantom.Implicits._
 
-val enumerator = Await.result(ExampleRecord.select.where(_.timestamp gtToken someTimestamp).fetchEnumerator(), 5000 millis)
+
+sealed class ExampleRecord3 private() extends CassandraTable[ExampleRecord3, ExampleModel] with LongOrderKey[ExampleRecord3, ExampleRecord] {
+
+  object id extends UUIDColumn(this) with PartitionKey[UUID]
+  object timestamp extends DateTimeColumn(this) with PrimaryKey[DateTime]
+  object name extends StringColumn(this) with PrimaryKey[String]
+  object props extends MapColumn[ExampleRecord2, ExampleRecord, String, String](this)
+  object test extends OptionalIntColumn(this)
+
+  override def fromRow(row: Row): ExampleModel = {
+    ExampleModel(id(row), name(row), props(row), timestamp(row), test(row));
+  }
+}
+
+object ExampleRecord3 extends ExampleRecord3 {
+  def getRecords(start: Int, limit: Int): Future[Set[ExampleModel]] = {
+    select.fetchEnumerator.map {
+      _.slice(start, limit).collect
+    }
+  }
+}
 
 ```
 
@@ -314,6 +331,27 @@ stuct ExampleModel {
   4: required i32 timestamp
   5: optional i32 test
 }
+```
+
+
+Running the tests
+=================
+
+phantom uses Embedded Cassandra to run tests without a local Cassandra server running.
+You need two terminals to run the tests, one for Embedded Cassandra and one for the actual tests.
+
+```scala
+sbt
+project phantom-cassandra-unit
+run
+```
+
+Then in a new terminal
+
+```scala
+sbt
+project phantom-test
+test
 ```
 
 Maintainers

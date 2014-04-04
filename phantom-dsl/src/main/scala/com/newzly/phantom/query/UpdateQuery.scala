@@ -15,11 +15,8 @@
  */
 package com.newzly.phantom.query
 
-import com.datastax.driver.core.querybuilder._
-
+import com.datastax.driver.core.querybuilder.{ Assignment, QueryBuilder, Update, Using }
 import com.newzly.phantom.CassandraTable
-import com.newzly.phantom.column.AbstractColumn
-import com.newzly.phantom.query.QueryCondition
 
 class AssignmentsQuery[T <: CassandraTable[T, R], R](table: T, val qb: Update.Assignments) extends ExecutableStatement {
 
@@ -56,6 +53,10 @@ class UpdateQuery[T <: CassandraTable[T, R], R](table: T, val qb: Update) {
   def ttl(expiry: Int): UpdateQuery[T, R] = {
     qb.using(QueryBuilder.ttl(expiry))
     this
+  }
+
+  def modify(a: T => Assignment): AssignmentsQuery[T, R] = {
+    new AssignmentsQuery[T, R](table, qb.`with`(a(table)))
   }
 }
 
