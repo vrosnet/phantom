@@ -15,20 +15,20 @@
  */
 package com.newzly.phantom.query
 
+import scala.util.Try
 import com.datastax.driver.core.querybuilder.{ Insert, QueryBuilder }
 import com.newzly.phantom.CassandraTable
 import com.newzly.phantom.column.AbstractColumn
-import scala.util.Try
 
-class InsertQuery[T <: CassandraTable[T, R], R](table: T, val qb: Insert) extends ExecutableStatement {
+class InsertQuery[T <: CassandraTable[T, R], R](table: T, val qb: Insert) extends SharedQueryMethods[InsertQuery[T, R], Insert](qb) with ExecutableStatement {
 
-  def value[RR](c: T => AbstractColumn[RR], value: RR): InsertQuery[T, R] = {
+  final def value[RR](c: T => AbstractColumn[RR], value: RR): InsertQuery[T, R] = {
     val col = c(table)
     qb.value(col.name, col.toCType(value))
     this
   }
 
-  def valueOrNull[RR](c: T => AbstractColumn[RR], value: RR): InsertQuery[T, R] = {
+  final def valueOrNull[RR](c: T => AbstractColumn[RR], value: RR): InsertQuery[T, R] = {
     val col = c(table)
     qb.value(col.name, Try {
       col.toCType(value)
