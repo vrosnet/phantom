@@ -1,36 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Phantom : Asynchronous type-safe Scala DSL for Cassandra" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Phantom by newzly</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Phantom</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
+    <div class="wrapper">
+      <header>
+        <h1>Phantom</h1>
+        <p>Asynchronous type-safe Scala DSL for Cassandra</p>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/newzly/phantom">View on GitHub</a>
+        <p class="view"><a href="https://github.com/newzly/phantom">View the Project on GitHub <small>newzly/phantom</small></a></p>
 
-          <h1 id="project_title">Phantom</h1>
-          <h2 id="project_tagline">Asynchronous type-safe Scala DSL for Cassandra</h2>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/newzly/phantom/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/newzly/phantom/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+        <ul>
+          <li><a href="https://github.com/newzly/phantom/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/newzly/phantom/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/newzly/phantom">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
         <h1>
 <a name="phantom-" class="anchor" href="#phantom-"><span class="octicon octicon-link"></span></a>phantom <a href="https://travis-ci.org/newzly/phantom"><img src="https://travis-ci.org/newzly/phantom.png?branch=develop" alt="Build Status"></a>
 </h1>
@@ -40,8 +37,24 @@
 <h1>
 <a name="using-phantom" class="anchor" href="#using-phantom"><span class="octicon octicon-link"></span></a>Using phantom</h1>
 
-<p>The current version is: <code>val phantomVersion = 0.2.0</code>.
+<p>The current version is: <code>val phantomVersion = 0.5.0</code>.
 Phantom is published to Maven Central and it's actively and avidly developed.</p>
+
+<h1>
+<a name="issues-and-questions" class="anchor" href="#issues-and-questions"><span class="octicon octicon-link"></span></a>Issues and questions</h1>
+
+<p>We love Cassandra to bits and use it in every bit our stack. phantom makes it super trivial for Scala users to embrace Cassandra, but don't let this mislead you.
+Cassandra is not another MongoDB JSON/BSON good marketing team technology, it is highly scalable, it's pretty difficult to use and get right and for most projects it is serious overkill.
+All queries need to be planned in advance, schema is not flexible and people who can help are very rare.</p>
+
+<p>Documentation is not plentiful and you to spend some serious hours on IRC channels looking for basic things.</p>
+
+<p>Unless you are planning on multi-datacenter financial timeseries data or 100 000 writes per second, you are going to waste a lot of time and money dealing with problems that won't do much for you, your app or business.
+For your own sake, research Cassandra use cases and see if it is truly a fit.</p>
+
+<p>We are very happy to help implement missing features in phantom, answer questions strictly about phantom, but Cassandra Data modeling is out of that scope.</p>
+
+<p>You can get in touch via the <a href="https://groups.google.com/forum/#!forum/newzly-phantom">newzly-phantom</a> Google Group.</p>
 
 <h1>
 <a name="integrating-phantom-in-your-project" class="anchor" href="#integrating-phantom-in-your-project"><span class="octicon octicon-link"></span></a>Integrating phantom in your project</h1>
@@ -60,16 +73,301 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-cassandra-unit"</span>        <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-example"</span>               <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-thrift"</span>                <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-test"</span>                  <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-finagle"</span>               <span class="o">%</span> <span class="n">phantomVersion</span>
+  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-test"</span>                  <span class="o">%</span> <span class="n">phantomVersion</span>
 <span class="o">)</span>
 </pre></div>
 
 <h1>
+<a name="available-primitive-columns" class="anchor" href="#available-primitive-columns"><span class="octicon octicon-link"></span></a>Available primitive columns</h1>
+
+<p>This is the list of available columns and how they map to C* data types.
+This also includes the newly introduced <code>static</code> columns in C* 2.0.6.</p>
+
+<p>The type of a static column can be any of the allowed primitive Cassandra types.
+phantom won't let you mixin a non-primitive via implicit magic.</p>
+
+<table>
+<thead><tr>
+<th>phantom columns</th>
+<th>Java/Scala type</th>
+<th>Cassandra type</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>BigDecimalColumn</td>
+<td>scala.math.BigDecimal</td>
+<td>decimal</td>
+</tr>
+<tr>
+<td>BigIntColumn</td>
+<td>scala.math.BigInt</td>
+<td>varint</td>
+</tr>
+<tr>
+<td>BooleanColumn</td>
+<td>scala.Boolean</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>DateColumn</td>
+<td>java.util.Date</td>
+<td>timestamp</td>
+</tr>
+<tr>
+<td>DateTimeColumn</td>
+<td>org.joda.time.DateTime</td>
+<td>timestamp</td>
+</tr>
+<tr>
+<td>DoubleColumn</td>
+<td>scala.Double</td>
+<td>double</td>
+</tr>
+<tr>
+<td>FloatColumn</td>
+<td>scala.Float</td>
+<td>float</td>
+</tr>
+<tr>
+<td>IntColumn</td>
+<td>scala.Int</td>
+<td>int</td>
+</tr>
+<tr>
+<td>InetAddressColumn</td>
+<td>java.net.InetAddress</td>
+<td>inet</td>
+</tr>
+<tr>
+<td>LongColumn</td>
+<td>scala.Long</td>
+<td>long</td>
+</tr>
+<tr>
+<td>StringColumn</td>
+<td>java.lang.String</td>
+<td>text</td>
+</tr>
+<tr>
+<td>UUIDColumn</td>
+<td>java.util.UUID</td>
+<td>uuid</td>
+</tr>
+<tr>
+<td>TimeUUIDColumn</td>
+<td>java.util.UUID</td>
+<td>timeuuid</td>
+</tr>
+<tr>
+<td>CounterColumn</td>
+<td>scala.Long</td>
+<td>counter</td>
+</tr>
+<tr>
+<td>StaticColumn&lt;type&gt;</td>
+<td>&lt;type&gt;</td>
+<td>type static</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="optional-primitive-columns" class="anchor" href="#optional-primitive-columns"><span class="octicon octicon-link"></span></a>Optional primitive columns</h1>
+
+<p>Optional columns allow you to set a column to a <code>null</code> or a <code>None</code>. Use them when you really want something to be optional.
+The outcome is that instead of a <code>T</code> you get an <code>Option[T]</code> and you can <code>match, fold, flatMap, map</code> on a <code>None</code>.</p>
+
+<p>The <code>Optional</code> part is handled at a DSL level, it's not translated to Cassandra in any way.</p>
+
+<table>
+<thead><tr>
+<th>phantom columns</th>
+<th>Java/Scala type</th>
+<th>Cassandra columns</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>OptionalBigDecimalColumn</td>
+<td>Option[scala.math.BigDecimal]</td>
+<td>decimal</td>
+</tr>
+<tr>
+<td>OptionalBigIntColumn</td>
+<td>Option[scala.math.BigInt]</td>
+<td>varint</td>
+</tr>
+<tr>
+<td>OptionalBooleanColumn</td>
+<td>Option[scala.Boolean]</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>OptionalDateColumn</td>
+<td>Option[java.util.Date]</td>
+<td>timestamp</td>
+</tr>
+<tr>
+<td>OptionalDateTimeColumn</td>
+<td>Option[org.joda.time.DateTime]</td>
+<td>timestamp</td>
+</tr>
+<tr>
+<td>OptionalDoubleColumn</td>
+<td>Option[scala.Double]</td>
+<td>double</td>
+</tr>
+<tr>
+<td>OptionalFloatColumn</td>
+<td>Option[scala.Float]</td>
+<td>float</td>
+</tr>
+<tr>
+<td>OptionalIntColumn</td>
+<td>Option[scala.Int]</td>
+<td>int</td>
+</tr>
+<tr>
+<td>OptionalInetAddressColumn</td>
+<td>Option[java.net.InetAddress]</td>
+<td>inet</td>
+</tr>
+<tr>
+<td>OptionalLongColumn</td>
+<td>Option[Long]</td>
+<td>long</td>
+</tr>
+<tr>
+<td>OptionalStringColumn</td>
+<td>Option[java.lang.String]</td>
+<td>text</td>
+</tr>
+<tr>
+<td>OptionalUUIDColumn</td>
+<td>Option[java.util.UUID]</td>
+<td>uuid</td>
+</tr>
+<tr>
+<td>OptionalTimeUUID</td>
+<td>Option[java.util.UUID]</td>
+<td>timeuuid</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="collection-columns" class="anchor" href="#collection-columns"><span class="octicon octicon-link"></span></a>Collection columns</h1>
+
+<p>Cassandra collections do not allow custom data types. Storing JSON as a string is possible, but it's still a <code>text</code> column as far as Cassandra is concerned.
+The <code>type</code> in the below example is always a default C* type.</p>
+
+<table>
+<thead><tr>
+<th>phantom columns</th>
+<th>Cassandra columns</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>ListColumn.&lt;type&gt;</td>
+<td>list&lt;type&gt;</td>
+</tr>
+<tr>
+<td>SetColumn.&lt;type&gt;</td>
+<td>set&lt;type&gt;</td>
+</tr>
+<tr>
+<td>MapColumn.&lt;type, type&gt;</td>
+<td>map&lt;type, type&gt;</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="special-columns" class="anchor" href="#special-columns"><span class="octicon octicon-link"></span></a>Special columns</h1>
+
+<p>phantom uses a specific set of traits to enforce more advanced Cassandra limitations and schema rules at compile time.</p>
+
+<p>For example:</p>
+
+<ul>
+<li>You cannot mix in more than one index on a single column</li>
+<li>You cannot set index columns to a different value</li>
+<li>You cannot query on a column that's not an index</li>
+</ul><h1>
+<a name="list-of-special-columns" class="anchor" href="#list-of-special-columns"><span class="octicon octicon-link"></span></a>List of special columns</h1>
+
+<ul>
+<li><code>PartitionKey[T]</code></li>
+</ul><p>This is the default partitioning key of the table, telling Cassandra how to divide data into partitions and store them accordingly.
+You must define at least one partition key for a table. Phantom will gently remind you of this with a fatal error.</p>
+
+<p>If you use a single partition key, the <code>PartitionKey</code> will always be the first <code>PrimaryKey</code> in the schema.</p>
+
+<p>It looks like this in CQL: <code>PRIMARY_KEY(your_partition_key, primary_key_1, primary_key_2)</code>.</p>
+
+<p>Using more than one <code>PartitionKey[T]</code> in your schema definition will output a Composite Key in Cassandra.
+<code>PRIMARY_KEY((your_partition_key_1, your_partition_key2), primary_key_1, primary_key_2)</code>.</p>
+
+<ul>
+<li><code>PrimaryKey[T]</code></li>
+</ul><p>As it's name says, using this will mark a column as <code>PrimaryKey</code>. Using multiple values will result in a Compound Value.
+The first <code>PrimaryKey</code> is used to partition data. phantom will force you to always define a <code>PartitionKey</code> so you don't forget
+about how your data is partitioned. We also use this DSL restriction because we hope to do more clever things with it in the future.</p>
+
+<p>A compound key in C* looks like this:
+<code>PRIMARY_KEY(primary_key, primary_key_1, primary_key_2)</code>.</p>
+
+<p>Before you add too many of these, remember they all have to go into a <code>where</code> clause.
+You can only query with a full primary key, even if it's compound. phantom can't yet give you a compile time error for this, but Cassandra will give you a runtime one.</p>
+
+<ul>
+<li><code>Index[T]</code></li>
+</ul><p>This is a SecondaryIndex in Cassandra. It can help you enable querying really fast, but it's not exactly high performance.
+It's generally best to avoid it, we implemented it to show off what good guys we are.</p>
+
+<p>When you mix in <code>Index[T]</code> on a column, phantom will let you use it in a <code>where</code> clause.
+However, don't forget to <code>allowFiltering</code> for such queries, otherwise C* will give you an error.</p>
+
+<ul>
+<li><code>ClusteringOrder</code></li>
+</ul><p>This can be used with either <code>java.util.Date</code> or <code>org.joda.time.DateTime</code>. It tells Cassandra to store records in a certain order based on this field.</p>
+
+<p>An example might be: <code>object timestamp extends DateTimeColumn(this) with ClusteringOrder[DateTime] with Ascending</code>
+To fully define a clustering column, you MUST also mixin either <code>Ascending</code> or <code>Descending</code> to indicate the sorting order.</p>
+
+<h1>
+<a name="thrift-columns" class="anchor" href="#thrift-columns"><span class="octicon octicon-link"></span></a>Thrift Columns</h1>
+
+<p>These columns are especially useful if you are building Thrift services. They are deeply integrated with Twitter Scrooge and relevant to the Twitter ecosystem(Finagle, Zipkin, Storm etc)
+They are available via the <code>phantom-thrift</code> module and you need to <code>import com.newzly.phantom.thrift.Implicits._</code> to get them.</p>
+
+<p>In the below scenario, the C* type is always text and the type you need to pass to the column is a Thrift struct, specifically <code>com.twitter.scrooge.ThriftStruct</code>.
+phantom will use a <code>CompactThriftSerializer</code>, store the record as a binary string and then reparse it on fetch.</p>
+
+<p>Thrift serialization and de-serialization is extremely fast, so you don't need to worry about speed or performance overhead.
+You generally use these to store collections(small number of items), not big things.</p>
+
+<table>
+<thead><tr>
+<th>phantom columns</th>
+<th>Cassandra columns</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>ThriftColumn.&lt;type&gt;</td>
+<td>text</td>
+</tr>
+<tr>
+<td>ThriftListColumn.&lt;type&gt;</td>
+<td>list&lt;text&gt;</td>
+</tr>
+<tr>
+<td>ThriftSetColumn.&lt;type&gt;</td>
+<td>set&lt;text&gt;</td>
+</tr>
+<tr>
+<td>ThriftMapColumn.&lt;type, type&gt;</td>
+<td>map&lt;text, text&gt;</td>
+</tr>
+</tbody>
+</table><h1>
 <a name="data-modeling-with-phantom" class="anchor" href="#data-modeling-with-phantom"><span class="octicon octicon-link"></span></a>Data modeling with phantom</h1>
 
 <div class="highlight highlight-scala"><pre>
-<span class="k">import</span> <span class="nn">java.util.</span><span class="o">{</span> <span class="nc">UUID</span><span class="o">,</span> <span class="nc">Date</span> <span class="o">}</span>
+<span class="k">import</span> <span class="nn">java.util.</span><span class="o">{</span> <span class="nc">Date</span><span class="o">,</span> <span class="nc">UUID</span> <span class="o">}</span>
 <span class="k">import</span> <span class="nn">com.datastax.driver.core.Row</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.sample.ExampleModel</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
@@ -82,7 +380,7 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
   <span class="n">test</span><span class="k">:</span> <span class="kt">Option</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span>
 <span class="o">)</span>
 
-<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="o">{</span>
 
   <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
   <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">ClusteringOrder</span> <span class="k">with</span> <span class="nc">Ascending</span>
@@ -102,9 +400,188 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 
 <p>The query syntax is inspired by the Foursquare Rogue library and aims to replicate CQL 3 as much as possible.</p>
 
-<p>Phantom works with both Scala Futures and Twitter Futures. For the Twitter flavour, simply add the <code>"com.newzly  %% phantom-finagle % phantomVersion"</code> dependency.</p>
+<p>Phantom works with both Scala Futures and Twitter Futures as first class citizens.</p>
+
+<h1>
+<a name="select-queries" class="anchor" href="#select-queries"><span class="octicon octicon-link"></span></a>"Select" queries</h1>
+
+<table>
+<thead><tr>
+<th>Method name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>where</code></td>
+<td>The <code>WHERE</code> clause in CQL</td>
+</tr>
+<tr>
+<td><code>and</code></td>
+<td>Chains several clauses, creating a <code>WHERE ... AND</code> query</td>
+</tr>
+<tr>
+<td><code>orderBy</code></td>
+<td>Adds an <code>ORDER_BY column_name</code> to the query</td>
+</tr>
+<tr>
+<td><code>allowFiltering</code></td>
+<td>Allows Cassandra to filter records in memory. This is an expensive operation.</td>
+</tr>
+<tr>
+<td><code>useConsistencyLevel</code></td>
+<td>Sets the consistency level to use.</td>
+</tr>
+<tr>
+<td><code>setFetchSize</code></td>
+<td>Sets the maximum number of records to retrieve. Default is 10000</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>Sets the exact number of records to retrieve.</td>
+</tr>
+</tbody>
+</table><p>Select queries are very straightforward and enforce most limitations at compile time.</p>
+
+<h1>
+<a name="where-and-and-clause-operators" class="anchor" href="#where-and-and-clause-operators"><span class="octicon octicon-link"></span></a><code>where</code> and <code>and</code> clause operators</h1>
+
+<table>
+<thead><tr>
+<th>Operator name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>eqs</td>
+<td>The "equals" operator. Will match if the objects are equal</td>
+</tr>
+<tr>
+<td>in</td>
+<td>The "in" operator. Will match if the object is found the list of arguments</td>
+</tr>
+<tr>
+<td>gt</td>
+<td>The "greater than" operator. Will match a the record is greater than the argument and exists</td>
+</tr>
+<tr>
+<td>gte</td>
+<td>The "greater than or equals" operator. Will match a the record is greater than the argument and exists</td>
+</tr>
+<tr>
+<td>lt</td>
+<td>The "lower than" operator. Will match a the record that is less than the argument and exists</td>
+</tr>
+<tr>
+<td>lte</td>
+<td>The "lower than or equals" operator. Will match a the record that is less than the argument and exists</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="partial-selects" class="anchor" href="#partial-selects"><span class="octicon octicon-link"></span></a>Partial selects</h1>
+
+<p>All partial select queries will return Tuples and are therefore limited to 22 fields.
+We haven't yet bothered to add more than 11 fields in the select, but you can always do a Pull Request.
+The file you are looking for is <a href="https://github.com/newzly/phantom/blob/develop/phantom-dsl/src/main/scala/com/newzly/phantom/SelectTable.scala">here</a>.
+The 22 field limitation will change in Scala 2.11 and phantom will be updated once cross version compilation is enabled.</p>
+
+<div class="highlight highlight-scala"><pre>  <span class="k">def</span> <span class="n">getNameById</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UUID</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span><span class="o">).</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">one</span><span class="o">()</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">getNameAndPropsById</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UUID</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">(</span><span class="kt">String</span>, <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">])]</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="k">_</span><span class="o">.</span><span class="n">props</span><span class="o">).</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">one</span><span class="o">()</span>
+  <span class="o">}</span>
+</pre></div>
+
+<h1>
+<a name="insert-queries" class="anchor" href="#insert-queries"><span class="octicon octicon-link"></span></a>"Insert" queries</h1>
+
+<table>
+<thead><tr>
+<th>Method name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>value</code></td>
+<td>A type safe Insert query builder. Throws an error for <code>null</code> values.</td>
+</tr>
+<tr>
+<td><code>valueOrNull</code></td>
+<td>This will accept a <code>null</code> without throwing an error.</td>
+</tr>
+<tr>
+<td><code>useConsistencyLevel</code></td>
+<td>Sets the consistency level to use.</td>
+</tr>
+<tr>
+<td><code>ttl</code></td>
+<td>Sets the "Time-To-Live" for the record.</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="update-queries" class="anchor" href="#update-queries"><span class="octicon octicon-link"></span></a>"Update" queries</h1>
+
+<table>
+<thead><tr>
+<th>Method name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>where</code></td>
+<td>The <code>WHERE</code> clause in CQL</td>
+</tr>
+<tr>
+<td><code>and</code></td>
+<td>Chains several clauses, creating a <code>WHERE ... AND</code> query</td>
+</tr>
+<tr>
+<td><code>modify</code></td>
+<td>The actual update query builder</td>
+</tr>
+<tr>
+<td><code>useConsistencyLevel</code></td>
+<td>Sets the consistency level to use.</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="delete-queries" class="anchor" href="#delete-queries"><span class="octicon octicon-link"></span></a>"Delete" queries</h1>
+
+<table>
+<thead><tr>
+<th>Method name</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr>
+<td><code>useConsistencyLevel</code></td>
+<td>Sets the consistency level to use.</td>
+</tr></tbody>
+</table><h1>
+<a name="scala-futures" class="anchor" href="#scala-futures"><span class="octicon octicon-link"></span></a>Scala Futures</h1>
+
+<div class="highlight highlight-scala"><pre><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">one</span><span class="o">()</span> <span class="c1">// When you only want to select one record</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"someOtherName"</span><span class="o">).</span><span class="n">future</span><span class="o">()</span> <span class="c1">// When you don't care about the return type.</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">fetchEnumerator</span> <span class="c1">// when you need an Enumerator</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">fetch</span> <span class="c1">// When you want to fetch a Seq[Record]</span>
+</pre></div>
+
+<h1>
+<a name="twitter-futures" class="anchor" href="#twitter-futures"><span class="octicon octicon-link"></span></a>Twitter Futures</h1>
+
+<div class="highlight highlight-scala"><pre><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">get</span><span class="o">()</span> <span class="c1">// When you only want to select one record</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"someOtherName"</span><span class="o">).</span><span class="n">execute</span><span class="o">()</span> <span class="c1">// When you don't care about the return type.</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">enumerate</span> <span class="c1">// when you need an Enumerator</span>
+<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">collect</span> <span class="c1">// When you want to fetch a Seq[Record]</span>
+</pre></div>
+
+<h1>
+<a name="more-examples-with-scala-futures" class="anchor" href="#more-examples-with-scala-futures"><span class="octicon octicon-link"></span></a>More examples with Scala Futures</h1>
 
 <div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+
 <span class="k">object</span> <span class="nc">ExampleRecord</span> <span class="k">extends</span> <span class="nc">ExampleRecord</span> <span class="o">{</span>
   <span class="k">override</span> <span class="k">val</span> <span class="n">tableName</span> <span class="k">=</span> <span class="s">"examplerecord"</span>
 
@@ -122,47 +599,126 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 </pre></div>
 
 <h1>
-<a name="partial-selects" class="anchor" href="#partial-selects"><span class="octicon octicon-link"></span></a>Partial selects</h1>
-
-<p>All partial select queries will return Tuples and are therefore limited to 22 fields.
-This will change in Scala 2.11 and phantom will be updated once cross version compilation is enabled.</p>
-
-<div class="highlight highlight-scala"><pre>  <span class="k">def</span> <span class="n">getNameById</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UUID</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span><span class="o">).</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">one</span><span class="o">()</span>
-  <span class="o">}</span>
-
-  <span class="k">def</span> <span class="n">getNameAndPropsById</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">UUID</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">(</span><span class="kt">String</span>, <span class="kt">Map</span><span class="o">[</span><span class="kt">String</span>, <span class="kt">String</span><span class="o">])]</span> <span class="o">{</span>
-    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span><span class="o">,</span> <span class="k">_</span><span class="o">.</span><span class="n">props</span><span class="o">).</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">one</span><span class="o">()</span>
-  <span class="o">}</span>
-</pre></div>
-
-<h1>
-<a name="collection-operators" class="anchor" href="#collection-operators"><span class="octicon octicon-link"></span></a>Collection operators</h1>
-
-<p>phantom supports CQL 3 modify operations for CQL 3 collections: <code>list, set, map</code>.</p>
-
-<p>It works as you would expect it to:</p>
-
-<p>List operators: <code>prepend, prependAll, append, appendAll, remove, removeAll</code></p>
+<a name="more-examples-with-twitter-futures" class="anchor" href="#more-examples-with-twitter-futures"><span class="octicon octicon-link"></span></a>More examples with Twitter Futures</h1>
 
 <div class="highlight highlight-scala"><pre>
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">prepend</span> <span class="n">someItem</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">prependAll</span> <span class="n">someItems</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
+<span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
 
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">append</span> <span class="n">someItem</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">appendAll</span> <span class="n">someItems</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
+<span class="k">object</span> <span class="nc">ExampleRecord</span> <span class="k">extends</span> <span class="nc">ExampleRecord</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">val</span> <span class="n">tableName</span> <span class="k">=</span> <span class="s">"examplerecord"</span>
 
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">remove</span> <span class="n">someItem</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
-<span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someList</span> <span class="n">removeAll</span> <span class="n">someItems</span><span class="o">).</span><span class="n">future</span><span class="o">()</span>
+  <span class="c1">// now define a session, a normal Datastax cluster connection</span>
+  <span class="k">implicit</span> <span class="k">val</span> <span class="n">session</span> <span class="k">=</span> <span class="nc">SomeCassandraClient</span><span class="o">.</span><span class="n">session</span><span class="o">;</span>
 
+  <span class="k">def</span> <span class="n">getRecordsByName</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Seq</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">collect</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">getOneRecordByName</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">someId</span><span class="k">:</span> <span class="kt">UUID</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Option</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">eqs</span> <span class="n">name</span><span class="o">).</span><span class="n">and</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">get</span><span class="o">()</span>
+  <span class="o">}</span>
+<span class="o">}</span>
 </pre></div>
 
-<p>Set operators: <code>append, appendAll, remove, removeAll</code>
-Map operators: <code>put, putAll</code></p>
+<h1>
+<a name="collections-and-operators" class="anchor" href="#collections-and-operators"><span class="octicon octicon-link"></span></a>Collections and operators</h1>
 
-<p>For working examples, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/ListOperatorsTest.scala">ListOperatorsTest.scala</a> and <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/MapOperationsTest.scala">MapOperationsTest.scala</a>.</p>
+<p>Based on the above list of columns, phantom supports CQL 3 modify operations for CQL 3 collections: <code>list, set, map</code>.
+All operators will be available in an update query, specifically:</p>
+
+<p><code>ExampleRecord.update.where(_.id eqs someId).modify(_.someList $OPERATOR $args).future()</code>.</p>
 
 <h1>
+<a name="list-operators" class="anchor" href="#list-operators"><span class="octicon octicon-link"></span></a>List operators</h1>
+
+<p>Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/ListOperatorsTest.scala">ListOperatorsTest.scala</a>.</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>prepend</code></td>
+<td>Adds an item to the head of the list</td>
+</tr>
+<tr>
+<td><code>prependAll</code></td>
+<td>Adds multiple items to the head of the list</td>
+</tr>
+<tr>
+<td><code>append</code></td>
+<td>Adds an item to the tail of the list</td>
+</tr>
+<tr>
+<td><code>appendAll</code></td>
+<td>Adds multiple items to the tail of the list</td>
+</tr>
+<tr>
+<td><code>discard</code></td>
+<td>Removes the given item from the list.</td>
+</tr>
+<tr>
+<td><code>discardAll</code></td>
+<td>Removes all given items from the list.</td>
+</tr>
+<tr>
+<td><code>setIdIx</code></td>
+<td>Updates a specific index in the list</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="set-operators" class="anchor" href="#set-operators"><span class="octicon octicon-link"></span></a>Set operators</h1>
+
+<p>Sets have a better performance than lists, as the Cassandra documentation suggests.
+Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/SetOperationsTest.scala">SetOperationsTest.scala</a>.</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>append</code></td>
+<td>Adds an item to the tail of the set</td>
+</tr>
+<tr>
+<td><code>appendAll</code></td>
+<td>Adds multiple items to the tail of the set</td>
+</tr>
+<tr>
+<td><code>remove</code></td>
+<td>Removes the given item from the set.</td>
+</tr>
+<tr>
+<td><code>removeAll</code></td>
+<td>Removes all given items from the set.</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="map-operators" class="anchor" href="#map-operators"><span class="octicon octicon-link"></span></a>Map operators</h1>
+
+<p>Both the key and value types of a Map must be Cassandra primitives.
+Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/MapOperationsTest.scala">MapOperationsTest.scala</a>:</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>put</code></td>
+<td>Adds an (key -&gt; value) pair to the map</td>
+</tr>
+<tr>
+<td><code>putAll</code></td>
+<td>Adds multiple (key -&gt; value) pairs to the map</td>
+</tr>
+</tbody>
+</table><h1>
 <a name="automated-schema-generation" class="anchor" href="#automated-schema-generation"><span class="octicon octicon-link"></span></a>Automated schema generation</h1>
 
 <p>Replication strategies and more advanced features are not yet available in phantom, but CQL 3 Table schemas are  automatically generated from the Scala code. To create a schema in Cassandra from a table definition:</p>
@@ -184,7 +740,7 @@ Map operators: <code>put, putAll</code></p>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
 
-<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord2</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord2</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod2</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord2</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord2</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod2</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
   <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
   <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
@@ -202,7 +758,37 @@ Map operators: <code>put, putAll</code></p>
 
 </pre></div>
 
-<p>For more details on how to use Cassandra partition tokens, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/SkipRecordsByToken.scala">SkipRecordsByToken.scala</a></p>
+<h1>
+<a name="partitiontoken-operators" class="anchor" href="#partitiontoken-operators"><span class="octicon octicon-link"></span></a>PartitionToken operators</h1>
+
+<table>
+<thead><tr>
+<th>Operator name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>eqsToken</td>
+<td>The "equals" operator. Will match if the objects are equal</td>
+</tr>
+<tr>
+<td>gtToken</td>
+<td>The "greater than" operator. Will match a the record is greater than the argument</td>
+</tr>
+<tr>
+<td>gteToken</td>
+<td>The "greater than or equals" operator. Will match a the record is greater than the argument</td>
+</tr>
+<tr>
+<td>ltToken</td>
+<td>The "lower than" operator. Will match a the record that is less than the argument and exists</td>
+</tr>
+<tr>
+<td>lteToken</td>
+<td>The "lower than or equals" operator. Will match a the record that is less than the argument</td>
+</tr>
+</tbody>
+</table><p>For more details on how to use Cassandra partition tokens, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/SkipRecordsByToken.scala">SkipRecordsByToken.scala</a></p>
 
 <h1>
 <a name="cassandra-time-series" class="anchor" href="#cassandra-time-series"><span class="octicon octicon-link"></span></a>Cassandra Time Series</h1>
@@ -214,7 +800,7 @@ Map operators: <code>put, putAll</code></p>
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
 
-<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
   <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
   <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">ClusteringOrder</span> <span class="k">with</span> <span class="nc">Ascending</span>
@@ -231,17 +817,17 @@ Map operators: <code>put, putAll</code></p>
 <p>Automatic schema generation can do all the setup for you.</p>
 
 <h1>
-<a name="composite-keys" class="anchor" href="#composite-keys"><span class="octicon octicon-link"></span></a>Composite keys</h1>
+<a name="compound-keys" class="anchor" href="#compound-keys"><span class="octicon octicon-link"></span></a>Compound keys</h1>
 
-<p>Phantom also supports using composite keys out of the box. The schema can once again by auto-generated.</p>
+<p>Phantom also supports using Compound keys out of the box. The schema can once again by auto-generated.</p>
 
-<p>A table can have only one <code>PartitionKey</code> but several <code>PrimaryKey</code> definitions. Phantom will use these keys to build a composite value. Example scenario, with the composite key: <code>(id, timestamp, name)</code></p>
+<p>A table can have only one <code>PartitionKey</code> but several <code>PrimaryKey</code> definitions. Phantom will use these keys to build a compound value. Example scenario, with the compound key: <code>(id, timestamp, name)</code></p>
 
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
 
-<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
   <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
   <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PrimaryKey</span><span class="o">[</span><span class="kt">DateTime</span><span class="o">]</span>
@@ -258,7 +844,7 @@ Map operators: <code>put, putAll</code></p>
 <h1>
 <a name="cql-3-index-and-non-primary-index-columns" class="anchor" href="#cql-3-index-and-non-primary-index-columns"><span class="octicon octicon-link"></span></a>CQL 3 index and non-primary index columns</h1>
 
-<p>When you want to use a column in a <code>where</code> clause, you need an index on it. Cassandra data modeling is out of the scope of this writing, but phantom offers <code>com.newzly.phantom.Keys.SecondaryKey</code> to enable querying.</p>
+<p>When you want to use a column in a <code>where</code> clause, you need an index on it. Cassandra data modeling is out of the scope of this writing, but phantom offers <code>com.newzly.phantom.keys.Index</code> to enable querying.</p>
 
 <p>The CQL 3 schema for secondary indexes can also be auto-generated with <code>ExampleRecord4.create()</code>.</p>
 
@@ -266,11 +852,11 @@ Map operators: <code>put, putAll</code></p>
 <span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
 
-<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord4</span> <span class="k">private</span><span class="o">()</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord4</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod4</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord4</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord4</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod4</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
   <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
-  <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">SecondaryKey</span><span class="o">[</span><span class="kt">DateTime</span><span class="o">]</span>
-  <span class="k">object</span> <span class="nc">name</span> <span class="k">extends</span> <span class="nc">StringColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">SecondaryKey</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Index</span><span class="o">[</span><span class="kt">DateTime</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">name</span> <span class="k">extends</span> <span class="nc">StringColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">Index</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
   <span class="k">object</span> <span class="nc">props</span> <span class="k">extends</span> <span class="nc">MapColumn</span><span class="o">[</span><span class="kt">ExampleRecord2</span>, <span class="kt">ExampleRecord</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">](</span><span class="k">this</span><span class="o">)</span>
   <span class="k">object</span> <span class="nc">test</span> <span class="k">extends</span> <span class="nc">OptionalIntColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
 
@@ -286,17 +872,38 @@ Map operators: <code>put, putAll</code></p>
 <p>Phantom comes packed with CQL rows asynchronous lazy iterators to help you deal with billions of records.
 phantom iterators are based on Play iterators with very lightweight integration.</p>
 
-<p>The functionality is identical with respect to asyncrhonous, lazy behaviour and available methods.
+<p>The functionality is identical with respect to asynchronous, lazy behaviour and available methods.
 For more on this, see this <a href="http://mandubian.com/2012/08/27/understanding-play2-iteratees-for-normal-humans/">Play tutorial</a></p>
 
-<p>Usage is trivial:</p>
+<p>Usage is trivial. If you want to use <code>slice, take or drop</code> with iterators, the partitioner needs to be ordered.</p>
 
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
+<span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
 <span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
 
-<span class="k">val</span> <span class="n">enumerator</span> <span class="k">=</span> <span class="nc">Await</span><span class="o">.</span><span class="n">result</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">select</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">timestamp</span> <span class="n">gtToken</span> <span class="n">someTimestamp</span><span class="o">).</span><span class="n">fetchEnumerator</span><span class="o">(),</span> <span class="mi">5000</span> <span class="n">millis</span><span class="o">)</span>
+
+<span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">object</span> <span class="nc">id</span> <span class="k">extends</span> <span class="nc">UUIDColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PartitionKey</span><span class="o">[</span><span class="kt">UUID</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">timestamp</span> <span class="k">extends</span> <span class="nc">DateTimeColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PrimaryKey</span><span class="o">[</span><span class="kt">DateTime</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">name</span> <span class="k">extends</span> <span class="nc">StringColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span> <span class="k">with</span> <span class="nc">PrimaryKey</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span>
+  <span class="k">object</span> <span class="nc">props</span> <span class="k">extends</span> <span class="nc">MapColumn</span><span class="o">[</span><span class="kt">ExampleRecord2</span>, <span class="kt">ExampleRecord</span>, <span class="kt">String</span>, <span class="kt">String</span><span class="o">](</span><span class="k">this</span><span class="o">)</span>
+  <span class="k">object</span> <span class="nc">test</span> <span class="k">extends</span> <span class="nc">OptionalIntColumn</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">fromRow</span><span class="o">(</span><span class="n">row</span><span class="k">:</span> <span class="kt">Row</span><span class="o">)</span><span class="k">:</span> <span class="kt">ExampleModel</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nc">ExampleModel</span><span class="o">(</span><span class="n">id</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">name</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">props</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">timestamp</span><span class="o">(</span><span class="n">row</span><span class="o">),</span> <span class="n">test</span><span class="o">(</span><span class="n">row</span><span class="o">));</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">ExampleRecord3</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">getRecords</span><span class="o">(</span><span class="n">start</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">limit</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Set</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">select</span><span class="o">.</span><span class="n">fetchEnumerator</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
+      <span class="k">_</span><span class="o">.</span><span class="n">slice</span><span class="o">(</span><span class="n">start</span><span class="o">,</span> <span class="n">limit</span><span class="o">).</span><span class="n">collect</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
 
 </pre></div>
 
@@ -309,6 +916,39 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 
 <p>Batches use lazy iterators and daisy chain them to offer thread safe behaviour. They are not memory intensive and you can expect consistent processing speed even with 1 000 000 statements per batch.</p>
 
+<p>Batches are immutable and adding a new record will result in a new Batch, just like most things Scala, so be careful to chain the calls.</p>
+
+<div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+
+<span class="nc">BatchStatement</span><span class="o">()</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla"</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someOtherId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla2"</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">future</span><span class="o">()</span>
+
+</pre></div>
+
+<p>phantom also supports COUNTER batch updates and UNLOGGED batch updates.</p>
+
+<div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+
+<span class="nc">CounterBatchStatement</span><span class="o">()</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someCounter</span> <span class="n">increment</span> <span class="mi">500L</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someOtherId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someCounter</span> <span class="n">decrement</span> <span class="mi">300L</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">future</span><span class="o">()</span>
+</pre></div>
+
+<div class="highlight highlight-scala"><pre>
+<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+
+<span class="nc">UnloggedBatchStatement</span><span class="o">()</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla"</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someOtherId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla2"</span><span class="o">))</span>
+    <span class="o">.</span><span class="n">future</span><span class="o">()</span>
+
+</pre></div>
+
 <h1>
 <a name="thrift-integration" class="anchor" href="#thrift-integration"><span class="octicon octicon-link"></span></a>Thrift integration</h1>
 
@@ -319,7 +959,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 stuct ExampleModel {
   1: required i32 id,
   2: required string name,
-  3: required Map&lt;string, string&gt; props,
+  3: required Map&amp;lt;string, string&amp;gt; props,
   4: required i32 timestamp
   5: optional i32 test
 }
@@ -344,14 +984,11 @@ You need two terminals to run the tests, one for Embedded Cassandra and one for 
 </pre></div>
 
 <h1>
-<a name="maintainers" class="anchor" href="#maintainers"><span class="octicon octicon-link"></span></a>Maintainers</h1>
+<a name="maintainers-and-contributors" class="anchor" href="#maintainers-and-contributors"><span class="octicon octicon-link"></span></a>Maintainers and contributors</h1>
 
-<p>Phantom was developed at newzly as an in-house project.
-All Cassandra integration at newzly goes through Phantom.</p>
+<p>Phantom was developed at newzly as an in-house project. All Cassandra integration at newzly goes through Phantom.</p>
 
 <ul>
-<li>Sorin Chiprian <a href="mailto:sorin.chiprian@newzly.com">sorin.chiprian@newzly.com</a>
-</li>
 <li>Flavian Alexandru <a href="mailto:flavian@newzly.com">flavian@newzly.com</a>
 </li>
 </ul><h1>
@@ -373,17 +1010,12 @@ All Cassandra integration at newzly goes through Phantom.</p>
 
 <p>We use GitFlow as a branching model and SemVer for versioning.</p>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Phantom maintained by <a href="https://github.com/newzly">newzly</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/newzly">newzly</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-
+    <script src="javascripts/scale.fix.js"></script>
     
-
   </body>
 </html>
