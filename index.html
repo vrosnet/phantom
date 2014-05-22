@@ -28,21 +28,20 @@
         </ul>
       </header>
       <section>
-        <h1>
-<a name="phantom-" class="anchor" href="#phantom-"><span class="octicon octicon-link"></span></a>phantom <a href="https://travis-ci.org/newzly/phantom"><img src="https://travis-ci.org/newzly/phantom.png?branch=develop" alt="Build Status"></a>
-</h1>
+        <p>phantom <a href="https://travis-ci.org/newzly/phantom"><img src="https://travis-ci.org/newzly/phantom.png?branch=develop" alt="Build Status"></a></p>
+
+<h1></h1>
 
 <p>Asynchronous Scala DSL for Cassandra</p>
 
 <h1>
 <a name="using-phantom" class="anchor" href="#using-phantom"><span class="octicon octicon-link"></span></a>Using phantom</h1>
 
-<p>The current version is: <code>val phantomVersion = 0.6.0</code>.
+<p>The current version is: <code>val phantomVersion = 0.7.0</code>.
 Phantom is published to Maven Central and it's actively and avidly developed.</p>
 
 <h1>
-<a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a><a>Table of contents</a>
-</h1>
+<a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of contents</h1>
 
 <ol>
 <li><a href="#issues-and-questions">Issues and questions</a></li>
@@ -59,11 +58,10 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 <li><a href="#partition-key">Partition Key</a></li>
                     <li><a href="#primary-key">Primary Key</a></li>
                     <li><a href="#secondary-key">Secondary Index Key</a></li>
-                    <li><a href="#secondary-key">Secondary Index Key</a></li>
                     <li><a href="#clustering-order">Clustering Order Key</a></li>
                 </ul>
 </li>
-<li><a href="#thrift-columns">Thrift columns</a></li>
+            <li><a href="#thrift-columns">Thrift columns</a></li>
         </ul>
 </li>
     <li><a href="#data-modeling">Data modeling with phantom</a></li>
@@ -124,34 +122,31 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
     <li>
         <p><a href="#contributors">Contributing to phantom</a></p>
         <ul>
-<li>Using GitFlow as a branching model</li>
-            <li>Scala style guidelines for contributions</li>
+<li><a href="#using-gitflow">Using GitFlow as a branching model</a></li>
+            <li><a href="#scala-style-guidelines">Scala style guidelines for contributions</a></li>
             <li>Using the testing utilities to write tests</li>
         </ul>
 </li>
 <li><a href="#copyright">Copyright</a></li>
 </ol><h1>
-<a name="issues-and-questions" class="anchor" href="#issues-and-questions"><span class="octicon octicon-link"></span></a><a>Issues and questions</a>
-</h1>
+<a name="issues-and-questions" class="anchor" href="#issues-and-questions"><span class="octicon octicon-link"></span></a>Issues and questions</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>We love Cassandra to bits and use it in every bit our stack. phantom makes it super trivial for Scala users to embrace Cassandra, but don't let this mislead you.
-Cassandra is not another MongoDB JSON/BSON good marketing team technology, it is highly scalable, it's pretty difficult to use and get right and for most projects it is serious overkill.
-All queries need to be planned in advance, schema is not flexible and people who can help are very rare.</p>
+<p>We love Cassandra to bits and use it in every bit our stack. phantom makes it super trivial for Scala users to embrace Cassandra.</p>
 
-<p>Documentation is not plentiful and you to spend some serious hours on IRC channels looking for basic things.</p>
+<p>Cassandra is highly scalable and it's by far the most powerful database technology available, open source or otherwise.</p>
 
-<p>Unless you are planning on multi-datacenter financial timeseries data or 100 000 writes per second, you are going to waste a lot of time and money dealing with problems that won't do much for you, your app or business.
-For your own sake, research Cassandra use cases and see if it is truly a fit.</p>
+<p>Phantom is built on top of the <a href="https://github.com/datastax/java-driver">Datastax Java Driver</a>, which does most of the heavy lifting. </p>
 
-<p>We are very happy to help implement missing features in phantom, answer questions strictly about phantom, but Cassandra Data modeling is out of that scope.</p>
+<p>If you're completely new to Cassandra, a much better place to start is the <a href="http://www.datastax.com/documentation/getting_started/doc/getting_started/gettingStartedIntro_r.html">Datastax Introduction to Cassandra</a></p>
+
+<p>We are very happy to help implement missing features in phantom, answer questions about phantom, and occasionally help you out with Cassandra questions, although do note we're a bit short staffed!</p>
 
 <p>You can get in touch via the <a href="https://groups.google.com/forum/#!forum/newzly-phantom">newzly-phantom</a> Google Group.</p>
 
 <h1>
-<a name="integrating-phantom-in-your-project" class="anchor" href="#integrating-phantom-in-your-project"><span class="octicon octicon-link"></span></a><a>Integrating phantom in your project</a>
-</h1>
+<a name="integrating-phantom-in-your-project" class="anchor" href="#integrating-phantom-in-your-project"><span class="octicon octicon-link"></span></a>Integrating phantom in your project</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -169,14 +164,12 @@ For your own sake, research Cassandra use cases and see if it is truly a fit.</p
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-cassandra-unit"</span>        <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-example"</span>               <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-thrift"</span>                <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-scalatra-test"</span>         <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
   <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-test"</span>                  <span class="o">%</span> <span class="n">phantomVersion</span>
 <span class="o">)</span>
 </pre></div>
 
 <h1>
-<a name="primitive-columns" class="anchor" href="#primitive-columns"><span class="octicon octicon-link"></span></a><a>Primitive columns</a>
-</h1>
+<a name="primitive-columns" class="anchor" href="#primitive-columns"><span class="octicon octicon-link"></span></a>Primitive columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -270,8 +263,7 @@ phantom won't let you mixin a non-primitive via implicit magic.</p>
 </tr>
 </tbody>
 </table><h1>
-<a name="optional-primitive-columns" class="anchor" href="#optional-primitive-columns"><span class="octicon octicon-link"></span></a><a>Optional primitive columns</a>
-</h1>
+<a name="optional-primitive-columns" class="anchor" href="#optional-primitive-columns"><span class="octicon octicon-link"></span></a>Optional primitive columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -354,8 +346,7 @@ The outcome is that instead of a <code>T</code> you get an <code>Option[T]</code
 </tr>
 </tbody>
 </table><h1>
-<a name="collection-columns" class="anchor" href="#collection-columns"><span class="octicon octicon-link"></span></a><a>Collection columns</a>
-</h1>
+<a name="collection-columns" class="anchor" href="#collection-columns"><span class="octicon octicon-link"></span></a>Collection columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -382,24 +373,14 @@ The <code>type</code> in the below example is always a default C* type.</p>
 </tr>
 </tbody>
 </table><h1>
-<a name="indexing-columns" class="anchor" href="#indexing-columns"><span class="octicon octicon-link"></span></a><a>Indexing columns</a>
-</h1>
+<a name="indexing-columns" class="anchor" href="#indexing-columns"><span class="octicon octicon-link"></span></a>Indexing columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
 <p>phantom uses a specific set of traits to enforce more advanced Cassandra limitations and schema rules at compile time.</p>
 
-<p>For example:</p>
-
-<ul>
-<li>You cannot mix in more than one index on a single column</li>
-<li>You cannot set index columns to a different value</li>
-<li>You cannot query on a column that's not an index</li>
-</ul><p>For more of the above, have a look at <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/query/QueryRestrictionsTest.scala">QueryRestrictions.scala</a>.</p>
-
 <h1>
-<a name="partitionkeyt" class="anchor" href="#partitionkeyt"><span class="octicon octicon-link"></span></a><a><code>PartitionKey[T]</code></a>
-</h1>
+<a name="partitionkeyt" class="anchor" href="#partitionkeyt"><span class="octicon octicon-link"></span></a>PartitionKey[T]</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -414,8 +395,7 @@ You must define at least one partition key for a table. Phantom will gently remi
 <code>PRIMARY_KEY((your_partition_key_1, your_partition_key2), primary_key_1, primary_key_2)</code>.</p>
 
 <h1>
-<a name="primarykeyt" class="anchor" href="#primarykeyt"><span class="octicon octicon-link"></span></a><a><code>PrimaryKey[T]</code></a>
-</h1>
+<a name="primarykeyt" class="anchor" href="#primarykeyt"><span class="octicon octicon-link"></span></a>PrimaryKey[T]</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -430,8 +410,7 @@ about how your data is partitioned. We also use this DSL restriction because we 
 You can only query with a full primary key, even if it's compound. phantom can't yet give you a compile time error for this, but Cassandra will give you a runtime one.</p>
 
 <h1>
-<a name="indext" class="anchor" href="#indext"><span class="octicon octicon-link"></span></a><a><code>Index[T]</code></a>
-</h1>
+<a name="index" class="anchor" href="#index"><span class="octicon octicon-link"></span></a>Index</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -442,8 +421,7 @@ It's generally best to avoid it, we implemented it to show off what good guys we
 However, don't forget to <code>allowFiltering</code> for such queries, otherwise C* will give you an error.</p>
 
 <h1>
-<a name="clusteringorder" class="anchor" href="#clusteringorder"><span class="octicon octicon-link"></span></a><a><code>ClusteringOrder</code></a>
-</h1>
+<a name="clusteringorder" class="anchor" href="#clusteringorder"><span class="octicon octicon-link"></span></a>ClusteringOrder</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -453,8 +431,7 @@ However, don't forget to <code>allowFiltering</code> for such queries, otherwise
 To fully define a clustering column, you MUST also mixin either <code>Ascending</code> or <code>Descending</code> to indicate the sorting order.</p>
 
 <h1>
-<a name="thrift-columns" class="anchor" href="#thrift-columns"><span class="octicon octicon-link"></span></a><a>Thrift Columns</a>
-</h1>
+<a name="thrift-columns" class="anchor" href="#thrift-columns"><span class="octicon octicon-link"></span></a>Thrift Columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -491,8 +468,7 @@ You generally use these to store collections(small number of items), not big thi
 </tr>
 </tbody>
 </table><h1>
-<a name="data-modeling-with-phantom" class="anchor" href="#data-modeling-with-phantom"><span class="octicon octicon-link"></span></a><a>Data modeling with phantom</a>
-</h1>
+<a name="data-modeling-with-phantom" class="anchor" href="#data-modeling-with-phantom"><span class="octicon octicon-link"></span></a>Data modeling with phantom</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -526,8 +502,7 @@ You generally use these to store collections(small number of items), not big thi
 </pre></div>
 
 <h1>
-<a name="querying-with-phantom" class="anchor" href="#querying-with-phantom"><span class="octicon octicon-link"></span></a><a>Querying with Phantom</a>
-</h1>
+<a name="querying-with-phantom" class="anchor" href="#querying-with-phantom"><span class="octicon octicon-link"></span></a>Querying with Phantom</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -536,8 +511,7 @@ You generally use these to store collections(small number of items), not big thi
 <p>Phantom works with both Scala Futures and Twitter Futures as first class citizens.</p>
 
 <h1>
-<a name="select-queries" class="anchor" href="#select-queries"><span class="octicon octicon-link"></span></a><a>"Select" queries</a>
-</h1>
+<a name="select-queries" class="anchor" href="#select-queries"><span class="octicon octicon-link"></span></a>"Select" queries</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -579,8 +553,8 @@ You generally use these to store collections(small number of items), not big thi
 </table><p>Select queries are very straightforward and enforce most limitations at compile time.</p>
 
 <h1>
-<a name="where-and-and-clause-operators" class="anchor" href="#where-and-and-clause-operators"><span class="octicon octicon-link"></span></a><a><code>where</code> and <code>and</code> clause operators</a>
-</h1>
+<a name="where-and-and-clause-operators" class="anchor" href="#where-and-and-clause-operators"><span class="octicon octicon-link"></span></a>
+<code>where</code> and <code>and</code> clause operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -616,8 +590,7 @@ You generally use these to store collections(small number of items), not big thi
 </tr>
 </tbody>
 </table><h1>
-<a name="partial-selects" class="anchor" href="#partial-selects"><span class="octicon octicon-link"></span></a><a>Partial selects</a>
-</h1>
+<a name="partial-selects" class="anchor" href="#partial-selects"><span class="octicon octicon-link"></span></a>Partial selects</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -636,8 +609,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </pre></div>
 
 <h1>
-<a name="insert-queries" class="anchor" href="#insert-queries"><span class="octicon octicon-link"></span></a><a>"Insert" queries</a>
-</h1>
+<a name="insert-queries" class="anchor" href="#insert-queries"><span class="octicon octicon-link"></span></a>"Insert" queries</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -665,8 +637,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </tr>
 </tbody>
 </table><h1>
-<a name="update-queries" class="anchor" href="#update-queries"><span class="octicon octicon-link"></span></a><a>"Update" queries</a>
-</h1>
+<a name="update-queries" class="anchor" href="#update-queries"><span class="octicon octicon-link"></span></a>"Update" queries</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -698,8 +669,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </tr>
 </tbody>
 </table><h1>
-<a name="delete-queries" class="anchor" href="#delete-queries"><span class="octicon octicon-link"></span></a><a>"Delete" queries</a>
-</h1>
+<a name="delete-queries" class="anchor" href="#delete-queries"><span class="octicon octicon-link"></span></a>"Delete" queries</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -719,8 +689,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </tr>
 </tbody>
 </table><h1>
-<a name="scala-futures" class="anchor" href="#scala-futures"><span class="octicon octicon-link"></span></a><a>Scala Futures</a>
-</h1>
+<a name="scala-futures" class="anchor" href="#scala-futures"><span class="octicon octicon-link"></span></a>Scala Futures</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -731,8 +700,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </pre></div>
 
 <h1>
-<a name="examples-with-scala-futures" class="anchor" href="#examples-with-scala-futures"><span class="octicon octicon-link"></span></a><a>Examples with Scala Futures</a>
-</h1>
+<a name="examples-with-scala-futures" class="anchor" href="#examples-with-scala-futures"><span class="octicon octicon-link"></span></a>Examples with Scala Futures</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -757,8 +725,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </pre></div>
 
 <h1>
-<a name="twitter-futures" class="anchor" href="#twitter-futures"><span class="octicon octicon-link"></span></a><a>Twitter Futures</a>
-</h1>
+<a name="twitter-futures" class="anchor" href="#twitter-futures"><span class="octicon octicon-link"></span></a>Twitter Futures</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -769,8 +736,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </pre></div>
 
 <h1>
-<a name="more-examples-with-twitter-futures" class="anchor" href="#more-examples-with-twitter-futures"><span class="octicon octicon-link"></span></a><a>More examples with Twitter Futures</a>
-</h1>
+<a name="more-examples-with-twitter-futures" class="anchor" href="#more-examples-with-twitter-futures"><span class="octicon octicon-link"></span></a>More examples with Twitter Futures</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -794,8 +760,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </pre></div>
 
 <h1>
-<a name="collections-and-operators" class="anchor" href="#collections-and-operators"><span class="octicon octicon-link"></span></a><a>Collections and operators</a>
-</h1>
+<a name="collections-and-operators" class="anchor" href="#collections-and-operators"><span class="octicon octicon-link"></span></a>Collections and operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -805,8 +770,7 @@ All operators will be available in an update query, specifically:</p>
 <p><code>ExampleRecord.update.where(_.id eqs someId).modify(_.someList $OPERATOR $args).future()</code>.</p>
 
 <h1>
-<a name="list-operators" class="anchor" href="#list-operators"><span class="octicon octicon-link"></span></a><a>List operators</a>
-</h1>
+<a name="list-operators" class="anchor" href="#list-operators"><span class="octicon octicon-link"></span></a>List operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -848,8 +812,7 @@ All operators will be available in an update query, specifically:</p>
 </tr>
 </tbody>
 </table><h1>
-<a name="set-operators" class="anchor" href="#set-operators"><span class="octicon octicon-link"></span></a><a>Set operators</a>
-</h1>
+<a name="set-operators" class="anchor" href="#set-operators"><span class="octicon octicon-link"></span></a>Set operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -863,11 +826,11 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </tr></thead>
 <tbody>
 <tr>
-<td><code>append</code></td>
+<td><code>add</code></td>
 <td>Adds an item to the tail of the set</td>
 </tr>
 <tr>
-<td><code>appendAll</code></td>
+<td><code>addAll</code></td>
 <td>Adds multiple items to the tail of the set</td>
 </tr>
 <tr>
@@ -880,8 +843,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </tr>
 </tbody>
 </table><h1>
-<a name="map-operators" class="anchor" href="#map-operators"><span class="octicon octicon-link"></span></a><a>Map operators</a>
-</h1>
+<a name="map-operators" class="anchor" href="#map-operators"><span class="octicon octicon-link"></span></a>Map operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -904,8 +866,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </tr>
 </tbody>
 </table><h1>
-<a name="automated-schema-generation" class="anchor" href="#automated-schema-generation"><span class="octicon octicon-link"></span></a><a>Automated schema generation</a>
-</h1>
+<a name="automated-schema-generation" class="anchor" href="#automated-schema-generation"><span class="octicon octicon-link"></span></a>Automated schema generation</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -921,8 +882,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 <p>Of course, you don't have to block unless you want to.</p>
 
 <h1>
-<a name="partition-tokens" class="anchor" href="#partition-tokens"><span class="octicon octicon-link"></span></a><a>Partition tokens</a>
-</h1>
+<a name="partition-tokens" class="anchor" href="#partition-tokens"><span class="octicon octicon-link"></span></a>Partition tokens</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -950,8 +910,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </pre></div>
 
 <h1>
-<a name="partitiontoken-operators" class="anchor" href="#partitiontoken-operators"><span class="octicon octicon-link"></span></a><a>PartitionToken operators</a>
-</h1>
+<a name="partitiontoken-operators" class="anchor" href="#partitiontoken-operators"><span class="octicon octicon-link"></span></a>PartitionToken operators</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -985,8 +944,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </table><p>For more details on how to use Cassandra partition tokens, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/SkipRecordsByToken.scala">SkipRecordsByToken.scala</a></p>
 
 <h1>
-<a name="cassandra-time-series" class="anchor" href="#cassandra-time-series"><span class="octicon octicon-link"></span></a><a>Cassandra Time Series</a>
-</h1>
+<a name="cassandra-time-series" class="anchor" href="#cassandra-time-series"><span class="octicon octicon-link"></span></a>Cassandra Time Series</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1014,8 +972,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 <p>Automatic schema generation can do all the setup for you.</p>
 
 <h1>
-<a name="compound-keys" class="anchor" href="#compound-keys"><span class="octicon octicon-link"></span></a><a>Compound keys</a>
-</h1>
+<a name="compound-keys" class="anchor" href="#compound-keys"><span class="octicon octicon-link"></span></a>Compound keys</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1042,8 +999,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </pre></div>
 
 <h1>
-<a name="cql-3-secondary-keys" class="anchor" href="#cql-3-secondary-keys"><span class="octicon octicon-link"></span></a><a>CQL 3 Secondary Keys</a>
-</h1>
+<a name="cql-3-secondary-keys" class="anchor" href="#cql-3-secondary-keys"><span class="octicon octicon-link"></span></a>CQL 3 Secondary Keys</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1073,8 +1029,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 </pre></div>
 
 <h1>
-<a name="asynchronous-iterators-for-large-record-sets" class="anchor" href="#asynchronous-iterators-for-large-record-sets"><span class="octicon octicon-link"></span></a><a>Asynchronous iterators for large record sets</a>
-</h1>
+<a name="asynchronous-iterators-for-large-record-sets" class="anchor" href="#asynchronous-iterators-for-large-record-sets"><span class="octicon octicon-link"></span></a>Asynchronous iterators for large record sets</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1108,17 +1063,14 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 
 <span class="k">object</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">ExampleRecord3</span> <span class="o">{</span>
   <span class="k">def</span> <span class="n">getRecords</span><span class="o">(</span><span class="n">start</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">limit</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">Set</span><span class="o">[</span><span class="kt">ExampleModel</span><span class="o">]]</span> <span class="k">=</span> <span class="o">{</span>
-    <span class="n">select</span><span class="o">.</span><span class="n">fetchEnumerator</span><span class="o">.</span><span class="n">map</span> <span class="o">{</span>
-      <span class="k">_</span><span class="o">.</span><span class="n">slice</span><span class="o">(</span><span class="n">start</span><span class="o">,</span> <span class="n">limit</span><span class="o">).</span><span class="n">collect</span>
-    <span class="o">}</span>
+    <span class="n">select</span><span class="o">.</span><span class="n">fetchEnumerator</span><span class="o">.</span><span class="n">slice</span><span class="o">(</span><span class="n">start</span><span class="o">,</span> <span class="n">limit</span><span class="o">).</span><span class="n">collect</span>
   <span class="o">}</span>
 <span class="o">}</span>
 
 </pre></div>
 
 <h1>
-<a name="batch-statements" class="anchor" href="#batch-statements"><span class="octicon octicon-link"></span></a><a>Batch statements</a>
-</h1>
+<a name="batch-statements" class="anchor" href="#batch-statements"><span class="octicon octicon-link"></span></a>Batch statements</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1133,8 +1085,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <p>phantom also supports COUNTER batch updates and UNLOGGED batch updates.</p>
 
 <h1>
-<a name="logged-batch-statements" class="anchor" href="#logged-batch-statements"><span class="octicon octicon-link"></span></a><a>LOGGED batch statements</a>
-</h1>
+<a name="logged-batch-statements" class="anchor" href="#logged-batch-statements"><span class="octicon octicon-link"></span></a>LOGGED batch statements</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1149,8 +1100,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 </pre></div>
 
 <h1>
-<a name="counter-batch-statements" class="anchor" href="#counter-batch-statements"><span class="octicon octicon-link"></span></a><a>COUNTER batch statements</a>
-</h1>
+<a name="counter-batch-statements" class="anchor" href="#counter-batch-statements"><span class="octicon octicon-link"></span></a>COUNTER batch statements</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1164,8 +1114,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 </pre></div>
 
 <h1>
-<a name="unlogged-batch-statements" class="anchor" href="#unlogged-batch-statements"><span class="octicon octicon-link"></span></a><a>UNLOGGED batch statements</a>
-</h1>
+<a name="unlogged-batch-statements" class="anchor" href="#unlogged-batch-statements"><span class="octicon octicon-link"></span></a>UNLOGGED batch statements</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1180,8 +1129,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 </pre></div>
 
 <h1>
-<a name="thrift-integration" class="anchor" href="#thrift-integration"><span class="octicon octicon-link"></span></a><a>Thrift integration</a>
-</h1>
+<a name="thrift-integration" class="anchor" href="#thrift-integration"><span class="octicon octicon-link"></span></a>Thrift integration</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1199,8 +1147,7 @@ stuct ExampleModel {
 </code></pre>
 
 <h1>
-<a name="running-the-tests-locally" class="anchor" href="#running-the-tests-locally"><span class="octicon octicon-link"></span></a><a>Running the tests locally</a>
-</h1>
+<a name="running-the-tests-locally" class="anchor" href="#running-the-tests-locally"><span class="octicon octicon-link"></span></a>Running the tests locally</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1220,8 +1167,7 @@ You need two terminals to run the tests, one for Embedded Cassandra and one for 
 </pre></div>
 
 <h1>
-<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a><a>Contributors</a>
-</h1>
+<a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1229,12 +1175,13 @@ You need two terminals to run the tests, one for Embedded Cassandra and one for 
 
 <ul>
 <li>Flavian Alexandru <a href="mailto:flavian@newzly.com">flavian@newzly.com</a>(maintainer)</li>
+<li>Tomasz Perek <a href="mailto:tomasz.perek@newzly.com">tomasz.perek@newzly.com</a>
+</li>
 <li>Viktor Taranenko (viktortnk)</li>
 <li>Bartosz Jankiewicz (<a href="https://github.com/bjankie1" class="user-mention">@bjankie1</a>)</li>
 <li>Eugene Zhulenev (<a href="https://github.com/ezhulenev" class="user-mention">@ezhulenev</a>)</li>
 </ul><h1>
-<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a><a>Copyright</a>
-</h1>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
@@ -1249,9 +1196,31 @@ You need two terminals to run the tests, one for Embedded Cassandra and one for 
 
 <p>Contributions are most welcome!</p>
 
+<h1>
+<a name="using-gitflow" class="anchor" href="#using-gitflow"><span class="octicon octicon-link"></span></a>Using GitFlow</h1>
+
 <p>To contribute, simply submit a "Pull request" via GitHub.</p>
 
 <p>We use GitFlow as a branching model and SemVer for versioning.</p>
+
+<ul>
+<li>When you submit a "Pull request" we require all changes to be squashed.</li>
+<li>We never merge more than one commit at a time. All the n commits on your feature branch must be squashed.</li>
+<li>We won't look at the pull request until Travis CI says the tests pass, make sure tests go well.</li>
+</ul><h1>
+<a name="scala-style-guidelines" class="anchor" href="#scala-style-guidelines"><span class="octicon octicon-link"></span></a>Scala Style Guidelines</h1>
+
+<p>In spirit, we follow the <a href="http://twitter.github.io/effectivescala/">Twitter Scala Style Guidelines</a>.
+We will reject your pull request if it doesn't meet code standards, but we'll happily give you a hand to get it right.</p>
+
+<p>Some of the things that will make us seriously frown:</p>
+
+<ul>
+<li>Blocking when you don't have to. It just makes our eyes hurt when we see useless blocking.</li>
+<li>Testing should be thread safe and fully async, use <code>ParallelTestExecution</code> if you want to show off.</li>
+<li>Use the common patterns you already see here, we've done a lot of work to make it easy.</li>
+<li>Don't randomly import stuff. We are very big on alphabetized clean imports.</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/newzly">newzly</a></p>
