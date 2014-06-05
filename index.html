@@ -37,7 +37,7 @@
 <h1>
 <a name="using-phantom" class="anchor" href="#using-phantom"><span class="octicon octicon-link"></span></a>Using phantom</h1>
 
-<p>The current version is: <code>val phantomVersion = 0.7.0</code>.
+<p>The current version is: <code>val phantomVersion = 0.8.0</code>.
 Phantom is published to Maven Central and it's actively and avidly developed.</p>
 
 <h1>
@@ -45,7 +45,7 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 
 <ol>
 <li><a href="#issues-and-questions">Issues and questions</a></li>
-    <li><a href="#integrating-phantom">Integrating phantom in your project</a></li>
+    <li><a href="#integrating-phantom-in-your-project">Integrating phantom in your project</a></li>
     <li>
         <p>phantom columns</p>
         <ul>
@@ -77,6 +77,7 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
             <li><a href="#truncate-queries">TRUNCATE queries</a></li>
             <li><a href="#create-queries">CREATE queries</a></li>
             <li><a href="#alter-queries">ALTER queries</a></li>
+            <li><a href="#common-query-methods">Common query methods</a></li>
         </ul>
 </li>
     <li>
@@ -686,6 +687,60 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 <tr>
 <td><code>useConsistencyLevel</code></td>
 <td>Sets the consistency level to use.</td>
+</tr>
+</tbody>
+</table><h1>
+<a name="common-query-methods" class="anchor" href="#common-query-methods"><span class="octicon octicon-link"></span></a>Common query methods</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>The full list can be found in <a href="https://github.com/newzly/phantom/blob/develop/phantom-dsl/src/main/scala/com/newzly/phantom/query/CQLQuery.scala">CQLQuery.scala</a>.</p>
+
+<table>
+<thead><tr>
+<th>Method name</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>tracing_=</code></td>
+<td>The Cassandra utility method. Enables or disables tracing.</td>
+</tr>
+<tr>
+<td><code>queryString</code></td>
+<td>Get the output CQL 3 query of a phantom query.</td>
+</tr>
+<tr>
+<td><code>consistencyLevel</code></td>
+<td>Retrieves the consistency level in use.</td>
+</tr>
+<tr>
+<td><code>consistencyLevel_=</code></td>
+<td>Sets the consistency level to use.</td>
+</tr>
+<tr>
+<td><code>retryPolicy</code></td>
+<td>Retrieves the RetryPolicy in use.</td>
+</tr>
+<tr>
+<td><code>retryPolicy_=</code></td>
+<td>Sets the RetryPolicy to use.</td>
+</tr>
+<tr>
+<td><code>serialConsistencyLevel</code></td>
+<td>Retrieves the serial consistency level in use.</td>
+</tr>
+<tr>
+<td><code>serialConsistencyLevel_=</code></td>
+<td>Sets the serial consistency level to use.</td>
+</tr>
+<tr>
+<td><code>forceNoValues_=</code></td>
+<td>Sets the serial consistency level to use.</td>
+</tr>
+<tr>
+<td><code>routingKey</code></td>
+<td>Retrieves the Routing Key as a ByteBuffer.</td>
 </tr>
 </tbody>
 </table><h1>
