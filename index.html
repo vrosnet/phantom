@@ -28,24 +28,37 @@
         </ul>
       </header>
       <section>
-        <p>phantom <a href="https://travis-ci.org/newzly/phantom"><img src="https://travis-ci.org/newzly/phantom.png?branch=develop" alt="Build Status"></a></p>
+        <p>phantom <a href="https://travis-ci.org/websudosuk/phantom"><img src="https://travis-ci.org/websudosuk/phantom.svg?branch=develop" alt="Build Status"></a></p>
 
 <h1></h1>
 
-<p>Asynchronous Scala DSL for Cassandra</p>
+<p>Reactive type-safe Scala DSL for Cassandra</p>
 
 <h1>
 <a name="using-phantom" class="anchor" href="#using-phantom"><span class="octicon octicon-link"></span></a>Using phantom</h1>
 
-<p>The current version is: <code>val phantomVersion = 0.8.0</code>.
+<p>The latest major release is: <code>val phantomVersion = 1.1.0</code>.
 Phantom is published to Maven Central and it's actively and avidly developed.</p>
+
+<p>Intermediary releases are available through our managed Maven repository,<code>"Websudos releases" at "http://maven.websudos.co.uk/ext-release-local"</code>.
+The latest development version is <code>val phantomVersion = 1.0.7</code>, found only on our internal Maven repository.</p>
+
+<p>The Apache Cassandra version used for auto-embedding Cassandra during tests is: <code>val cassandraVersion = "2.1.0-rc5"</code>.</p>
+
+<p>If you use phantom, please consider adding your company to our list of adopters. Phantom is and will always be completely free and open source, 
+but the more adopters our projects have, the more people from our company will actively work to make them better.</p>
+
+<p>To stay up-to-date with our latest releases and news, follow us on Twitter: <a href="https://twitter.com/websudos">@websudos</a>.</p>
 
 <h1>
 <a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of contents</h1>
 
 <ol>
 <li><a href="#issues-and-questions">Issues and questions</a></li>
-    <li><a href="#integrating-phantom-in-your-project">Integrating phantom in your project</a></li>
+    <li><a href="#adopters">Adopters</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#commercial-support">Commercial support</a></li>
+    <li><a href="#integrating-phantom-in-your-project">Using phantom in your project</a></li>
     <li>
         <p>phantom columns</p>
         <ul>
@@ -64,7 +77,7 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
             <li><a href="#thrift-columns">Thrift columns</a></li>
         </ul>
 </li>
-    <li><a href="#data-modeling">Data modeling with phantom</a></li>
+    <li><a href="#data-modeling-with-phantom">Data modeling with phantom</a></li>
     <li>
         <p><a href="#querying-with-phantom">Querying with phantom</a></p>
         <ul>
@@ -115,17 +128,33 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
         <ul>
 <li><a href="#logged-batch-statements">LOGGED Batch statements</a></li>
             <li><a href="#counter-batch-statements">COUNTER Batch statements</a></li>
-            <li><a href="#&lt;a%20id=">UNLOGGED Batch statements</a></li>
+            <li><a href="logged-batch-statements">UNLOGGED Batch statements</a></li>
         </ul>
 </li>
     <li><a href="#thrift-integration">Thrift integration</a></li>
-    <li><a href="#running-tests">Running the tests locally</a></li>
+    <li>
+      <p><a href="apache-zookeeper-integration">Apache ZooKeeper integration</a></p>
+      <ul>
+<li><a href="#zookeeper-connectors">ZooKeeper connectors</a></li>
+        <li><a href="#the-simple-cassandra-connector">The simple Cassandra connector</a></li>
+        <li><a href="#the-default-zookeeper-connector-and-default-zookeeper-manager">The DefaultZooKeeperConnector and DefaultZooKeeperManager</a></li>
+        <li><a href="#using-a-zookeeper-instance">Using a ZooKeeperInstance</a></li>
+      </ul>
+</li>
+    <li>
+      <p><a href="#testing-utilities">Testing Utilities</a></p>
+      <ul>
+<li><a href="#auto-embedded-cassandra">Auto-embeddeded Cassandra</a></li>
+        <li><a href="#using-the-default-suite">Using the default PhantomCassandraSuite to write tests</a></li>
+        <li><a href="#running-tests">Running the tests locally</a></li>
+      </ul>
+</li>
+    <li><a href="#thrift-integration">Thrift integration</a></li>
     <li>
         <p><a href="#contributors">Contributing to phantom</a></p>
         <ul>
 <li><a href="#using-gitflow">Using GitFlow as a branching model</a></li>
             <li><a href="#scala-style-guidelines">Scala style guidelines for contributions</a></li>
-            <li>Using the testing utilities to write tests</li>
         </ul>
 </li>
 <li><a href="#copyright">Copyright</a></li>
@@ -144,7 +173,80 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 
 <p>We are very happy to help implement missing features in phantom, answer questions about phantom, and occasionally help you out with Cassandra questions, although do note we're a bit short staffed!</p>
 
-<p>You can get in touch via the <a href="https://groups.google.com/forum/#!forum/newzly-phantom">newzly-phantom</a> Google Group.</p>
+<p>You can get in touch via the <a href="https://groups.google.com/forum/#!forum/newzly-phantom">newzly-phantom</a> Google Group or via the below listed emails.</p>
+
+<p>We are also extremely grateful if you add your company to our list of adopters, as it makes it easy for us to further increase adoption, 
+contributions and make phantom even more awesome.</p>
+
+<h1>
+<a name="adopters" class="anchor" href="#adopters"><span class="octicon octicon-link"></span></a>Adopters</h1>
+
+<p>This is a list of companies that have embraced phantom as part of their technology stack and using it in production environments.</p>
+
+<ul>
+<li><a href="https://www.credit-suisse.com/global/en/">CreditSuisse</a></li>
+<li><a href="http://www.pellucid.com/">Pellucid Analytics</a></li>
+<li><a href="http://www.sphonic.com/">Sphonic</a></li>
+<li><a href="https://www.newzly.com/">Newzly</a></li>
+<li><a href="http://www.equens.com/">Equens</a></li>
+<li><a href="http://www.victorops.com/">VictorOps</a></li>
+</ul><h1>
+<a name="roadmap" class="anchor" href="#roadmap"><span class="octicon octicon-link"></span></a>Roadmap</h1>
+
+<p>While dates are not fixed, we will use this list to tell you about our plans for the future. If you have great ideas about what could benefit all phantom 
+adopters, please get in touch. We are very happy and eager to listen.</p>
+
+<ul>
+<li>User defined types</li>
+</ul><p>We are working closely around the latest features in the Datastax Java driver and Apache Cassandra 2.1 to offer a fully type safe DSL for user defined types.
+This feature is well in progress and you can expect to see it live roughly at the same time as the release of the Datastax 2.1 driver, planned for July 2014.</p>
+
+<p>Some of the cool features include automatic schema generation, fully type safe referencing of fields and inner members of UDTs and fully type safe querying.</p>
+
+<ul>
+<li>Zookeeper support</li>
+</ul><p>Since Cassandra cannot be loadbalanced effectively and Zookeeper is to date the de-facto standard for distributed synchronisation, 
+we figured a pre-build integration based on <code>finagle-zookeeper</code> would be awesome.</p>
+
+<p>We've even taken it one step further, writing some pretty cool tools for testing automations. With a simple trait you can run asynchronous tests against an embedded Cassandra instance and an 
+embedded Zookeeper instance. This process is completely transparent and you don't really need to do anything. No config or starting tools is necessary, 
+everything will start and stop automatically, configure itself automatically and run tests in parallel using async assertions, 
+all automatic and with our tools.</p>
+
+<p>This awesome feature is still in battle-testing while we iron out some last few bugs and nastiness from its API, 
+you can expect to see it live around phantom 0.9.0 or 1.0.0, but it's coming together quite nicely and we have already upgraded a lot of our testing to use 
+the fancy new tooling.</p>
+
+<p>We are also testing it in production in a massive enterprise to make sure it's reliable with a few dozen nodes in a cluster, 
+not just the local embedded flavour.</p>
+
+<ul>
+<li>Spark integration</li>
+</ul><p>Thanks to the awesome partnership between Databricks and Datastax, Spark is getting a Cassandra facelift with an awesome integration. We won't be slow to 
+follow up with a fully type safe Scala implementation of that integration, so you can enjoy the benefits of high power computation with Cassandra as a backup
+ storage through the simple and hopefully awesome DSL we've gotten you used to.</p>
+
+<p>You can expect to see the spark integration live in a new <code>phantom-spark</code> module in the 1.1.0 or 1.2.0 version, planned sometime in September 2014.</p>
+
+<h1>
+<a name="commercial-support" class="anchor" href="#commercial-support"><span class="octicon octicon-link"></span></a>Commercial support</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>We, the people behind phantom run a software development house specialised in Scala, NoSQL and distributed systems. If you are after enterprise grade 
+training or support for using phantom, <a href="http://www.websudos.co.uk">Websudos</a> is here to help!</p>
+
+<p>We offer a comprehensive range of services, including but not limited to:</p>
+
+<ul>
+<li>Remote contractors for hire</li>
+<li>Training</li>
+<li>In house software development</li>
+<li>Team building</li>
+<li>Architecture planning</li>
+<li>Startup product development</li>
+</ul><p>We are big fans of open source and we will open source every project we can! To read more about our OSS efforts, 
+click <a href="http://www.websudos.co.uk/work">here</a>.</p>
 
 <h1>
 <a name="integrating-phantom-in-your-project" class="anchor" href="#integrating-phantom-in-your-project"><span class="octicon octicon-link"></span></a>Integrating phantom in your project</h1>
@@ -154,18 +256,21 @@ Phantom is published to Maven Central and it's actively and avidly developed.</p
 <p>For most things, all you need is <code>phantom-dsl</code>. Read through for information on other modules.</p>
 
 <div class="highlight highlight-scala"><pre><span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-dsl"</span>                   <span class="o">%</span> <span class="n">phantomVersion</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-dsl"</span>                   <span class="o">%</span> <span class="n">phantomVersion</span>
 <span class="o">)</span>
 </pre></div>
 
 <p>The full list of available modules is:</p>
 
 <div class="highlight highlight-scala"><pre><span class="n">libraryDependencies</span> <span class="o">++=</span> <span class="nc">Seq</span><span class="o">(</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-dsl"</span>                   <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-cassandra-unit"</span>        <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-example"</span>               <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-thrift"</span>                <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
-  <span class="s">"com.newzly"</span>  <span class="o">%%</span> <span class="s">"phantom-test"</span>                  <span class="o">%</span> <span class="n">phantomVersion</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-dsl"</span>                   <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-example"</span>               <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-spark"</span>                 <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-thrift"</span>                <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-test"</span>                  <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-testing"</span>               <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-udt"</span>                   <span class="o">%</span> <span class="n">phantomVersion</span><span class="o">,</span>
+  <span class="s">"com.websudos"</span>  <span class="o">%%</span> <span class="s">"phantom-zookeeper"</span>             <span class="o">%</span> <span class="n">phantomVersion</span>
 <span class="o">)</span>
 </pre></div>
 
@@ -187,6 +292,11 @@ phantom won't let you mixin a non-primitive via implicit magic.</p>
 <th>Cassandra type</th>
 </tr></thead>
 <tbody>
+<tr>
+<td>BlobColumn</td>
+<td>java.nio.ByteBuffer</td>
+<td>blog</td>
+</tr>
 <tr>
 <td>BigDecimalColumn</td>
 <td>scala.math.BigDecimal</td>
@@ -258,6 +368,11 @@ phantom won't let you mixin a non-primitive via implicit magic.</p>
 <td>counter</td>
 </tr>
 <tr>
+<td>CounterColumn</td>
+<td>scala.Long</td>
+<td>counter</td>
+</tr>
+<tr>
 <td>StaticColumn&lt;type&gt;</td>
 <td>&lt;type&gt;</td>
 <td>type static</td>
@@ -280,6 +395,11 @@ The outcome is that instead of a <code>T</code> you get an <code>Option[T]</code
 <th>Cassandra columns</th>
 </tr></thead>
 <tbody>
+<tr>
+<td>OptionalBlobColumn</td>
+<td>Option[java.nio.ByteBuffer]</td>
+<td>blog</td>
+</tr>
 <tr>
 <td>OptionalBigDecimalColumn</td>
 <td>Option[scala.math.BigDecimal]</td>
@@ -354,6 +474,11 @@ The outcome is that instead of a <code>T</code> you get an <code>Option[T]</code
 <p>Cassandra collections do not allow custom data types. Storing JSON as a string is possible, but it's still a <code>text</code> column as far as Cassandra is concerned.
 The <code>type</code> in the below example is always a default C* type.</p>
 
+<p>JSON columns require you to define a <code>toJson</code> and <code>fromJson</code> method, telling phantom how to go from a <code>String</code> to the type you need. 
+It makes no assumptions as to what library you are using, although we have tested with <code>lift-json</code> and <code>play-json</code>.</p>
+
+<p>Examples on how to use JSON columns can be found in <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-dsl/src/test/scala/com/websudos/phantom/dsl/specialized/JsonColumnTest.scala">JsonColumnTest.scala</a></p>
+
 <table>
 <thead><tr>
 <th>phantom columns</th>
@@ -372,13 +497,26 @@ The <code>type</code> in the below example is always a default C* type.</p>
 <td>MapColumn.&lt;type, type&gt;</td>
 <td>map&lt;type, type&gt;</td>
 </tr>
+<tr>
+<td>JsonColumn.&lt;type&gt;</td>
+<td>text</td>
+</tr>
+<tr>
+<td>JsonListColumn.&lt;type&gt;</td>
+<td>list&lt;text&gt;</td>
+</tr>
+<tr>
+<td>JsonSetColumn.&lt;type&gt;</td>
+<td>set&lt;type&gt;</td>
+</tr>
 </tbody>
 </table><h1>
 <a name="indexing-columns" class="anchor" href="#indexing-columns"><span class="octicon octicon-link"></span></a>Indexing columns</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>phantom uses a specific set of traits to enforce more advanced Cassandra limitations and schema rules at compile time.</p>
+<p>phantom uses a specific set of traits to enforce more advanced Cassandra limitations and schema rules at compile time.
+Instead of waiting for Cassandra to tell you you've done bad things, phantom won't let you compile them, saving you a lot of time.</p>
 
 <h1>
 <a name="partitionkeyt" class="anchor" href="#partitionkeyt"><span class="octicon octicon-link"></span></a>PartitionKey[T]</h1>
@@ -437,7 +575,7 @@ To fully define a clustering column, you MUST also mixin either <code>Ascending<
 <p><a href="#table-of-contents">back to top</a></p>
 
 <p>These columns are especially useful if you are building Thrift services. They are deeply integrated with Twitter Scrooge and relevant to the Twitter ecosystem(Finagle, Zipkin, Storm etc)
-They are available via the <code>phantom-thrift</code> module and you need to <code>import com.newzly.phantom.thrift.Implicits._</code> to get them.</p>
+They are available via the <code>phantom-thrift</code> module and you need to <code>import com.websudos.phantom.thrift.Implicits._</code> to get them.</p>
 
 <p>In the below scenario, the C* type is always text and the type you need to pass to the column is a Thrift struct, specifically <code>com.twitter.scrooge.ThriftStruct</code>.
 phantom will use a <code>CompactThriftSerializer</code>, store the record as a binary string and then reparse it on fetch.</p>
@@ -476,8 +614,8 @@ You generally use these to store collections(small number of items), not big thi
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">java.util.</span><span class="o">{</span> <span class="nc">Date</span><span class="o">,</span> <span class="nc">UUID</span> <span class="o">}</span>
 <span class="k">import</span> <span class="nn">com.datastax.driver.core.Row</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.sample.ExampleModel</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.sample.ExampleModel</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="k">case</span> <span class="k">class</span> <span class="nc">ExampleModel</span> <span class="o">(</span>
   <span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
@@ -694,7 +832,7 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>The full list can be found in <a href="https://github.com/newzly/phantom/blob/develop/phantom-dsl/src/main/scala/com/newzly/phantom/query/CQLQuery.scala">CQLQuery.scala</a>.</p>
+<p>The full list can be found in <a href="https://github.com/websudos/phantom/blob/develop/phantom-dsl/src/main/scala/com/websudos/phantom/query/CQLQuery%0A.scala">CQLQuery.scala</a>.</p>
 
 <table>
 <thead><tr>
@@ -829,7 +967,7 @@ All operators will be available in an update query, specifically:</p>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/ListOperatorsTest.scala">ListOperatorsTest.scala</a>.</p>
+<p>Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/dsl/crud/ListOperatorsTest.scala">ListOperatorsTest.scala</a>.</p>
 
 <table>
 <thead><tr>
@@ -872,7 +1010,7 @@ All operators will be available in an update query, specifically:</p>
 <p><a href="#table-of-contents">back to top</a></p>
 
 <p>Sets have a better performance than lists, as the Cassandra documentation suggests.
-Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/SetOperationsTest.scala">SetOperationsTest.scala</a>.</p>
+Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/dsl/crud/SetOperationsTest.scala">SetOperationsTest.scala</a>.</p>
 
 <table>
 <thead><tr>
@@ -903,7 +1041,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 <p><a href="#table-of-contents">back to top</a></p>
 
 <p>Both the key and value types of a Map must be Cassandra primitives.
-Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/crud/MapOperationsTest.scala">MapOperationsTest.scala</a>:</p>
+Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/dsl/crud/MapOperationsTest.scala">MapOperationsTest.scala</a>:</p>
 
 <table>
 <thead><tr>
@@ -944,7 +1082,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord2</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord2</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod2</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
@@ -996,19 +1134,19 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 <td>The "lower than or equals" operator. Will match a the record that is less than the argument</td>
 </tr>
 </tbody>
-</table><p>For more details on how to use Cassandra partition tokens, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/SkipRecordsByToken.scala">SkipRecordsByToken.scala</a></p>
+</table><p>For more details on how to use Cassandra partition tokens, see <a href="https://github.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/dsl/SkipRecordsByToken.scala">SkipRecordsByToken.scala</a></p>
 
 <h1>
 <a name="cassandra-time-series" class="anchor" href="#cassandra-time-series"><span class="octicon octicon-link"></span></a>Cassandra Time Series</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>phantom supports Cassandra Time Series with both <code>java.util.Date</code> and <code>org.joda.time.DateTime</code>. To use them, simply mixin <code>com.newzly.phantom.keys.ClusteringOrder</code> and either <code>Ascending</code> or <code>Descending</code>.</p>
+<p>phantom supports Cassandra Time Series. To use them, simply mixin <code>com.websudos.phantom.keys.ClusteringOrder</code> and either <code>Ascending</code> or <code>Descending</code>.</p>
 
 <p>Restrictions are enforced at compile time.</p>
 
 <div class="highlight highlight-scala"><pre>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
@@ -1037,7 +1175,7 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
@@ -1058,16 +1196,17 @@ Examples in <a href="https://github.com/newzly/phantom/blob/develop/phantom-test
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>When you want to use a column in a <code>where</code> clause, you need an index on it. Cassandra data modeling is out of the scope of this writing, but phantom offers <code>com.newzly.phantom.keys.Index</code> to enable querying.</p>
+<p>When you want to use a column in a <code>where</code> clause, you need an index on it. Cassandra data modeling is out of the scope of this writing, 
+but com.websudos.phantom offers <code>com.websudos.phantom.keys.Index</code> to enable querying.</p>
 
 <p>The CQL 3 schema for secondary indexes can also be auto-generated with <code>ExampleRecord4.create()</code>.</p>
 
-<p><code>SELECT</code> is the only query you can perform with an <code>Index</code> column. This is a Cassandra limitation. The relevant tests are found <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/dsl/specialized/SecondaryIndexTest.scala">here</a>.</p>
+<p><code>SELECT</code> is the only query you can perform with an <code>Index</code> column. This is a Cassandra limitation. The relevant tests are found <a href="https://github.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/dsl/specialized/SecondaryIndexTest.scala">here</a>.</p>
 
 <div class="highlight highlight-scala"><pre>
 <span class="k">import</span> <span class="nn">java.util.UUID</span>
 <span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord4</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord4</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecod4</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
 
@@ -1100,7 +1239,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <span class="k">import</span> <span class="nn">scala.concurrent.Await</span>
 <span class="k">import</span> <span class="nn">scala.concurrent.duration._</span>
 <span class="k">import</span> <span class="nn">org.joda.time.DateTime</span>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 
 <span class="k">sealed</span> <span class="k">class</span> <span class="nc">ExampleRecord3</span> <span class="k">extends</span> <span class="nc">CassandraTable</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleModel</span><span class="o">]</span> <span class="k">with</span> <span class="nc">LongOrderKey</span><span class="o">[</span><span class="kt">ExampleRecord3</span>, <span class="kt">ExampleRecord</span><span class="o">]</span> <span class="o">{</span>
@@ -1129,9 +1268,9 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>phantom also brrings in support for batch statements. To use them, see <a href="https://github.com/newzly/phantom/blob/develop/phantom-test/src/test/scala/com/newzly/phantom/iteratee/IterateeBigTest.scala">IterateeBigTest.scala</a></p>
+<p>phantom also brrings in support for batch statements. To use them, see <a href="https://github%0A.com/websudosuk/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/iteratee/IterateeBigTest.scala">IterateeBigTest.scala</a></p>
 
-<p>We have tested with 10,000 statements per batch, and 1000 batches processed simulatenously. Before you run the test, beware that it takes ~40 minutes.</p>
+<p>We have tested with 10,000 statements per batch, and 1000 batches processed simultaneously. Before you run the test, beware that it takes ~40 minutes.</p>
 
 <p>Batches use lazy iterators and daisy chain them to offer thread safe behaviour. They are not memory intensive and you can expect consistent processing speed even with 1 000 000 statements per batch.</p>
 
@@ -1145,7 +1284,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <p><a href="#table-of-contents">back to top</a></p>
 
 <div class="highlight highlight-scala"><pre>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="nc">BatchStatement</span><span class="o">()</span>
     <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla"</span><span class="o">))</span>
@@ -1160,7 +1299,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <p><a href="#table-of-contents">back to top</a></p>
 
 <div class="highlight highlight-scala"><pre>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="nc">CounterBatchStatement</span><span class="o">()</span>
     <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">someCounter</span> <span class="n">increment</span> <span class="mi">500L</span><span class="o">))</span>
@@ -1174,7 +1313,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <p><a href="#table-of-contents">back to top</a></p>
 
 <div class="highlight highlight-scala"><pre>
-<span class="k">import</span> <span class="nn">com.newzly.phantom.Implicits._</span>
+<span class="k">import</span> <span class="nn">com.websudos.phantom.Implicits._</span>
 
 <span class="nc">UnloggedBatchStatement</span><span class="o">()</span>
     <span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="nc">ExampleRecord</span><span class="o">.</span><span class="n">update</span><span class="o">.</span><span class="n">where</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">id</span> <span class="n">eqs</span> <span class="n">someId</span><span class="o">).</span><span class="n">modify</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">name</span> <span class="n">setTo</span> <span class="s">"blabla"</span><span class="o">))</span>
@@ -1188,9 +1327,10 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>We use Apache Thrift extensively for our backend services. <code>phantom</code> is very easy to integrate with Thrift models and uses <code>Twitter Scrooge</code> to compile them. Thrift integration is optional and available via <code>"com.newzly" %% "phantom-thrift"  % phantomVersion</code>.</p>
+<p>We use Apache Thrift extensively for our backend services. phantom is very easy to integrate with Thrift models and uses <code>Twitter Scrooge</code> to compile them. 
+Thrift integration is optional and available via <code>"com.websudos" %% "phantom-thrift"  % phantomVersion</code>.</p>
 
-<pre lang="thrift"><code>namespace java com.newzly.phantom.sample.ExampleModel
+<pre lang="thrift"><code>namespace java com.websudos.phantom.sample.ExampleModel
 
 stuct ExampleModel {
   1: required i32 id,
@@ -1202,31 +1342,110 @@ stuct ExampleModel {
 </code></pre>
 
 <h1>
+<a name="apache-zookeeper-integration" class="anchor" href="#apache-zookeeper-integration"><span class="octicon octicon-link"></span></a>Apache ZooKeeper Integration</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>If you have never heard of Apache ZooKeeper before, a much better place to start is <a href="http://zookeeper.apache.org/">here</a>. Phantom offers a complete set of features for ZooKeeper integration using the <a href="https://github.com/p-antoine/finagle-zookeeper">finagle-zookeeper</a> project.</p>
+
+<h1>
+<a name="zookeeper-connectors" class="anchor" href="#zookeeper-connectors"><span class="octicon octicon-link"></span></a>ZooKeeper Connectors</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>Using a set of conventions phantom can automate the entire process of using ZooKeeper in a distributed environment. Phantom will deal with a large series of concerns for you, specifically:</p>
+
+<ul>
+<li>Creating a ZooKeeper client and initilising it in due time.</li>
+<li>Fetching and parsing a sequence of Cassandra ports from ZooKeeper.</li>
+<li>Creating a Cluster configuration based on the sequence of Cassandra ports available in ZooKeeper.</li>
+<li>Creating an implicit session for queries to execute.</li>
+</ul><p>The entire process described above is entirely automated with a series of sensible defaults available. More details on default implementations are available below. Bottom line, if you want to go custom, you may override at will, if you just want to get something working as fast as possible, then <code>phantom-zookeeper</code> can do everything for you.</p>
+
+<h1>
+<a name="the-simple-cassandra-connector" class="anchor" href="#the-simple-cassandra-connector"><span class="octicon octicon-link"></span></a>The simple Cassandra Connector</h1>
+
+<p>This implementation is a very simple way to connect to a running Cassandra node. This is not using ZooKeeper and it's not really indented for multi-node 
+testing or connections, but sometimes you just want to get things working immediately.</p>
+
+<p>The implementation details are available <a href="https://github%0A.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/SimpleCassandraConnector.scala">here</a>, 
+but without further ado, this connector will attempt to connector to a local Cassandra, either embedded or not.</p>
+
+<p>Inside Websudos, our port convention is <code>9042</code> for local Cassandra and <code>9142</code> for embedded. This is reflected in our <code>cassandra.yaml</code> 
+configuration files. Overidding this is quite simple, although you will need to create your own pair of manager and connector.</p>
+
+<h1>
+<a name="the-defaultzookeeperconnector-and-defaultzookeepermanager" class="anchor" href="#the-defaultzookeeperconnector-and-defaultzookeepermanager"><span class="octicon octicon-link"></span></a>The DefaultZooKeeperConnector and DefaultZooKeeperManager</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>The default implementation expects Cassandra IPs to be listed in a Sequence of <code>host:port</code> combinations, with <code>:</code> as a separator literal. It also expects the default path in ZooKeeper for Cassandra ports to be <code>/cassandra</code> and the sequence of ports should look like this:</p>
+
+<p><code>host1:port1, host2:port2, host3:port3, host4:port4</code></p>
+
+<p>Phantom will fetch the data found on the  <code>/cassandra</code> path on the ZooKeeper master and attempt to parse all <code>host:port</code> pairs to a <code>Seq[InetSocketAddress]</code> and build a <code>com.datastax.driver.core.Cluster</code> using the sequence of addresses.</p>
+
+<p>Using that <code>Cluster</code> phantom will spawn an <code>implicit session: com.datastax.driver.core.Session</code>. This session is the execution context of all queries inside a table definition. The <code>DefaultZooKeeperManager</code>, found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala">here</a>, will do all the plumbing work for you. More details on the internals are available <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala#L51">here</a>.</p>
+
+<h1>
+<a name="using-a-zookeeperinstance" class="anchor" href="#using-a-zookeeperinstance"><span class="octicon octicon-link"></span></a>Using a ZooKeeperInstance</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>For testing automation purposes, <code>phantom-zookeeper</code> contains a simple implementation of a ZooKeeper node. The implementation is available <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperInstance.scala">here</a>, 
+and it's used mainly for testing purposes. If you are using ZooKeeper in a production environment and you are using the <code>phantom-zookeeper</code> module to 
+automate your Cassandra connections, the phantom testing utilities will automatically spawn a <code>ZooKeeperInstance</code> if no local ZooKeeper server is found 
+running on the default <code>localhost:2181</code> address.</p>
+
+<p>The <code>ZooKeeper Instance</code> will pick a free port by itself, spawn a ZooKeeper instance, create the <code>/cassandra</code> path, 
+add <code>localhost:9142</code> to it, and propagate the <code>host:port</code> combination through an environment variable. The testing utilities will then read an 
+environment variable, spawn ZooKeeper Client based on <code>finagle-zookeeper</code>,  spawn an <code>EmbeddedCassandra</code> server if none is found running, fetch the settings from ZooKeeper and create 
+all the plumbing you need to run the tests. You get all that for free by mixing in a single trait, 
+just like we do <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>.</p>
+
+<h1>
+<a name="testing-utilities" class="anchor" href="#testing-utilities"><span class="octicon octicon-link"></span></a>Testing utilities</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>Naturally, no job is considered truly done with the full power testing automation provided out-of-the box. This is exactly what we tried to achieve with the 
+testing utilities, giving you a very simple, easily extensible, yet highly sensible defaults. We wanted something that works for most things most of the time
+with 0 integration work on your behalf, yet allowing you to go crazy and custom as you please if the scenario warrants it. </p>
+
+<p>With that design philosophy in mind, we've created two kinds of tests, 1 running with a <code>SimpleCassandraConnector</code>, 
+with the implementation found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/SimpleCassandraConnector.scala">here</a>, where the testing utilities will auto-spawn an Embedded Cassandra database with the right version and the right settings, 
+run all the tests and cleanup after tests are done.</p>
+
+<p>The other, more complex implementation, targets people who want to use phantom/Cassandra in a distributed environment. This is an easy way to automate 
+multi-DC or multi-cluster tests via service discovery with Apache ZooKeeper. More details are available right above. The <code>BaseTest</code> implementation, 
+which uses a <code>DefaultZooKeeperConnector</code>, is found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>, and it follows the pattern described above.</p>
+
+<h1>
+<a name="auto-embedded-cassandra" class="anchor" href="#auto-embedded-cassandra"><span class="octicon octicon-link"></span></a>Auto-embedded Cassandra</h1>
+
+<p><a href="#table-of-contents">back to top</a></p>
+
+<p>Phantom spares you of the trouble to spawn your own Cassandra server during tests. The implementation of this is based on the <a href="https://github.com/jsevellec/cassandra-unit">cassandra-unit</a> project. Phantom will automatically pick the right version of Cassandra, 
+however do be careful. We often tend to use the latest version as we do our best to keep up with the latest features.</p>
+
+<p>You may use a brand new phantom feature, see the tests passing with flying colours locally and then get bad errors in production. The version of Cassandra 
+covered by the latest phantom release and used for embedding is written at the very top of this readme.</p>
+
+<h1>
 <a name="running-the-tests-locally" class="anchor" href="#running-the-tests-locally"><span class="octicon octicon-link"></span></a>Running the tests locally</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>phantom uses Embedded Cassandra to run tests without a local Cassandra server running.
-You need two terminals to run the tests, one for Embedded Cassandra and one for the actual tests.</p>
-
-<div class="highlight highlight-scala"><pre><span class="n">sbt</span>
-<span class="n">project</span> <span class="n">phantom</span><span class="o">-</span><span class="n">cassandra</span><span class="o">-</span><span class="n">unit</span>
-<span class="n">run</span>
-</pre></div>
-
-<p>Then in a new terminal</p>
-
-<div class="highlight highlight-scala"><pre><span class="n">sbt</span>
-<span class="n">project</span> <span class="n">phantom</span><span class="o">-</span><span class="n">test</span>
-<span class="n">test</span>
-</pre></div>
+<p>phantom uses the <code>phantom-testing</code> module to run tests without a local Cassandra server running.
+There are no pre-requisites for running the tests. Phantom will automatically load an Embedded Cassandra with the right version, 
+run all the tests and do the cleanup afterwards. Read more on the testing utilities to see how you can achieve the same thing in your own database tests.</p>
 
 <h1>
 <a name="contributors" class="anchor" href="#contributors"><span class="octicon octicon-link"></span></a>Contributors</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>Phantom was developed at newzly as an in-house project. All Cassandra integration at newzly goes through phantom.</p>
+<p>Phantom was developed at websudos as an in-house project. All Cassandra integration at websudos goes through phantom.</p>
 
 <ul>
 <li>Flavian Alexandru <a href="mailto:flavian@newzly.com">flavian@newzly.com</a>(maintainer)</li>
@@ -1242,7 +1461,7 @@ You need two terminals to run the tests, one for Embedded Cassandra and one for 
 
 <p>Special thanks to Viktor Taranenko from WhiskLabs, who gave us the original idea.</p>
 
-<p>Copyright 2013 WhiskLabs, Copyright 2013 - 2014 newzly.</p>
+<p>Copyright 2013 - 2014 websudos.</p>
 
 <h1>
 <a name="contributing-to-phantom" class="anchor" href="#contributing-to-phantom"><span class="octicon octicon-link"></span></a>Contributing to phantom</h1>
@@ -1273,6 +1492,7 @@ We will reject your pull request if it doesn't meet code standards, but we'll ha
 <ul>
 <li>Blocking when you don't have to. It just makes our eyes hurt when we see useless blocking.</li>
 <li>Testing should be thread safe and fully async, use <code>ParallelTestExecution</code> if you want to show off.</li>
+<li>Writing tests should use the pre-existing tools, they bring in EmbeddedCassandra, Zookeeper and other niceties, allowing us to run multi-datacenter tests.</li>
 <li>Use the common patterns you already see here, we've done a lot of work to make it easy.</li>
 <li>Don't randomly import stuff. We are very big on alphabetized clean imports.</li>
 </ul>
