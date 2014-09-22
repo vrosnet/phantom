@@ -28,11 +28,16 @@
         </ul>
       </header>
       <section>
-        <p>phantom <a href="https://travis-ci.org/websudosuk/phantom"><img src="https://travis-ci.org/websudosuk/phantom.svg?branch=develop" alt="Build Status"></a></p>
+        <p>phantom <a href="https://travis-ci.org/websudos/phantom"><img src="https://travis-ci.org/websudos/phantom.svg?branch=develop" alt="Build Status"></a></p>
 
 <h1></h1>
 
 <p>Reactive type-safe Scala DSL for Cassandra</p>
+
+<p>To stay up-to-date with our latest releases and news, follow us on Twitter: <a href="https://twitter.com/websudos">@websudos</a>.</p>
+
+<p>If you use phantom, please consider adding your company to our list of adopters. Phantom is and will always be completely free and open source, 
+but the more adopters our projects have, the more people from our company will actively work to make them better.</p>
 
 <h1>
 <a name="using-phantom" class="anchor" href="#using-phantom"><span class="octicon octicon-link"></span></a>Using phantom</h1>
@@ -40,15 +45,21 @@
 <p>The latest major release is: <code>val phantomVersion = 1.2.2</code>.
 Phantom is published to Maven Central and it's actively and avidly developed.</p>
 
+<h3>
+<a name="scala-210-releases" class="anchor" href="#scala-210-releases"><span class="octicon octicon-link"></span></a>Scala 2.10 releases</h3>
+
 <p>Intermediary releases are available through our managed Maven repository,<code>"Websudos releases" at "http://maven.websudos.co.uk/ext-release-local"</code>.
-The latest development version is <code>val phantomVersion = 1.2.2</code>, found only on our internal Maven repository.</p>
+The latest development version is <code>val phantomVersion = 1.2.7</code>. This version is likely only available on our Maven repository as an intermediary release.</p>
 
-<p>The Apache Cassandra version used for auto-embedding Cassandra during tests is: <code>val cassandraVersion = "2.1.0-rc5"</code>.</p>
+<h3>
+<a name="scala-211-releases" class="anchor" href="#scala-211-releases"><span class="octicon octicon-link"></span></a>Scala 2.11 releases</h3>
 
-<p>If you use phantom, please consider adding your company to our list of adopters. Phantom is and will always be completely free and open source, 
-but the more adopters our projects have, the more people from our company will actively work to make them better.</p>
+<p>The latest Scala 2.11 release is <code>val phantomVersion = 1.2.7</code>. At this point in time, the only Scala 2.11 compatible modules are:</p>
 
-<p>To stay up-to-date with our latest releases and news, follow us on Twitter: <a href="https://twitter.com/websudos">@websudos</a>.</p>
+<ul>
+<li>
+<code>phantom-dsl</code>.</li>
+</ul><p>The Apache Cassandra version used for auto-embedding Cassandra during tests is: <code>val cassandraVersion = "2.1.0-rc5"</code>.</p>
 
 <h1>
 <a name="table-of-contents" class="anchor" href="#table-of-contents"><span class="octicon octicon-link"></span></a>Table of contents</h1>
@@ -176,7 +187,7 @@ but the more adopters our projects have, the more people from our company will a
 <p>You can get in touch via the <a href="https://groups.google.com/forum/#!forum/newzly-phantom">newzly-phantom</a> Google Group or via the below listed emails.</p>
 
 <p>We are also extremely grateful if you add your company to our list of adopters, as it makes it easy for us to further increase adoption, 
-contributions and make phantom even more awesome.</p>
+contributions and make phantom better and better.</p>
 
 <h1>
 <a name="adopters" class="anchor" href="#adopters"><span class="octicon octicon-link"></span></a>Adopters</h1>
@@ -204,29 +215,31 @@ This feature is well in progress and you can expect to see it live roughly at th
 <p>Some of the cool features include automatic schema generation, fully type safe referencing of fields and inner members of UDTs and fully type safe querying.</p>
 
 <ul>
-<li>Zookeeper support</li>
-</ul><p>Since Cassandra cannot be loadbalanced effectively and Zookeeper is to date the de-facto standard for distributed synchronisation, 
-we figured a pre-build integration based on <code>finagle-zookeeper</code> would be awesome.</p>
+<li>Zookeeper support(available as of 1.1.0).</li>
+</ul><p>Since Cassandra cannot be loadbalanced effectively and Zookeeper is to date the de-facto standard for distributed synchronisation and service discovery, 
+we figured a pre-build integration based on <code>finagle-zookeeper</code> would be useful.</p>
 
 <p>We've even taken it one step further, writing some pretty cool tools for testing automations. With a simple trait you can run asynchronous tests against an embedded Cassandra instance and an 
 embedded Zookeeper instance. This process is completely transparent and you don't really need to do anything. No config or starting tools is necessary, 
 everything will start and stop automatically, configure itself automatically and run tests in parallel using async assertions, 
 all automatic and with our tools.</p>
 
-<p>This awesome feature is still in battle-testing while we iron out some last few bugs and nastiness from its API, 
-you can expect to see it live around phantom 0.9.0 or 1.0.0, but it's coming together quite nicely and we have already upgraded a lot of our testing to use 
-the fancy new tooling.</p>
-
 <p>We are also testing it in production in a massive enterprise to make sure it's reliable with a few dozen nodes in a cluster, 
 not just the local embedded flavour.</p>
 
 <ul>
-<li>Spark integration</li>
-</ul><p>Thanks to the awesome partnership between Databricks and Datastax, Spark is getting a Cassandra facelift with an awesome integration. We won't be slow to 
-follow up with a fully type safe Scala implementation of that integration, so you can enjoy the benefits of high power computation with Cassandra as a backup
- storage through the simple and hopefully awesome DSL we've gotten you used to.</p>
+<li>A new QueryBuilder</li>
+</ul><p>At present times, phantom is relying on the underlying Datastax Java Driver to serialise queries to CQL and while the querybuilder implementation is 
+excellent for Java standards, it doesn't add any Scala features, since it was a Java only product. With a Scala based builder we plan to add more advanced 
+behaviour, such as immutable builders and phantom types.</p>
 
-<p>You can expect to see the spark integration live in a new <code>phantom-spark</code> module in the 1.1.0 or 1.2.0 version, planned sometime in September 2014.</p>
+<ul>
+<li>Spark integration</li>
+</ul><p>Thanks to the recent partnership between Databricks and Datastax, Spark is getting a Cassandra facelift with a Datastax backed integration. We won't be slow to 
+follow up with a type safe Scala variant of that integration, so you can enjoy the benefits of high power computation with Cassandra as a backup
+ storage through the simple high power DSL we've gotten you used to.</p>
+
+<p>You can expect to see the spark integration live in a new <code>phantom-spark</code> module in the 1.3.0 or 1.4.0 version, planned sometime in September 2014.</p>
 
 <h1>
 <a name="commercial-support" class="anchor" href="#commercial-support"><span class="octicon octicon-link"></span></a>Commercial support</h1>
@@ -477,7 +490,7 @@ The <code>type</code> in the below example is always a default C* type.</p>
 <p>JSON columns require you to define a <code>toJson</code> and <code>fromJson</code> method, telling phantom how to go from a <code>String</code> to the type you need. 
 It makes no assumptions as to what library you are using, although we have tested with <code>lift-json</code> and <code>play-json</code>.</p>
 
-<p>Examples on how to use JSON columns can be found in <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-dsl/src/test/scala/com/websudos/phantom/dsl/specialized/JsonColumnTest.scala">JsonColumnTest.scala</a></p>
+<p>Examples on how to use JSON columns can be found in <a href="https://github.com/websudos/phantom/blob/develop/phantom-dsl/src/test/scala/com/websudos/phantom/dsl/specialized/JsonColumnTest.scala">JsonColumnTest.scala</a></p>
 
 <table>
 <thead><tr>
@@ -1268,7 +1281,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>phantom also brrings in support for batch statements. To use them, see <a href="https://github%0A.com/websudosuk/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/iteratee/IterateeBigTest.scala">IterateeBigTest.scala</a></p>
+<p>phantom also brrings in support for batch statements. To use them, see <a href="https://github%0A.com/websudos/phantom/blob/develop/phantom-test/src/test/scala/com/websudos/phantom/iteratee/IterateeBigTest.scala">IterateeBigTest.scala</a></p>
 
 <p>We have tested with 10,000 statements per batch, and 1000 batches processed simultaneously. Before you run the test, beware that it takes ~40 minutes.</p>
 
@@ -1368,7 +1381,7 @@ stuct ExampleModel {
 <p>This implementation is a very simple way to connect to a running Cassandra node. This is not using ZooKeeper and it's not really indented for multi-node 
 testing or connections, but sometimes you just want to get things working immediately.</p>
 
-<p>The implementation details are available <a href="https://github%0A.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/SimpleCassandraConnector.scala">here</a>, 
+<p>The implementation details are available <a href="https://github%0A.com/websudos/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/SimpleCassandraConnector.scala">here</a>, 
 but without further ado, this connector will attempt to connector to a local Cassandra, either embedded or not.</p>
 
 <p>Inside Websudos, our port convention is <code>9042</code> for local Cassandra and <code>9142</code> for embedded. This is reflected in our <code>cassandra.yaml</code> 
@@ -1385,14 +1398,14 @@ configuration files. Overidding this is quite simple, although you will need to 
 
 <p>Phantom will fetch the data found on the  <code>/cassandra</code> path on the ZooKeeper master and attempt to parse all <code>host:port</code> pairs to a <code>Seq[InetSocketAddress]</code> and build a <code>com.datastax.driver.core.Cluster</code> using the sequence of addresses.</p>
 
-<p>Using that <code>Cluster</code> phantom will spawn an <code>implicit session: com.datastax.driver.core.Session</code>. This session is the execution context of all queries inside a table definition. The <code>DefaultZooKeeperManager</code>, found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala">here</a>, will do all the plumbing work for you. More details on the internals are available <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala#L51">here</a>.</p>
+<p>Using that <code>Cluster</code> phantom will spawn an <code>implicit session: com.datastax.driver.core.Session</code>. This session is the execution context of all queries inside a table definition. The <code>DefaultZooKeeperManager</code>, found <a href="https://github.com/websudos/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala">here</a>, will do all the plumbing work for you. More details on the internals are available <a href="https://github.com/websudos/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperManager.scala#L51">here</a>.</p>
 
 <h1>
 <a name="using-a-zookeeperinstance" class="anchor" href="#using-a-zookeeperinstance"><span class="octicon octicon-link"></span></a>Using a ZooKeeperInstance</h1>
 
 <p><a href="#table-of-contents">back to top</a></p>
 
-<p>For testing automation purposes, <code>phantom-zookeeper</code> contains a simple implementation of a ZooKeeper node. The implementation is available <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperInstance.scala">here</a>, 
+<p>For testing automation purposes, <code>phantom-zookeeper</code> contains a simple implementation of a ZooKeeper node. The implementation is available <a href="https://github.com/websudos/phantom/blob/develop/phantom-zookeeper/src/main/scala/com/websudos/phantom/zookeeper/ZookeeperInstance.scala">here</a>, 
 and it's used mainly for testing purposes. If you are using ZooKeeper in a production environment and you are using the <code>phantom-zookeeper</code> module to 
 automate your Cassandra connections, the phantom testing utilities will automatically spawn a <code>ZooKeeperInstance</code> if no local ZooKeeper server is found 
 running on the default <code>localhost:2181</code> address.</p>
@@ -1401,7 +1414,7 @@ running on the default <code>localhost:2181</code> address.</p>
 add <code>localhost:9142</code> to it, and propagate the <code>host:port</code> combination through an environment variable. The testing utilities will then read an 
 environment variable, spawn ZooKeeper Client based on <code>finagle-zookeeper</code>,  spawn an <code>EmbeddedCassandra</code> server if none is found running, fetch the settings from ZooKeeper and create 
 all the plumbing you need to run the tests. You get all that for free by mixing in a single trait, 
-just like we do <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>.</p>
+just like we do <a href="https://github.com/websudos/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>.</p>
 
 <h1>
 <a name="testing-utilities" class="anchor" href="#testing-utilities"><span class="octicon octicon-link"></span></a>Testing utilities</h1>
@@ -1413,12 +1426,57 @@ testing utilities, giving you a very simple, easily extensible, yet highly sensi
 with 0 integration work on your behalf, yet allowing you to go crazy and custom as you please if the scenario warrants it. </p>
 
 <p>With that design philosophy in mind, we've created two kinds of tests, 1 running with a <code>SimpleCassandraConnector</code>, 
-with the implementation found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/SimpleCassandraConnector.scala">here</a>, where the testing utilities will auto-spawn an Embedded Cassandra database with the right version and the right settings, 
+with the implementation found <a href="https://github.com/websudos/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/SimpleCassandraConnector.scala">here</a>, where the testing utilities will auto-spawn an Embedded Cassandra database with the right version and the right settings, 
 run all the tests and cleanup after tests are done.</p>
 
-<p>The other, more complex implementation, targets people who want to use phantom/Cassandra in a distributed environment. This is an easy way to automate 
+<p>The other, more complex implementation, targets users who want to use phantom/Cassandra in a distributed environment. This is an easy way to automate 
 multi-DC or multi-cluster tests via service discovery with Apache ZooKeeper. More details are available right above. The <code>BaseTest</code> implementation, 
-which uses a <code>DefaultZooKeeperConnector</code>, is found <a href="https://github.com/websudosuk/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>, and it follows the pattern described above.</p>
+which uses a <code>DefaultZooKeeperConnector</code>, is found <a href="https://github.com/websudos/phantom/blob/develop/phantom-testing/src/main/scala/com/websudos/phantom/testing/BaseTest.scala">here</a>, and it follows the pattern described above.</p>
+
+<p>There are 4 core implementations available:</p>
+
+<table>
+<thead><tr>
+<th>Name</th>
+<th>Description</th>
+<th>ZooKeeper support</th>
+<th>Auto-embedding support</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>CassandraFlatSpec</td>
+<td>Simple FlatSpec trait mixin, based on <code>org.scalatest.FlatSpec</code>
+</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>CassandraFeatureSpec</td>
+<td>Simple FeatureSpec trait mixin, based on <code>org.scalatest.FeatureSpec</code>
+</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>BaseTest</td>
+<td>ZooKeeper powered FlatSpec trait mixin, based on <code>org.scalatest.FlatSpec</code>
+</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>FeatureBestTest</td>
+<td>ZooKeeper powered FeatureSpec trait mixin, based on <code>org.scalatest.FeatureSpec</code>
+</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table><p>Using the built in testing utilities is very simple. In most cases, you use one of the first two base implementations, 
+either <code>CassandraFlatSpec</code> or <code>CassandraFeatureSpec</code>, based on what kind of tests you like writing(flat or feature).</p>
+
+<p>If you are using ZooKeeper and you want to run tests through a full ZooKeeper powered cycle, where Cassandra settings are retrieved from a ZooKeeper that 
+can either be running locally or auto-spawned if none is found, pick one of the last two base suites.</p>
 
 <h1>
 <a name="auto-embedded-cassandra" class="anchor" href="#auto-embedded-cassandra"><span class="octicon octicon-link"></span></a>Auto-embedded Cassandra</h1>
