@@ -194,6 +194,7 @@ Cassandra, otherwise you will get an error when phantom tries to start the embed
 <li><a href="https://www.websudos.com/">websudos</a></li>
 <li><a href="http://www.equens.com/">Equens</a></li>
 <li><a href="http://www.victorops.com/">VictorOps</a></li>
+<li><a href="http://www.socrata.com">Socrata</a></li>
 </ul>
 
 <h1>
@@ -276,41 +277,41 @@ click <a href="http://www.websudos.co.uk/work">here</a>.</p>
 resolution errors.</p>
 
 <div class="highlight highlight-scala"><pre>resolvers <span class="pl-k">++</span><span class="pl-k">=</span> <span class="pl-en">Seq</span>(
- <span class="pl-s1"><span class="pl-pds">"</span>Typesafe repository snapshots<span class="pl-pds">"</span></span> at <span class="pl-s1"><span class="pl-pds">"</span>http://repo.typesafe.com/typesafe/snapshots/<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Typesafe repository releases<span class="pl-pds">"</span></span> at <span class="pl-s1"><span class="pl-pds">"</span>http://repo.typesafe.com/typesafe/releases/<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Sonatype repo<span class="pl-pds">"</span></span>                    at <span class="pl-s1"><span class="pl-pds">"</span>https://oss.sonatype.org/content/groups/scala-tools/<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Sonatype releases<span class="pl-pds">"</span></span>                at <span class="pl-s1"><span class="pl-pds">"</span>https://oss.sonatype.org/content/repositories/releases<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Sonatype snapshots<span class="pl-pds">"</span></span>               at <span class="pl-s1"><span class="pl-pds">"</span>https://oss.sonatype.org/content/repositories/snapshots<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Sonatype staging<span class="pl-pds">"</span></span>                 at <span class="pl-s1"><span class="pl-pds">"</span>http://oss.sonatype.org/content/repositories/staging<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Java.net Maven2 Repository<span class="pl-pds">"</span></span>       at <span class="pl-s1"><span class="pl-pds">"</span>http://download.java.net/maven/2/<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Twitter Repository<span class="pl-pds">"</span></span>               at <span class="pl-s1"><span class="pl-pds">"</span>http://maven.twttr.com<span class="pl-pds">"</span></span>,
-  <span class="pl-s1"><span class="pl-pds">"</span>Websudos releases<span class="pl-pds">"</span></span>                at <span class="pl-s1"><span class="pl-pds">"</span>http://maven.websudos.co.uk/ext-release-local<span class="pl-pds">"</span></span>
+ <span class="pl-s"><span class="pl-pds">"</span>Typesafe repository snapshots<span class="pl-pds">"</span></span> at <span class="pl-s"><span class="pl-pds">"</span>http://repo.typesafe.com/typesafe/snapshots/<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Typesafe repository releases<span class="pl-pds">"</span></span> at <span class="pl-s"><span class="pl-pds">"</span>http://repo.typesafe.com/typesafe/releases/<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Sonatype repo<span class="pl-pds">"</span></span>                    at <span class="pl-s"><span class="pl-pds">"</span>https://oss.sonatype.org/content/groups/scala-tools/<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Sonatype releases<span class="pl-pds">"</span></span>                at <span class="pl-s"><span class="pl-pds">"</span>https://oss.sonatype.org/content/repositories/releases<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Sonatype snapshots<span class="pl-pds">"</span></span>               at <span class="pl-s"><span class="pl-pds">"</span>https://oss.sonatype.org/content/repositories/snapshots<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Sonatype staging<span class="pl-pds">"</span></span>                 at <span class="pl-s"><span class="pl-pds">"</span>http://oss.sonatype.org/content/repositories/staging<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Java.net Maven2 Repository<span class="pl-pds">"</span></span>       at <span class="pl-s"><span class="pl-pds">"</span>http://download.java.net/maven/2/<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Twitter Repository<span class="pl-pds">"</span></span>               at <span class="pl-s"><span class="pl-pds">"</span>http://maven.twttr.com<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>Websudos releases<span class="pl-pds">"</span></span>                at <span class="pl-s"><span class="pl-pds">"</span>http://maven.websudos.co.uk/ext-release-local<span class="pl-pds">"</span></span>
 )</pre></div>
 
 <p>For most things, all you need is <code>phantom-dsl</code>. Read through for information on other modules.</p>
 
 <div class="highlight highlight-scala"><pre>libraryDependencies <span class="pl-k">++</span><span class="pl-k">=</span> <span class="pl-en">Seq</span>(
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-dsl<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-dsl<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion
 )</pre></div>
 
 <p>The full list of available modules is:</p>
 
 <div class="highlight highlight-scala"><pre>libraryDependencies <span class="pl-k">++</span><span class="pl-k">=</span> <span class="pl-en">Seq</span>(
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-dsl<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-example<span class="pl-pds">"</span></span>               <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-spark<span class="pl-pds">"</span></span>                 <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-thrift<span class="pl-pds">"</span></span>                <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-test<span class="pl-pds">"</span></span>                  <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-testing<span class="pl-pds">"</span></span>               <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-udt<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion,
-  <span class="pl-s1"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s1"><span class="pl-pds">"</span>phantom-zookeeper<span class="pl-pds">"</span></span>             <span class="pl-k">%</span> phantomVersion
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-dsl<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-example<span class="pl-pds">"</span></span>               <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-spark<span class="pl-pds">"</span></span>                 <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-thrift<span class="pl-pds">"</span></span>                <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-test<span class="pl-pds">"</span></span>                  <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-testing<span class="pl-pds">"</span></span>               <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-udt<span class="pl-pds">"</span></span>                   <span class="pl-k">%</span> phantomVersion,
+  <span class="pl-s"><span class="pl-pds">"</span>com.websudos<span class="pl-pds">"</span></span>  <span class="pl-k">%%</span> <span class="pl-s"><span class="pl-pds">"</span>phantom-zookeeper<span class="pl-pds">"</span></span>             <span class="pl-k">%</span> phantomVersion
 )</pre></div>
 
 <p>If you include <code>phantom-zookeeper</code>, make sure to add the following resolvers:</p>
 
-<div class="highlight highlight-scala"><pre>resolvers <span class="pl-k">+</span><span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>twitter-repo<span class="pl-pds">"</span></span> at <span class="pl-s1"><span class="pl-pds">"</span>http://maven.twttr.com<span class="pl-pds">"</span></span>
+<div class="highlight highlight-scala"><pre>resolvers <span class="pl-k">+</span><span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>twitter-repo<span class="pl-pds">"</span></span> at <span class="pl-s"><span class="pl-pds">"</span>http://maven.twttr.com<span class="pl-pds">"</span></span>
 
-resolvers <span class="pl-k">+</span><span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>websudos-repo<span class="pl-pds">"</span></span> at <span class="pl-s1"><span class="pl-pds">"</span>http://maven.websudos.co.uk/ext-release-local<span class="pl-pds">"</span></span></pre></div>
+resolvers <span class="pl-k">+</span><span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>websudos-repo<span class="pl-pds">"</span></span> at <span class="pl-s"><span class="pl-pds">"</span>http://maven.websudos.co.uk/ext-release-local<span class="pl-pds">"</span></span></pre></div>
 
 <h1>
 <a id="primitive-columns" class="anchor" href="#primitive-columns" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="primitive-columns">Primitive columns</a>
@@ -367,6 +368,11 @@ phantom won't let you mixin a non-primitive via implicit magic.</p>
 <td>DoubleColumn</td>
 <td>scala.Double</td>
 <td>double</td>
+</tr>
+<tr>
+<td>EnumColumn</td>
+<td>scala.Enumeration</td>
+<td>text</td>
 </tr>
 <tr>
 <td>FloatColumn</td>
@@ -470,6 +476,11 @@ The outcome is that instead of a <code>T</code> you get an <code>Option[T]</code
 <td>OptionalDoubleColumn</td>
 <td>Option[scala.Double]</td>
 <td>double</td>
+</tr>
+<tr>
+<td>OptionalEnumColumn</td>
+<td>Option[scala.Enumeration]</td>
+<td>text</td>
 </tr>
 <tr>
 <td>OptionalFloatColumn</td>
@@ -678,22 +689,22 @@ You generally use these to store collections(small number of items), not big thi
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
 <span class="pl-k">case</span> <span class="pl-k">class</span> <span class="pl-en">ExampleModel</span> (
-  <span class="pl-v">id</span>: <span class="pl-st">Int</span>,
-  <span class="pl-v">name</span>: <span class="pl-st">String</span>,
-  <span class="pl-v">props</span>: <span class="pl-en">Map</span>[<span class="pl-st">String</span>, <span class="pl-st">String</span>],
-  <span class="pl-v">timestamp</span>: <span class="pl-st">Int</span>,
-  <span class="pl-v">test</span>: <span class="pl-en">Option</span>[<span class="pl-st">Int</span>]
+  <span class="pl-v">id</span>: <span class="pl-k">Int</span>,
+  <span class="pl-v">name</span>: <span class="pl-k">String</span>,
+  <span class="pl-v">props</span>: <span class="pl-en">Map</span>[<span class="pl-k">String</span>, <span class="pl-k">String</span>],
+  <span class="pl-v">timestamp</span>: <span class="pl-k">Int</span>,
+  <span class="pl-v">test</span>: <span class="pl-en">Option</span>[<span class="pl-k">Int</span>]
 )
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord</span>, <span class="pl-en">ExampleModel</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord</span>, <span class="pl-en">ExampleModel</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-en">DateTime</span>] <span class="pl-k">with</span> <span class="pl-e">Ascending</span>
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>)
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord</span>, <span class="pl-en">ExampleModel</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord</span>, <span class="pl-en">ExampleModel</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }
@@ -859,11 +870,11 @@ We haven't yet bothered to add more than 10 fields in the select, but you can al
 The file you are looking for is <a href="https://github.com/websudos/phantom/blob/develop/phantom-dsl/src/main/scala/com/websudos/phantom/SelectTable.scala">here</a>.
 The 22 field limitation will change in Scala 2.11 and phantom will be updated once cross version compilation is enabled.</p>
 
-<div class="highlight highlight-scala"><pre>  <span class="pl-k">def</span> <span class="pl-en">getNameById</span>(<span class="pl-v">id</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-st">String</span>]] <span class="pl-k">=</span> {
+<div class="highlight highlight-scala"><pre>  <span class="pl-k">def</span> <span class="pl-en">getNameById</span>(<span class="pl-v">id</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-k">String</span>]] <span class="pl-k">=</span> {
     <span class="pl-en">ExampleRecord</span>.select(_.name).where(_.id eqs someId).one()
   }
 
-  <span class="pl-k">def</span> <span class="pl-en">getNameAndPropsById</span>(<span class="pl-v">id</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>(<span class="pl-st">String</span>, <span class="pl-en">Map</span>[<span class="pl-st">String</span>, <span class="pl-st">String</span>])] {
+  <span class="pl-k">def</span> <span class="pl-en">getNameAndPropsById</span>(<span class="pl-v">id</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>(<span class="pl-k">String</span>, <span class="pl-en">Map</span>[<span class="pl-k">String</span>, <span class="pl-k">String</span>])] {
     <span class="pl-en">ExampleRecord</span>.select(_.name, _.props).where(_.id eqs someId).one()
   }</pre></div>
 
@@ -929,6 +940,13 @@ The 22 field limitation will change in Scala 2.11 and phantom will be updated on
 </tbody>
 </table>
 
+<p>Example:</p>
+
+<div class="highlight highlight-scala"><pre><span class="pl-en">ExampleRecord</span>.update.where(_.id eqs myUuid).
+                     modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>Barack Obama<span class="pl-pds">"</span></span>).
+                     and(_.props put (<span class="pl-s"><span class="pl-pds">"</span>title<span class="pl-pds">"</span></span> <span class="pl-k">-</span><span class="pl-k">&gt;</span> <span class="pl-s"><span class="pl-pds">"</span>POTUS<span class="pl-pds">"</span></span>)).
+                     future()</pre></div>
+
 <h1>
 <a id="delete-queries" class="anchor" href="#delete-queries" aria-hidden="true"><span class="octicon octicon-link"></span></a><a id="delete-queries">"Delete" queries</a>
 </h1>
@@ -992,7 +1010,7 @@ The Scala Future methods are: </p>
 </table>
 
 <div class="highlight highlight-scala"><pre><span class="pl-en">ExampleRecord</span>.select.one() <span class="pl-c">// When you only want to select one record</span>
-<span class="pl-en">ExampleRecord</span>.update.where(_.name eqs name).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>someOtherName<span class="pl-pds">"</span></span>).future() <span class="pl-c">// When you don't care about the return type.</span>
+<span class="pl-en">ExampleRecord</span>.update.where(_.name eqs name).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>someOtherName<span class="pl-pds">"</span></span>).future() <span class="pl-c">// When you don't care about the return type.</span>
 <span class="pl-en">ExampleRecord</span>.select.fetchEnumerator <span class="pl-c">// when you need an Enumerator</span>
 <span class="pl-en">ExampleRecord</span>.select.fetch <span class="pl-c">// When you want to fetch a Seq[Record]</span></pre></div>
 
@@ -1007,16 +1025,16 @@ The Scala Future methods are: </p>
 <span class="pl-k">import</span> <span class="pl-v">scala.concurrent.</span><span class="pl-v">Future</span>
 
 <span class="pl-k">object</span> <span class="pl-en">ExampleRecord</span> <span class="pl-k">extends</span> <span class="pl-e">ExampleRecord</span> {
-  <span class="pl-s">override</span> <span class="pl-k">val</span> <span class="pl-en">tableName</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>examplerecord<span class="pl-pds">"</span></span>
+  <span class="pl-k">override</span> <span class="pl-k">val</span> <span class="pl-en">tableName</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>examplerecord<span class="pl-pds">"</span></span>
 
   <span class="pl-c">// now define a session, a normal Datastax cluster connection</span>
-  <span class="pl-s">implicit</span> <span class="pl-k">val</span> <span class="pl-en">session</span> <span class="pl-k">=</span> <span class="pl-en">SomeCassandraClient</span>.session;
+  <span class="pl-k">implicit</span> <span class="pl-k">val</span> <span class="pl-en">session</span> <span class="pl-k">=</span> <span class="pl-en">SomeCassandraClient</span>.session;
 
-  <span class="pl-k">def</span> <span class="pl-en">getRecordsByName</span>(<span class="pl-v">name</span>: <span class="pl-st">String</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Seq</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
+  <span class="pl-k">def</span> <span class="pl-en">getRecordsByName</span>(<span class="pl-v">name</span>: <span class="pl-k">String</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Seq</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
     <span class="pl-en">ExampleRecord</span>.select.where(_.name eqs name).fetch
   }
 
-  <span class="pl-k">def</span> <span class="pl-en">getOneRecordByName</span>(<span class="pl-v">name</span>: <span class="pl-st">String</span>, <span class="pl-v">someId</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
+  <span class="pl-k">def</span> <span class="pl-en">getOneRecordByName</span>(<span class="pl-v">name</span>: <span class="pl-k">String</span>, <span class="pl-v">someId</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
     <span class="pl-en">ExampleRecord</span>.select.where(_.name eqs name).and(_.id eqs someId).one()
   }
 }</pre></div>
@@ -1058,7 +1076,7 @@ However, the concurrency primitives are all based on Google Guava executors and 
 </table>
 
 <div class="highlight highlight-scala"><pre><span class="pl-en">ExampleRecord</span>.select.get() <span class="pl-c">// When you only want to select one record</span>
-<span class="pl-en">ExampleRecord</span>.update.where(_.name eqs name).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>someOtherName<span class="pl-pds">"</span></span>).execute() <span class="pl-c">// When you don't care about the return type.</span>
+<span class="pl-en">ExampleRecord</span>.update.where(_.name eqs name).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>someOtherName<span class="pl-pds">"</span></span>).execute() <span class="pl-c">// When you don't care about the return type.</span>
 <span class="pl-en">ExampleRecord</span>.select.enumerate <span class="pl-c">// when you need an Enumerator</span>
 <span class="pl-en">ExampleRecord</span>.select.collect <span class="pl-c">// When you want to fetch a Seq[Record]</span></pre></div>
 
@@ -1072,16 +1090,16 @@ However, the concurrency primitives are all based on Google Guava executors and 
 <span class="pl-k">import</span> <span class="pl-v">com.twitter.util.</span><span class="pl-v">Future</span>
 
 <span class="pl-k">object</span> <span class="pl-en">ExampleRecord</span> <span class="pl-k">extends</span> <span class="pl-e">ExampleRecord</span> {
-  <span class="pl-s">override</span> <span class="pl-k">val</span> <span class="pl-en">tableName</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">"</span>examplerecord<span class="pl-pds">"</span></span>
+  <span class="pl-k">override</span> <span class="pl-k">val</span> <span class="pl-en">tableName</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>examplerecord<span class="pl-pds">"</span></span>
 
   <span class="pl-c">// now define a session, a normal Datastax cluster connection</span>
-  <span class="pl-s">implicit</span> <span class="pl-k">val</span> <span class="pl-en">session</span> <span class="pl-k">=</span> <span class="pl-en">SomeCassandraClient</span>.session;
+  <span class="pl-k">implicit</span> <span class="pl-k">val</span> <span class="pl-en">session</span> <span class="pl-k">=</span> <span class="pl-en">SomeCassandraClient</span>.session;
 
-  <span class="pl-k">def</span> <span class="pl-en">getRecordsByName</span>(<span class="pl-v">name</span>: <span class="pl-st">String</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Seq</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
+  <span class="pl-k">def</span> <span class="pl-en">getRecordsByName</span>(<span class="pl-v">name</span>: <span class="pl-k">String</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Seq</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
     <span class="pl-en">ExampleRecord</span>.select.where(_.name eqs name).collect
   }
 
-  <span class="pl-k">def</span> <span class="pl-en">getOneRecordByName</span>(<span class="pl-v">name</span>: <span class="pl-st">String</span>, <span class="pl-v">someId</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
+  <span class="pl-k">def</span> <span class="pl-en">getOneRecordByName</span>(<span class="pl-v">name</span>: <span class="pl-k">String</span>, <span class="pl-v">someId</span>: <span class="pl-en">UUID</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Option</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
     <span class="pl-en">ExampleRecord</span>.select.where(_.name eqs name).and(_.id eqs someId).get()
   }
 }</pre></div>
@@ -1235,15 +1253,15 @@ Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-te
 <span class="pl-k">import</span> <span class="pl-v">scala.concurrent.duration.</span><span class="pl-v">_</span>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord2</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod2</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord2</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod2</span>, <span class="pl-en">ExampleRecord</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>)
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }
@@ -1305,15 +1323,15 @@ Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-te
 <span class="pl-k">import</span> <span class="pl-v">org.joda.time.</span><span class="pl-v">DateTime</span>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod3</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod3</span>, <span class="pl-en">ExampleRecord</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-en">DateTime</span>] <span class="pl-k">with</span> <span class="pl-e">Ascending</span>
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>)
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }</pre></div>
@@ -1334,15 +1352,15 @@ Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-te
 <span class="pl-k">import</span> <span class="pl-v">org.joda.time.</span><span class="pl-v">DateTime</span>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod3</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod3</span>, <span class="pl-en">ExampleRecord</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-en">DateTime</span>]
-  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-st">String</span>]
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-k">String</span>]
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }</pre></div>
@@ -1365,15 +1383,15 @@ but phantom offers <code>com.websudos.phantom.keys.Index</code> to enable queryi
 <span class="pl-k">import</span> <span class="pl-v">org.joda.time.</span><span class="pl-v">DateTime</span>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord4</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord4</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod4</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord4</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord4</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod4</span>, <span class="pl-en">ExampleRecord</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">Index</span>[<span class="pl-en">DateTime</span>]
-  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">Index</span>[<span class="pl-st">String</span>]
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">Index</span>[<span class="pl-k">String</span>]
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }</pre></div>
@@ -1399,21 +1417,21 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
 
-<span class="pl-s">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleRecord</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-en">DateTime</span>]
-  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-st">String</span>]
-  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-st">String</span>, <span class="pl-st">String</span>](<span class="pl-v">this</span>)
+  <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-k">String</span>]
+  <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">test</span> <span class="pl-k">extends</span> <span class="pl-e">OptionalIntColumn</span>(<span class="pl-v">this</span>)
 
-  <span class="pl-s">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
+  <span class="pl-k">override</span> <span class="pl-k">def</span> <span class="pl-en">fromRow</span>(<span class="pl-v">row</span>: <span class="pl-en">Row</span>)<span class="pl-k">:</span> <span class="pl-en">ExampleModel</span> <span class="pl-k">=</span> {
     <span class="pl-en">ExampleModel</span>(id(row), name(row), props(row), timestamp(row), test(row));
   }
 }
 
 <span class="pl-k">object</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">ExampleRecord3</span> {
-  <span class="pl-k">def</span> <span class="pl-en">getRecords</span>(<span class="pl-v">start</span>: <span class="pl-st">Int</span>, <span class="pl-v">limit</span>: <span class="pl-st">Int</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Set</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
+  <span class="pl-k">def</span> <span class="pl-en">getRecords</span>(<span class="pl-v">start</span>: <span class="pl-k">Int</span>, <span class="pl-v">limit</span>: <span class="pl-k">Int</span>)<span class="pl-k">:</span> <span class="pl-en">Future</span>[<span class="pl-en">Set</span>[<span class="pl-en">ExampleModel</span>]] <span class="pl-k">=</span> {
     select.fetchEnumerator.slice(start, limit).collect
   }
 }
@@ -1445,8 +1463,8 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
 <span class="pl-en">BatchStatement</span>()
-    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someId).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>blabla<span class="pl-pds">"</span></span>))
-    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someOtherId).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>blabla2<span class="pl-pds">"</span></span>))
+    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someId).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>blabla<span class="pl-pds">"</span></span>))
+    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someOtherId).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>blabla2<span class="pl-pds">"</span></span>))
     .future()
 </pre></div>
 
@@ -1474,8 +1492,8 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.Implicits.</span><span class="pl-v">_</span>
 
 <span class="pl-en">UnloggedBatchStatement</span>()
-    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someId).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>blabla<span class="pl-pds">"</span></span>))
-    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someOtherId).modify(_.name setTo <span class="pl-s1"><span class="pl-pds">"</span>blabla2<span class="pl-pds">"</span></span>))
+    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someId).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>blabla<span class="pl-pds">"</span></span>))
+    .add(<span class="pl-en">ExampleRecord</span>.update.where(_.id eqs someOtherId).modify(_.name setTo <span class="pl-s"><span class="pl-pds">"</span>blabla2<span class="pl-pds">"</span></span>))
     .future()
 </pre></div>
 
@@ -1488,7 +1506,7 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <p>We use Apache Thrift extensively for our backend services. phantom is very easy to integrate with Thrift models and uses <code>Twitter Scrooge</code> to compile them. 
 Thrift integration is optional and available via <code>"com.websudos" %% "phantom-thrift"  % phantomVersion</code>.</p>
 
-<div class="highlight highlight-thrift"><pre><span class="pl-k">namespace</span> <span class="pl-s3">java</span> <span class="pl-vo">com.websudos.phantom.sample.ExampleModel</span>
+<div class="highlight highlight-thrift"><pre><span class="pl-k">namespace</span> <span class="pl-c1">java</span> <span class="pl-smi">com.websudos.phantom.sample.ExampleModel</span>
 
 stuct ExampleModel {
   1: required i32 id,
@@ -1674,6 +1692,7 @@ Scala/Cassandra users in the world rely on phantom</p>
 <li>Stephen Samuel (<a href="https://github.com/sksamuel" class="user-mention">@sksamuel</a>)</li>
 <li>Tomasz Perek (<a href="https://github.com/tperek" class="user-mention">@tperek</a>)</li>
 <li>Benjamin Edwards (<a href="https://github.com/benjumanji" class="user-mention">@benjumanji</a>)</li>
+<li>Evan Chan (<a href="https://github.com/evanfchan" class="user-mention">@evanfchan</a>)</li>
 </ul>
 
 <h1>
