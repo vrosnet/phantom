@@ -1,7 +1,10 @@
 *.class
 *.log
+*.jar
+*.jar.old
 
 atlassian-ide-plugin.xml
+
 
 # Eclipse specific
 .classpath
