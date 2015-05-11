@@ -1,34 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Phantom by websudos</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Phantom</h1>
-        <p>Asynchronous type-safe Scala DSL for Cassandra</p>
+    <section class="page-header">
+      <h1 class="project-name">Phantom</h1>
+      <h2 class="project-tagline">Asynchronous type-safe Scala DSL for Cassandra</h2>
+      <a href="https://github.com/websudos/phantom" class="btn">View on GitHub</a>
+      <a href="https://github.com/websudos/phantom/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/websudos/phantom/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/websudos/phantom">View the Project on GitHub <small>websudos/phantom</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/websudos/phantom/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/websudos/phantom/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/websudos/phantom">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <p>phantom <a href="https://travis-ci.org/websudos/phantom"><img src="https://travis-ci.org/websudos/phantom.svg?branch=develop" alt="Build Status"></a> <a href="https://coveralls.io/r/websudos/phantom"><img src="https://coveralls.io/repos/websudos/phantom/badge.svg" alt="Coverage Status"></a> <a href="https://maven-badges.herokuapp.com/maven-central/com.websudos/phantom_2.10"><img src="https://maven-badges.herokuapp.com/maven-central/com.websudos/phantom_2.10/badge.svg" alt="Maven Central"></a></p>
+    <section class="main-content">
+      <p>phantom <a href="https://travis-ci.org/websudos/phantom"><img src="https://travis-ci.org/websudos/phantom.svg?branch=develop" alt="Build Status"></a> <a href="https://coveralls.io/r/websudos/phantom"><img src="https://coveralls.io/repos/websudos/phantom/badge.svg" alt="Coverage Status"></a> <a href="https://maven-badges.herokuapp.com/maven-central/com.websudos/phantom_2.10"><img src="https://maven-badges.herokuapp.com/maven-central/com.websudos/phantom_2.10/badge.svg" alt="Maven Central"></a></p>
 
 <h1></h1>
 
@@ -74,8 +65,8 @@ Cassandra, otherwise you will get an error when phantom tries to start the embed
 <ul>
     <li><a href="#new-querybuilder">1.8.0: A new QueryBuilder, written from the ground up, in idiomatic Scala</a></li>
     <li><a href="#alter-queries">1.8.0: Added support for type-safe ALTER queries</a></li>
-    <li><a href="#advanced-cql-support">1.8.0:Support for advanced CQL options</a></li> 
-    <li><a href="#prepared-statements">1.8.0: Type safe prepared statements</a></li>
+    <li><a href="#advanced-cql-support">1.8.0: Support for advanced CQL options</a></li> 
+    <li><a href="#prepared-statements">1.9.0: Type safe prepared statements</a></li>
     <li><a href="#automigration">1.9.0: Automated Schema migrations</a></li>
     <li><a href="#udts">2.0.0: Type safe user defined types</a></li>
     <li>
@@ -1441,9 +1432,10 @@ Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-te
 <span class="pl-k">import</span> <span class="pl-v">scala.concurrent.duration.</span><span class="pl-v">_</span>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.dsl.</span><span class="pl-v">_</span>
 
-<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord2</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod2</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord2</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleModel</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
+  <span class="pl-k">object</span> <span class="pl-en">order_id</span> <span class="pl-k">extends</span> <span class="pl-e">LongColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-k">Long</span>] <span class="pl-k">with</span> <span class="pl-e">Descending</span>
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>)
   <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
@@ -1538,9 +1530,10 @@ Examples in <a href="https://github.com/websudos/phantom/blob/develop/phantom-te
 <div class="highlight highlight-scala"><pre>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.dsl.</span><span class="pl-v">_</span>
 
-<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod3</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
+  <span class="pl-k">object</span> <span class="pl-en">order_id</span> <span class="pl-k">extends</span> <span class="pl-e">LongColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-k">Long</span>] <span class="pl-k">with</span> <span class="pl-e">Descending</span>
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-en">DateTime</span>]
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-k">String</span>]
   <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
@@ -1567,9 +1560,10 @@ but phantom offers <code>com.websudos.phantom.keys.Index</code> to enable queryi
 <div class="highlight highlight-scala"><pre>
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.dsl.</span><span class="pl-v">_</span>
 
-<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord4</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord4</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecod4</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord4</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord4</span>, <span class="pl-en">ExampleModel</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
+  <span class="pl-k">object</span> <span class="pl-en">order_id</span> <span class="pl-k">extends</span> <span class="pl-e">LongColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-k">Long</span>] <span class="pl-k">with</span> <span class="pl-e">Descending</span>
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">Index</span>[<span class="pl-en">DateTime</span>]
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">Index</span>[<span class="pl-k">String</span>]
   <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
@@ -1600,9 +1594,10 @@ For more on this, see this <a href="http://mandubian.com/2012/08/27/understandin
 <span class="pl-k">import</span> <span class="pl-v">com.websudos.phantom.dsl.</span><span class="pl-v">_</span>
 
 
-<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] <span class="pl-k">with</span> <span class="pl-e">LongOrderKey</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleRecord</span>] {
+<span class="pl-k">sealed</span> <span class="pl-k">class</span> <span class="pl-en">ExampleRecord3</span> <span class="pl-k">extends</span> <span class="pl-e">CassandraTable</span>[<span class="pl-en">ExampleRecord3</span>, <span class="pl-en">ExampleModel</span>] {
 
   <span class="pl-k">object</span> <span class="pl-en">id</span> <span class="pl-k">extends</span> <span class="pl-e">UUIDColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PartitionKey</span>[<span class="pl-en">UUID</span>]
+  <span class="pl-k">object</span> <span class="pl-en">order_id</span> <span class="pl-k">extends</span> <span class="pl-e">LongColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">ClusteringOrder</span>[<span class="pl-k">Long</span>] <span class="pl-k">with</span> <span class="pl-e">Descending</span>
   <span class="pl-k">object</span> <span class="pl-en">timestamp</span> <span class="pl-k">extends</span> <span class="pl-e">DateTimeColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-en">DateTime</span>]
   <span class="pl-k">object</span> <span class="pl-en">name</span> <span class="pl-k">extends</span> <span class="pl-e">StringColumn</span>(<span class="pl-v">this</span>) <span class="pl-k">with</span> <span class="pl-e">PrimaryKey</span>[<span class="pl-k">String</span>]
   <span class="pl-k">object</span> <span class="pl-en">props</span> <span class="pl-k">extends</span> <span class="pl-e">MapColumn</span>[<span class="pl-en">ExampleRecord2</span>, <span class="pl-en">ExampleRecord</span>, <span class="pl-k">String</span>, <span class="pl-k">String</span>](<span class="pl-v">this</span>)
@@ -2018,14 +2013,16 @@ We will reject your pull request if it doesn't meet code standards, but we'll ha
 <p>YourKit is the very core of our performance bottleneck testing, and without it phantom would still be a painfully slow tool.</p>
 
 <p><a href="https://www.yourkit.com/java/profiler/index.jsp">YourKit Java profiler</a></p>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/websudos">websudos</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/websudos/phantom">Phantom</a> is maintained by <a href="https://github.com/websudos">websudos</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-              <script type="text/javascript">
+
+    </section>
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -2038,3 +2035,4 @@ We will reject your pull request if it doesn't meet code standards, but we'll ha
 
   </body>
 </html>
+
