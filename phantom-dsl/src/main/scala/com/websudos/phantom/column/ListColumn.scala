@@ -32,7 +32,6 @@ package com.websudos.phantom.column
 import com.datastax.driver.core.Row
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.builder.QueryBuilder
-import com.websudos.phantom.builder.QueryBuilder.Utils
 import com.websudos.phantom.builder.primitives.Primitive
 import com.websudos.phantom.builder.query.CQLQuery
 
@@ -41,10 +40,15 @@ import scala.collection.JavaConverters._
 import scala.util.{Success, Try}
 
 
-abstract class AbstractListColumn[Owner <: CassandraTable[Owner, Record], Record, RR](table: CassandraTable[Owner, Record])
-  extends Column[Owner, Record, List[RR]](table) with CollectionValueDefinition[RR] {
+abstract class AbstractListColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  RR
+](table: CassandraTable[Owner, Record])(
+  implicit builder: QueryBuilder
+) extends Column[Owner, Record, List[RR]](table) with CollectionValueDefinition[RR] {
 
-  override def asCql(v: List[RR]): String = Utils.collection(v.map(valueAsCql)).queryString
+  override def asCql(v: List[RR]): String = builder.Utils.collection(v.map(valueAsCql)).queryString
 
   override def apply(r: Row): List[RR] = {
     parse(r).getOrElse(Nil)
@@ -52,12 +56,18 @@ abstract class AbstractListColumn[Owner <: CassandraTable[Owner, Record], Record
 }
 
 @implicitNotFound(msg = "Type ${RR} must be a Cassandra primitive")
-class ListColumn[Owner <: CassandraTable[Owner, Record], Record, RR : Primitive](table: CassandraTable[Owner, Record])
-    extends AbstractListColumn[Owner, Record, RR](table) with PrimitiveCollectionValue[RR] {
+class ListColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  RR
+](table: CassandraTable[Owner, Record])(
+  implicit primitive: Primitive[RR],
+  builder: QueryBuilder
+) extends AbstractListColumn[Owner, Record, RR](table) with PrimitiveCollectionValue[RR] {
 
   override val valuePrimitive = Primitive[RR]
 
-  override val cassandraType = QueryBuilder.Collections.listType(valuePrimitive.cassandraType).queryString
+  override val cassandraType = builder.Collections.listType(valuePrimitive.cassandraType).queryString
 
   override def qb: CQLQuery = CQLQuery(name).forcePad.append(cassandraType)
 

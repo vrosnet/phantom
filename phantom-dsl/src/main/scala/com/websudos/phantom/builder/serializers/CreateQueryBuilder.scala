@@ -29,7 +29,7 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder.Utils
+import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
@@ -140,60 +140,60 @@ sealed trait CachingQueryBuilder extends CreateOptionsBuilder {
 }
 
 
-private[builder] class CreateTableBuilder extends
+private[builder] class CreateTableBuilder(val builder: QueryBuilder) extends
   CompactionQueryBuilder
   with CompressionQueryBuilder {
 
   object Caching extends CachingQueryBuilder
 
   def read_repair_chance(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.read_repair_chance, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.read_repair_chance, st)
   }
 
   def dclocal_read_repair_chance(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.dclocal_read_repair_chance, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.dclocal_read_repair_chance, st)
   }
 
   def default_time_to_live(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.default_time_to_live, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.default_time_to_live, st)
   }
 
   def gc_grace_seconds(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.gc_grace_seconds, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.gc_grace_seconds, st)
   }
 
   def populate_io_cache_on_flush(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.populate_io_cache_on_flush, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.populate_io_cache_on_flush, st)
   }
 
   def bloom_filter_fp_chance(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.bloom_filter_fp_chance, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.bloom_filter_fp_chance, st)
   }
 
   def replicate_on_write(st: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.replicate_on_write, st)
+    builder.Utils.option(CQLSyntax.CreateOptions.replicate_on_write, st)
   }
 
   def compression(qb: CQLQuery) : CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.compression, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
+    builder.Utils.option(CQLSyntax.CreateOptions.compression, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
   }
 
   def compaction(qb: CQLQuery) : CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.compaction, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
+    builder.Utils.option(CQLSyntax.CreateOptions.compaction, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
   }
 
   def comment(qb: String): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.comment, CQLQuery.empty.appendSingleQuote(qb))
+    builder.Utils.option(CQLSyntax.CreateOptions.comment, CQLQuery.empty.appendSingleQuote(qb))
   }
 
   def caching(qb: String, wrapped: Boolean): CQLQuery = {
     if (wrapped) {
-      Utils.option(
+      builder.Utils.option(
         CQLSyntax.CreateOptions.caching,
-        CQLQuery.empty.append(Utils.curlyWrap(qb))
+        CQLQuery.empty.append(builder.Utils.curlyWrap(qb))
       )
     } else {
-      Utils.option(
+      builder.Utils.option(
         CQLSyntax.CreateOptions.caching,
         CQLQuery.empty.appendSingleQuote(qb)
       )
@@ -201,7 +201,7 @@ private[builder] class CreateTableBuilder extends
   }
 
   def caching(qb: CQLQuery): CQLQuery = {
-    Utils.option(CQLSyntax.CreateOptions.caching, CQLQuery.empty.append(qb))
+    builder.Utils.option(CQLSyntax.CreateOptions.caching, CQLQuery.empty.append(qb))
   }
 
   def `with`(clause: CQLQuery): CQLQuery = {

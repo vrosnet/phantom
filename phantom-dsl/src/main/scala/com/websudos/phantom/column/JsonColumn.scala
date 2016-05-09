@@ -64,12 +64,16 @@ abstract class JsonColumn[T <: CassandraTable[T, R], R, ValueType](table: Cassan
   }
 }
 
-abstract class JsonListColumn[T <: CassandraTable[T, R], R, ValueType](table: CassandraTable[T, R]) extends AbstractListColumn[T, R,
+abstract class JsonListColumn[
+  T <: CassandraTable[T, R],
+  R,
+  ValueType
+](table: CassandraTable[T, R])(implicit builder: QueryBuilder) extends AbstractListColumn[T, R,
   ValueType](table) with JsonDefinition[ValueType] {
 
   override def valueAsCql(obj: ValueType): String = CQLQuery.empty.singleQuote(toJson(obj))
 
-  override val cassandraType = QueryBuilder.Collections.listType(Primitive[String].cassandraType).queryString
+  override val cassandraType = builder.Collections.listType(Primitive[String].cassandraType).queryString
 
   override def parse(r: Row): Try[List[ValueType]] = {
     if (r.isNull(name)) {
@@ -80,10 +84,14 @@ abstract class JsonListColumn[T <: CassandraTable[T, R], R, ValueType](table: Ca
   }
 }
 
-abstract class JsonSetColumn[T <: CassandraTable[T, R], R, ValueType](table: CassandraTable[T, R]) extends AbstractSetColumn[T ,R,
+abstract class JsonSetColumn[
+  T <: CassandraTable[T, R],
+  R,
+  ValueType
+](table: CassandraTable[T, R])(implicit builder: QueryBuilder) extends AbstractSetColumn[T ,R,
   ValueType](table) with JsonDefinition[ValueType] {
 
-  override val cassandraType = QueryBuilder.Collections.setType(Primitive[String].cassandraType).queryString
+  override val cassandraType = builder.Collections.setType(Primitive[String].cassandraType).queryString
 
   override def parse(r: Row): Try[Set[ValueType]] = {
     if (r.isNull(name)) {

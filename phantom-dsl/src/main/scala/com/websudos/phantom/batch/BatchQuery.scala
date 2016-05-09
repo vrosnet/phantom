@@ -85,7 +85,11 @@ sealed class BatchQuery[Status <: ConsistencyBound](
 
 
   @implicitNotFound("A ConsistencyLevel was already specified for this query.")
-  final def consistencyLevel_=(level: ConsistencyLevel)(implicit ev: Status =:= Unspecified, session: Session): BatchQuery[Specified] = {
+  final def consistencyLevel_=(level: ConsistencyLevel)(
+    implicit ev: Status =:= Unspecified,
+    session: Session,
+    builder: QueryBuilder
+  ): BatchQuery[Specified] = {
     if (session.v3orNewer) {
       new BatchQuery[Specified](
         iterator,
@@ -98,7 +102,7 @@ sealed class BatchQuery[Status <: ConsistencyBound](
       new BatchQuery[Specified](
         iterator,
         batchType,
-        usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart append builder.consistencyLevel(level.toString),
         added,
         options
       )
@@ -150,11 +154,11 @@ sealed class BatchQuery[Status <: ConsistencyBound](
     )
   }
 
-  def timestamp(stamp: Long): BatchQuery[Status] = {
+  def timestamp(stamp: Long)(implicit builder: QueryBuilder): BatchQuery[Status] = {
     new BatchQuery(
       iterator,
       batchType,
-      usingPart append QueryBuilder.timestamp(stamp.toString),
+      usingPart append builder.timestamp(stamp.toString),
       added,
       options
     )
@@ -173,7 +177,7 @@ private[phantom] trait Batcher {
     new BatchQuery(Iterator.empty, BatchType.Logged, UsingPart.empty, false, QueryOptions.empty)
   }
 
-  def timestamp(stamp: Long): BatchQuery[Unspecified] = {
+  def timestamp(stamp: Long)(implicit builder: QueryBuilder): BatchQuery[Unspecified] = {
     apply().timestamp(stamp)
   }
 

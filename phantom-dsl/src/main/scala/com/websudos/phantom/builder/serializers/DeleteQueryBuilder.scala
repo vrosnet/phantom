@@ -37,7 +37,7 @@ case class TableReference(space: String, name: String) {
 
   def tableDef(config: QueryBuilderConfig, tableName: String): CQLQuery = {
     if (config.caseSensitiveTables) {
-      CQLQuery(CQLQuery.escape(tableName))
+      CQLQuery(CQLQuery.doubleQuote(tableName))
     } else {
       CQLQuery(tableName)
     }

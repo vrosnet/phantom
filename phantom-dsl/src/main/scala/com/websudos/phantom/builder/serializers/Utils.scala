@@ -29,7 +29,6 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder.Utils
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
@@ -100,7 +99,7 @@ private[builder] trait Utils {
   }
 
   def option(option: String, value: String): CQLQuery = {
-    Utils.concat(option, CQLSyntax.Symbols.`=`, value)
+    concat(option, CQLSyntax.Symbols.`=`, value)
   }
 
   def option(opt: String, value: CQLQuery): CQLQuery = {

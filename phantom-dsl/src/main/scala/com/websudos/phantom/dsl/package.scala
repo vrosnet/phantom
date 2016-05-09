@@ -36,12 +36,12 @@ import java.util.{Date, Random}
 import com.datastax.driver.core.utils.UUIDs
 import com.datastax.driver.core.{VersionNumber, ConsistencyLevel => CLevel}
 import com.websudos.phantom.batch.Batcher
-import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.clauses.{UpdateClause, WhereClause}
 import com.websudos.phantom.builder.ops._
 import com.websudos.phantom.builder.primitives.{DefaultPrimitives, Primitive}
 import com.websudos.phantom.builder.query.{CQLQuery, CreateImplicits, DeleteImplicits, SelectImplicits}
 import com.websudos.phantom.builder.syntax.CQLSyntax
+import com.websudos.phantom.builder.{QueryBuilder, QueryBuilderConfig, QueryBuilderHolder}
 import shapeless.{::, HNil}
 
 import scala.concurrent.ExecutionContextExecutor
@@ -53,6 +53,10 @@ package object dsl extends ImplicitMechanism with CreateImplicits
   with SelectImplicits
   with Operators
   with DeleteImplicits {
+
+  val QueryBuilderHolder = new QueryBuilderHolder(new QueryBuilder(QueryBuilderConfig.Default))
+
+  implicit def builder: QueryBuilder = QueryBuilderHolder.builder
 
   type CassandraTable[Owner <: CassandraTable[Owner, Record], Record] = com.websudos.phantom.CassandraTable[Owner, Record]
 
@@ -186,45 +190,45 @@ package object dsl extends ImplicitMechanism with CreateImplicits
 
     def ltToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
-        QueryBuilder.Where.lt(
-          QueryBuilder.Where.token(p.name).queryString,
-          QueryBuilder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
+        QueryBuilderHolder.builder.Where.lt(
+          QueryBuilderHolder.builder.Where.token(p.name).queryString,
+          QueryBuilderHolder.builder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
         )
       )
     }
 
     def lteToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
-        QueryBuilder.Where.lte(
-          QueryBuilder.Where.token(p.name).queryString,
-          QueryBuilder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
+        QueryBuilderHolder.builder.Where.lte(
+          QueryBuilderHolder.builder.Where.token(p.name).queryString,
+          QueryBuilderHolder.builder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
         )
       )
     }
 
     def gtToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
-        QueryBuilder.Where.gt(
-          QueryBuilder.Where.token(p.name).queryString,
-          QueryBuilder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
+        QueryBuilderHolder.builder.Where.gt(
+          QueryBuilderHolder.builder.Where.token(p.name).queryString,
+          QueryBuilderHolder.builder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
         )
       )
     }
 
     def gteToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
-        QueryBuilder.Where.gte(
-          QueryBuilder.Where.token(p.name).queryString,
-          QueryBuilder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
+        QueryBuilderHolder.builder.Where.gte(
+          QueryBuilderHolder.builder.Where.token(p.name).queryString,
+          QueryBuilderHolder.builder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
         )
       )
     }
 
     def eqsToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
-        QueryBuilder.Where.eqs(
-          QueryBuilder.Where.token(p.name).queryString,
-          QueryBuilder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
+        QueryBuilderHolder.builder.Where.eqs(
+          QueryBuilderHolder.builder.Where.token(p.name).queryString,
+          QueryBuilderHolder.builder.Where.fcall(CQLSyntax.token, p.asCql(value)).queryString
         )
       )
     }
@@ -235,13 +239,13 @@ package object dsl extends ImplicitMechanism with CreateImplicits
     Record
   ](val col: CounterColumn[Owner, Record]) extends AnyVal {
     final def +=[T : Numeric](value: T): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Update.increment(col.name, value.toString))
+      new UpdateClause.Condition(QueryBuilderHolder.builder.Update.increment(col.name, value.toString))
     }
 
     final def increment[T : Numeric](value: T): UpdateClause.Condition = +=(value)
 
     final def -=[T : Numeric](value: T): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Update.decrement(col.name, value.toString))
+      new UpdateClause.Condition(QueryBuilderHolder.builder.Update.decrement(col.name, value.toString))
     }
 
     final def decrement[T : Numeric](value: T): UpdateClause.Condition = -=(value)

@@ -29,6 +29,8 @@
  */
 package com.websudos.phantom.builder
 
+import java.util.concurrent.atomic.AtomicReference
+
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.serializers._
 import com.websudos.phantom.builder.syntax.CQLSyntax
@@ -39,17 +41,17 @@ object QueryBuilderConfig {
   final val Default = new QueryBuilderConfig(true)
 }
 
-abstract class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.Default) {
+private[phantom] class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.Default) {
 
   def caseSensitiveNames(boolean: Boolean): Unit = {
     config.caseSensitiveTables = boolean
   }
 
-  case object Create extends CreateTableBuilder
+  case object Create extends CreateTableBuilder(this)
 
   case object Delete extends DeleteQueryBuilder
 
-  case object Update extends UpdateQueryBuilder
+  case object Update extends UpdateQueryBuilder(this)
 
   case object Collections extends CollectionModifiers(this)
 
@@ -118,4 +120,12 @@ abstract class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.
   }
 }
 
-private[phantom] object QueryBuilder extends QueryBuilder(QueryBuilderConfig.Default)
+class QueryBuilderHolder(private[this] val qb: QueryBuilder) {
+  def builderReference: AtomicReference[QueryBuilder] = new AtomicReference[QueryBuilder](qb)
+
+  def builder: QueryBuilder = builderReference.get
+
+  def configure(config: QueryBuilderConfig): Unit = {
+    builderReference.set(new QueryBuilder(config))
+  }
+}

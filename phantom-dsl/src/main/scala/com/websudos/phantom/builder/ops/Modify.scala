@@ -40,7 +40,9 @@ import shapeless.<:!<
 
 import scala.annotation.implicitNotFound
 
-private[phantom] abstract class AbstractModifyColumn[RR](col: AbstractColumn[RR]) {
+private[phantom] abstract class AbstractModifyColumn[RR](
+  col: AbstractColumn[RR]
+)(implicit builder: QueryBuilder) {
 
   /**
     * Default setTo clause for all update queries except for map columns.
@@ -54,7 +56,7 @@ private[phantom] abstract class AbstractModifyColumn[RR](col: AbstractColumn[RR]
     * @return A serialized update clause condition that is latter appended to the Set Query part of an update query.
     */
   def setTo(value: RR): UpdateClause.Condition = {
-    new UpdateClause.Condition(QueryBuilder.Update.setTo(col.name, col.asCql(value)))
+    new UpdateClause.Condition(builder.Update.setTo(col.name, col.asCql(value)))
   }
 
   /**
@@ -71,15 +73,16 @@ private[phantom] abstract class AbstractModifyColumn[RR](col: AbstractColumn[RR]
     */
   def setTo(value: PrepareMark): PreparedWhereClause.ParametricCondition[RR] = {
     new PreparedWhereClause.ParametricCondition[RR](
-      QueryBuilder.Update.setTo(col.name, value.qb.queryString)
+      builder.Update.setTo(col.name, value.qb.queryString)
     )
   }
 }
 
-sealed class ModifyColumn[RR](col: AbstractColumn[RR]) extends AbstractModifyColumn[RR](col)
+sealed class ModifyColumn[RR](col: AbstractColumn[RR])(implicit builder: QueryBuilder) extends AbstractModifyColumn[RR](col)
 
-sealed class ModifyColumnOptional[Owner <: CassandraTable[Owner, Record], Record, RR](col: OptionalColumn[Owner, Record, RR])
-  extends AbstractModifyColumn[Option[RR]](col)
+sealed class ModifyColumnOptional[Owner <: CassandraTable[Owner, Record], Record, RR](
+  col: OptionalColumn[Owner, Record, RR]
+)(implicit builder: QueryBuilder) extends AbstractModifyColumn[Option[RR]](col)
 
 abstract class SelectColumn[T](val col: AbstractColumn[_]) {
   def apply(r: Row): T
@@ -99,64 +102,82 @@ sealed trait ColumnModifiers {
 
 trait CollectionOperators {
 
-  implicit class ListLikeModifyColumn[Owner <: CassandraTable[Owner, Record], Record, RR](col: AbstractListColumn[Owner, Record, RR]) {
+  implicit class ListLikeModifyColumn[
+    Owner <: CassandraTable[Owner, Record],
+    Record,
+    RR
+  ](col: AbstractListColumn[Owner, Record, RR])(implicit builder: QueryBuilder) {
 
     def prepend(value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.prepend(col.name, col.asCql(value :: Nil)))
+      new UpdateClause.Condition(builder.Collections.prepend(col.name, col.asCql(value :: Nil)))
     }
 
     def prepend(values: List[RR]): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.prepend(col.name, col.asCql(values)))
+      new UpdateClause.Condition(builder.Collections.prepend(col.name, col.asCql(values)))
     }
 
     def append(value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.append(col.name, col.asCql(value :: Nil)))
+      new UpdateClause.Condition(builder.Collections.append(col.name, col.asCql(value :: Nil)))
     }
 
     def append(values: List[RR]): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.append(col.name, col.asCql(values)))
+      new UpdateClause.Condition(builder.Collections.append(col.name, col.asCql(values)))
     }
 
     def discard(value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.discard(col.name, col.asCql(value :: Nil)))
+      new UpdateClause.Condition(builder.Collections.discard(col.name, col.asCql(value :: Nil)))
     }
 
     def discard(values: List[RR]): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.discard(col.name, col.asCql(values)))
+      new UpdateClause.Condition(builder.Collections.discard(col.name, col.asCql(values)))
     }
 
     def setIdx(i: Int, value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.setIdX(col.name, i.toString, col.valueAsCql(value)))
+      new UpdateClause.Condition(builder.Collections.setIdX(col.name, i.toString, col.valueAsCql(value)))
     }
   }
 
-  implicit class SetLikeModifyColumn[Owner <: CassandraTable[Owner, Record], Record, RR](col: AbstractSetColumn[Owner, Record, RR]) {
+  implicit class SetLikeModifyColumn[
+    Owner <: CassandraTable[Owner, Record],
+    Record,
+    RR
+  ](col: AbstractSetColumn[Owner, Record, RR])(implicit builder: QueryBuilder) {
 
     def add(value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.add(col.name, Set(col.valueAsCql(value))))
+      new UpdateClause.Condition(builder.Collections.add(col.name, Set(col.valueAsCql(value))))
     }
 
     def addAll(values: Set[RR]): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.add(col.name, values.map(col.valueAsCql)))
+      new UpdateClause.Condition(builder.Collections.add(col.name, values.map(col.valueAsCql)))
     }
 
     def remove(value: RR): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.remove(col.name, Set(col.valueAsCql(value))))
+      new UpdateClause.Condition(builder.Collections.remove(col.name, Set(col.valueAsCql(value))))
     }
 
     def removeAll(values: Set[RR]): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.remove(col.name, values.map(col.valueAsCql)))
+      new UpdateClause.Condition(builder.Collections.remove(col.name, values.map(col.valueAsCql)))
     }
   }
 
-  implicit class MapLikeModifyColumn[Owner <: CassandraTable[Owner, Record], Record, A, B](col: AbstractMapColumn[Owner, Record, A, B]) {
+  implicit class MapLikeModifyColumn[
+    Owner <: CassandraTable[Owner, Record],
+    Record,
+    A,
+    B
+  ](col: AbstractMapColumn[Owner, Record, A, B])(implicit builder: QueryBuilder) {
 
     def set(key: A, value: B): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.mapSet(col.name, col.keyAsCql(key).toString, col.valueAsCql(value)))
+      new UpdateClause.Condition(
+        builder.Collections.mapSet(
+          col.name,
+          col.keyAsCql(key).toString,
+          col.valueAsCql(value))
+      )
     }
 
     def put(value: (A, B)): UpdateClause.Condition = {
-      new UpdateClause.Condition(QueryBuilder.Collections.put(
+      new UpdateClause.Condition(builder.Collections.put(
         col.name,
         col.keyAsCql(value._1).toString -> col.valueAsCql(value._2))
       )
@@ -164,7 +185,7 @@ trait CollectionOperators {
 
     def putAll[L](values: L)(implicit ev1: L => Traversable[(A, B)]): UpdateClause.Condition = {
       new UpdateClause.Condition(
-        QueryBuilder.Collections.put(col.name, values.map { case (key, value) => {
+        builder.Collections.put(col.name, values.map { case (key, value) => {
           Tuple2(col.keyAsCql(key).toString, col.valueAsCql(value).toString)
         }}.toSeq : _*))
     }
@@ -179,7 +200,8 @@ private[ops] trait ModifyMechanism extends CollectionOperators with ColumnModifi
   implicit def columnToModifyColumn[RR](
     col: AbstractColumn[RR])(
     implicit ev: col.type <:!< Unmodifiable,
-    ev2: col.type <:!< CollectionValueDefinition[RR]
+    ev2: col.type <:!< CollectionValueDefinition[RR],
+    builder: QueryBuilder
   ): ModifyColumn[RR] = new ModifyColumn(col)
 
 
