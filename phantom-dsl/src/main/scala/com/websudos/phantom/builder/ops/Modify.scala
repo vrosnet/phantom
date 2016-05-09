@@ -176,9 +176,11 @@ sealed class ModifiableColumn[T]
 private[ops] trait ModifyMechanism extends CollectionOperators with ColumnModifiers {
 
   @implicitNotFound(msg = "This type of column can not be modified. Indexes are fixed, counters can only be incremented and decremented.")
-  implicit def columnToModifyColumn[RR](col: AbstractColumn[RR])
-                                       (implicit ev: col.type <:!< Unmodifiable,
-                                         ev2: col.type <:!< CollectionValueDefinition[RR]): ModifyColumn[RR] = new ModifyColumn(col)
+  implicit def columnToModifyColumn[RR](
+    col: AbstractColumn[RR])(
+    implicit ev: col.type <:!< Unmodifiable,
+    ev2: col.type <:!< CollectionValueDefinition[RR]
+  ): ModifyColumn[RR] = new ModifyColumn(col)
 
 
 }

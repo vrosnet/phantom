@@ -184,7 +184,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
 
   implicit class PartitionTokenHelper[T](val p: Column[_, _, T] with PartitionKey[T]) extends AnyVal {
 
-    def ltToken (value: T): WhereClause.Condition = {
+    def ltToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
         QueryBuilder.Where.lt(
           QueryBuilder.Where.token(p.name).queryString,
@@ -193,7 +193,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
       )
     }
 
-    def lteToken (value: T): WhereClause.Condition = {
+    def lteToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
         QueryBuilder.Where.lte(
           QueryBuilder.Where.token(p.name).queryString,
@@ -202,7 +202,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
       )
     }
 
-    def gtToken (value: T): WhereClause.Condition = {
+    def gtToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
         QueryBuilder.Where.gt(
           QueryBuilder.Where.token(p.name).queryString,
@@ -211,7 +211,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
       )
     }
 
-    def gteToken (value: T): WhereClause.Condition = {
+    def gteToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
         QueryBuilder.Where.gte(
           QueryBuilder.Where.token(p.name).queryString,
@@ -220,7 +220,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
       )
     }
 
-    def eqsToken (value: T): WhereClause.Condition = {
+    def eqsToken(value: T): WhereClause.Condition = {
       new WhereClause.Condition(
         QueryBuilder.Where.eqs(
           QueryBuilder.Where.token(p.name).queryString,
@@ -230,7 +230,10 @@ package object dsl extends ImplicitMechanism with CreateImplicits
     }
   }
 
-  implicit class CounterOperations[Owner <: CassandraTable[Owner, Record], Record](val col: CounterColumn[Owner, Record]) extends AnyVal {
+  implicit class CounterOperations[
+    Owner <: CassandraTable[Owner, Record],
+    Record
+  ](val col: CounterColumn[Owner, Record]) extends AnyVal {
     final def +=[T : Numeric](value: T): UpdateClause.Condition = {
       new UpdateClause.Condition(QueryBuilder.Update.increment(col.name, value.toString))
     }
