@@ -93,11 +93,19 @@ class AlterQuery[
    * @return An alter query with a DROP TABLE instruction encoded in the query string.
    */
   final def drop()(implicit keySpace: KeySpace): AlterQuery[Table, Record, Status, Chain] = {
-    new AlterQuery(table, QueryBuilder.Alter.dropTable(table.tableName, keySpace.name), options)
+    new AlterQuery(
+      table,
+      QueryBuilder.Alter.dropTable(QueryBuilder.table(keySpace.name, table.tableName)),
+      options
+    )
   }
 
   final def dropIfExists()(implicit keySpace: KeySpace): AlterQuery[Table, Record, Status, Chain] = {
-    new AlterQuery(table, QueryBuilder.Alter.dropTableIfExist(table.tableName, keySpace.name), options)
+    new AlterQuery(
+      table,
+      QueryBuilder.Alter.dropTableIfExist(QueryBuilder.table(keySpace.name, table.tableName)),
+      options
+    )
   }
 
   /**
@@ -119,17 +127,23 @@ class AlterQuery[
   }
 
   @implicitNotFound("You cannot use 2 `with` clauses on the same create query. Use `and` instead.")
-  final def `with`(clause: TablePropertyClause)(implicit ev: Chain =:= WithUnchainned): AlterQuery[Table, Record, Status, WithChainned] = {
+  final def `with`(clause: TablePropertyClause)(
+    implicit ev: Chain =:= WithUnchainned
+  ): AlterQuery[Table, Record, Status, WithChainned] = {
     new AlterQuery(table, QueryBuilder.Alter.`with`(qb, clause.qb), options)
   }
 
   @implicitNotFound("You cannot use 2 `with` clauses on the same create query. Use `and` instead.")
-  final def option(clause: TablePropertyClause)(implicit ev: Chain =:= WithUnchainned): AlterQuery[Table, Record, Status, WithChainned] = {
+  final def option(clause: TablePropertyClause)(
+    implicit ev: Chain =:= WithUnchainned
+  ): AlterQuery[Table, Record, Status, WithChainned] = {
     new AlterQuery(table, QueryBuilder.Alter.`with`(qb, clause.qb), options)
   }
 
   @implicitNotFound("You have to use `with` before using `and` in a create query.")
-  final def and(clause: TablePropertyClause)(implicit ev: Chain =:= WithChainned): AlterQuery[Table, Record, Status, WithChainned] = {
+  final def and(clause: TablePropertyClause)(
+    implicit ev: Chain =:= WithChainned
+  ): AlterQuery[Table, Record, Status, WithChainned] = {
     new AlterQuery(table, QueryBuilder.Where.and(qb, clause.qb), options)
   }
 
@@ -162,7 +176,7 @@ object AlterQuery {
   def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): AlterQuery.Default[T, R] = {
     new AlterQuery[T, R, Unspecified, WithUnchainned](
       table,
-      QueryBuilder.Alter.alter(QueryBuilder.keyspace(keySpace.name, table.tableName).queryString),
+      QueryBuilder.Alter.alter(QueryBuilder.table(keySpace.name, table.tableName)),
       QueryOptions.empty
     )
   }

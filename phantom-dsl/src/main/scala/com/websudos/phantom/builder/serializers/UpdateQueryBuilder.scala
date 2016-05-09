@@ -92,9 +92,8 @@ private[builder] class UpdateQueryBuilder {
     clauses(CQLSyntax.using, queries)
   }
 
-  def update(tableName: String): CQLQuery = {
-    CQLQuery(CQLSyntax.update)
-      .forcePad.append(tableName)
+  def update(table: TableReference): CQLQuery = {
+    CQLQuery(CQLSyntax.update).forcePad.append(table.toCql())
   }
 
   def updateMapColumn(column: String, key: String, value: String): CQLQuery = {

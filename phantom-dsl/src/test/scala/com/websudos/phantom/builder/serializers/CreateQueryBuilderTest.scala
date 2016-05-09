@@ -31,7 +31,6 @@ package com.websudos.phantom.builder.serializers
 
 import java.util.concurrent.TimeUnit
 
-import com.twitter.conversions.storage._
 import com.twitter.util.{Duration => TwitterDuration}
 import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.SerializationTest
@@ -46,6 +45,7 @@ import scala.concurrent.duration._
 class CreateQueryBuilderTest extends FreeSpec with Matchers with SerializationTest {
 
   val BasicTable = TestDatabase.basicTable
+  private[this] val defaultMbSize = 50
   final val DefaultTtl = 500
   final val OneDay = 86400
 
@@ -62,7 +62,7 @@ class CreateQueryBuilderTest extends FreeSpec with Matchers with SerializationTe
 
       "serialise a simple create query with a SizeTieredCompactionStrategy and 1 compaction strategy options set" in {
 
-        val qb = BasicTable.create.`with`(compaction eqs LeveledCompactionStrategy.sstable_size_in_mb(50)).qb.queryString
+        val qb = BasicTable.create.`with`(compaction eqs LeveledCompactionStrategy.sstable_size_in_mb(defaultMbSize)).qb.queryString
 
         qb shouldEqual "CREATE TABLE phantom.basicTable (id uuid, id2 uuid, id3 uuid, placeholder text, PRIMARY KEY (id, id2, id3)) WITH compaction = { 'class' " +
           ": 'LeveledCompactionStrategy', 'sstable_size_in_mb' : '50' }"
@@ -70,7 +70,7 @@ class CreateQueryBuilderTest extends FreeSpec with Matchers with SerializationTe
 
       "serialise a simple create query with a SizeTieredCompactionStrategy and 1 compaction strategy options set and a compression strategy set" in {
         val qb = BasicTable.create
-          .`with`(compaction eqs LeveledCompactionStrategy.sstable_size_in_mb(50))
+          .`with`(compaction eqs LeveledCompactionStrategy.sstable_size_in_mb(defaultMbSize))
           .and(compression eqs LZ4Compressor.crc_check_chance(0.5))
         .qb.queryString
 
@@ -208,13 +208,13 @@ class CreateQueryBuilderTest extends FreeSpec with Matchers with SerializationTe
 
     "should allow generating secondary indexes based on trait mixins" - {
       "specify a secondary index on a non-map column" in {
-        val qb = QueryBuilder.Create.index("t", "k", "col").queryString
+        val qb = QueryBuilder.Create.index(QueryBuilder.table("k", "t"), "col").queryString
 
         qb shouldEqual "CREATE INDEX IF NOT EXISTS t_col_idx ON k.t(col)"
       }
 
       "specify a secondary index on a map column for the keys of a map column" in {
-        val qb = QueryBuilder.Create.mapIndex("t", "k", "col").queryString
+        val qb = QueryBuilder.Create.mapIndex(QueryBuilder.table("k", "t"), "col").queryString
 
         qb shouldEqual "CREATE INDEX IF NOT EXISTS t_col_idx ON k.t(keys(col))"
       }

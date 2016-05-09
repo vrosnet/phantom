@@ -57,7 +57,7 @@ object TruncateQuery {
   def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): TruncateQuery.Default[T, R] = {
     new TruncateQuery(
       table,
-      QueryBuilder.truncate(QueryBuilder.keyspace(keySpace.name, table.tableName).queryString),
+      QueryBuilder.truncate(QueryBuilder.table(keySpace.name, table.tableName)),
       QueryOptions.empty
     )
   }

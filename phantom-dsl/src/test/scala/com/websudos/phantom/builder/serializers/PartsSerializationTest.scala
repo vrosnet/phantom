@@ -73,7 +73,7 @@ class PartsSerializationTest extends FreeSpec with SerializationTest {
       "build to a CQLQuery clause using a SELECT query as an initializer" in {
         val part = new WherePart()
 
-        val init = QueryBuilder.Select.select("table", "keyspace")
+        val init = QueryBuilder.Select.select(QueryBuilder.table("table", "keyspace"))
 
         val l1 = QueryBuilder.Update.where(QueryBuilder.Where.eqs("a", "b"))
 
@@ -116,7 +116,9 @@ class PartsSerializationTest extends FreeSpec with SerializationTest {
           .append(QueryBuilder.Update.set(QueryBuilder.Update.setTo("a", "b")))
           .append(QueryBuilder.Update.setTo("c", "d"))
 
-        (part1 merge new SetPart()).build(QueryBuilder.Update.update("k.t")).queryString shouldEqual "UPDATE k.t SET a = b, c = d"
+        (part1 merge new SetPart()).build(
+          QueryBuilder.Update.update(QueryBuilder.table("k", "t"))
+        ).queryString shouldEqual "UPDATE k.t SET a = b, c = d"
       }
 
       "should merge a SET part with an WHERE part in an Update clause and no init value" in {
@@ -139,7 +141,7 @@ class PartsSerializationTest extends FreeSpec with SerializationTest {
         val wherePart = new WherePart().append(QueryBuilder.Update.where(QueryBuilder.Where.eqs("z1", "z2")))
 
         (part1 merge wherePart)
-          .build(QueryBuilder.Update.update("k.t"))
+          .build(QueryBuilder.Update.update(QueryBuilder.table("k", "t")))
           .queryString shouldEqual "UPDATE k.t SET a = b, c = d WHERE z1 = z2"
       }
     }
@@ -154,7 +156,7 @@ class PartsSerializationTest extends FreeSpec with SerializationTest {
 
       "merging consecutive empty parts with an initialization should build into the initialization string" in {
 
-        val qb = QueryBuilder.Select.count("t", "k")
+        val qb = QueryBuilder.Select.count(QueryBuilder.table("k", "t"))
 
         val merged = (SetPart.empty merge WherePart.empty merge OrderPart.empty merge FilteringPart.empty).build(qb)
 
@@ -172,7 +174,7 @@ class PartsSerializationTest extends FreeSpec with SerializationTest {
         val filteringPart = new FilteringPart().append(QueryBuilder.Select.allowFiltering())
 
         (part1 merge wherePart merge filteringPart)
-          .build(QueryBuilder.Select.select("t", "k"))
+          .build(QueryBuilder.Select.select(QueryBuilder.table("k", "t")))
           .queryString shouldEqual "SELECT * FROM k.t SET a = b, c = d WHERE z1 = z2 ALLOW FILTERING"
       }
     }

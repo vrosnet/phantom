@@ -33,13 +33,17 @@ import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.serializers._
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-case class QueryBuilderConfig(caseSensitiveTables: Boolean)
+case class QueryBuilderConfig(var caseSensitiveTables: Boolean)
 
 object QueryBuilderConfig {
-  final val Default = new QueryBuilderConfig(false)
+  final val Default = new QueryBuilderConfig(true)
 }
 
 abstract class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.Default) {
+
+  def caseSensitiveNames(boolean: Boolean): Unit = {
+    config.caseSensitiveTables = boolean
+  }
 
   case object Create extends CreateTableBuilder
 
@@ -65,8 +69,8 @@ abstract class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.
     qb.forcePad.append(CQLSyntax.ifNotExists)
   }
 
-  def truncate(table: String): CQLQuery = {
-    CQLQuery(CQLSyntax.truncate).forcePad.append(table)
+  def truncate(table: TableReference): CQLQuery = {
+    CQLQuery(CQLSyntax.truncate).forcePad.append(table.toCql())
   }
 
   def using(qb: CQLQuery): CQLQuery = {
@@ -97,25 +101,11 @@ abstract class QueryBuilder(val config: QueryBuilderConfig = QueryBuilderConfig.
     CQLQuery(CQLSyntax.consistency).forcePad.append(level)
   }
 
-  def tableDef(tableName: String): CQLQuery = {
-    if (config.caseSensitiveTables) {
-      CQLQuery(CQLQuery.escape(tableName))
-    } else {
-      CQLQuery(tableName)
-    }
+  def table(space: String, tableQuery: CQLQuery): TableReference = {
+    table(space, tableQuery.queryString)
   }
 
-  def keyspace(space: String, tableQuery: CQLQuery): CQLQuery = {
-    keyspace(space, tableQuery.queryString)
-  }
-
-  def keyspace(keySpace: String, table: String): CQLQuery = {
-    if (table.startsWith(keySpace + ".")) {
-      tableDef(table)
-    }  else {
-      tableDef(table).prepend(s"$keySpace.")
-    }
-  }
+  def table(keySpace: String, table: String): TableReference = TableReference(keySpace, table)
 
   def limit(value: Int): CQLQuery = {
     CQLQuery(CQLSyntax.limit)

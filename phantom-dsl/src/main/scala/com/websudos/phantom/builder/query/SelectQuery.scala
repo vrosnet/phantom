@@ -29,8 +29,6 @@
  */
 package com.websudos.phantom.builder.query
 
-import java.util.concurrent.Executor
-
 import com.datastax.driver.core.{ConsistencyLevel, Row, Session}
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.builder._
@@ -41,7 +39,7 @@ import shapeless.ops.hlist.Reverse
 import shapeless.{::, =:!=, HList, HNil}
 
 import scala.annotation.implicitNotFound
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future => ScalaFuture}
+import scala.concurrent.{ExecutionContextExecutor, Future => ScalaFuture}
 import scala.util.Try
 
 class SelectQuery[
@@ -289,7 +287,6 @@ class SelectQuery[
    * @param session The implicit session provided by a [[com.websudos.phantom.connectors.Connector]].
    * @param keySpace The implicit keySpace definition provided by a [[com.websudos.phantom.connectors.Connector]].
    * @param ev The implicit limit for the query.
-   * @param executor The implicit Java executor.
    * @param ec The implicit Scala execution context.
    * @return A Scala future guaranteed to contain a single result wrapped as an Option.
    */
@@ -331,14 +328,14 @@ private[phantom] class RootSelectBlock[
         new SelectQuery(
           table,
           rowFunc,
-          QueryBuilder.Select.select(table.tableName, keySpace.name, opt)
+          QueryBuilder.Select.select(QueryBuilder.table(keySpace.name, table.tableName), opt)
         )
       }
       case None => {
         new SelectQuery(
           table,
           rowFunc,
-          QueryBuilder.Select.select(table.tableName, keySpace.name, columns: _*)
+          QueryBuilder.Select.select(QueryBuilder.table(keySpace.name, table.tableName), columns: _*)
         )
       }
     }
@@ -346,7 +343,11 @@ private[phantom] class RootSelectBlock[
 
   @implicitNotFound("You haven't provided a KeySpace in scope. Use a Connector to automatically inject one.")
   def distinct()(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = {
-    new SelectQuery(table, rowFunc, QueryBuilder.Select.distinct(table.tableName, keySpace.name, columns: _*))
+    new SelectQuery(
+      table,
+      rowFunc,
+      QueryBuilder.Select.distinct(QueryBuilder.table(keySpace.name, table.tableName), columns: _*)
+    )
   }
 
   private[this] def extractCount(r: Row): Long = {
@@ -362,7 +363,7 @@ private[phantom] class RootSelectBlock[
     new SelectQuery(
       table,
       f1(table).extractor,
-      QueryBuilder.Select.select(table.tableName, keySpace.name, f1(table).qb),
+      QueryBuilder.Select.select(QueryBuilder.table(keySpace.name, table.tableName)),
       WherePart.empty,
       OrderPart.empty,
       LimitedPart.empty,
@@ -377,7 +378,7 @@ private[phantom] class RootSelectBlock[
     new SelectQuery(
       table,
       extractCount,
-      QueryBuilder.Select.count(table.tableName, keySpace.name),
+      QueryBuilder.Select.count(QueryBuilder.table(keySpace.name, table.tableName)),
       WherePart.empty,
       OrderPart.empty,
       LimitedPart.empty,
@@ -407,7 +408,8 @@ object SelectQuery {
 
 private[phantom] trait SelectImplicits {
   @implicitNotFound("You haven't provided a KeySpace in scope. Use a Connector to automatically inject one.")
-  final implicit def rootSelectBlockToSelectQuery[T <: CassandraTable[T, _], R]( root: RootSelectBlock[T, R])(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = {
-    root.all
-  }
+  final implicit def rootSelectBlockToSelectQuery[
+    T <: CassandraTable[T, _],
+    R
+  ](root: RootSelectBlock[T, R])(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = root.all
 }

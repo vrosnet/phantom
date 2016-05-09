@@ -32,6 +32,7 @@ package com.websudos.phantom.builder.query
 import com.datastax.driver.core._
 import com.websudos.phantom.builder._
 import com.websudos.phantom.builder.query.options.TablePropertyClause
+import com.websudos.phantom.builder.serializers.TableReference
 import com.websudos.phantom.builder.syntax.CQLSyntax
 import com.websudos.phantom.connectors.KeySpace
 import com.websudos.phantom.{CassandraTable, Manager}
@@ -45,8 +46,9 @@ class RootCreateQuery[
 ](val table: Table) {
 
   private[phantom] def default()(implicit keySpace: KeySpace): CQLQuery = {
-    CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.table)
-      .forcePad.append(QueryBuilder.keyspace(keySpace.name, table.tableName)).forcePad
+    CQLQuery(CQLSyntax.create)
+      .forcePad.append(CQLSyntax.table).forcePad
+      .append(QueryBuilder.table(keySpace.name, table.tableName).toCql()).forcePad
       .append(CQLSyntax.Symbols.`(`)
       .append(QueryBuilder.Utils.join(table.columns.map(_.qb): _*))
       .append(CQLSyntax.Symbols.`,`)
@@ -62,7 +64,7 @@ class RootCreateQuery[
   private[this] def lightweight()(implicit keySpace: KeySpace): CQLQuery = {
     CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.table)
       .forcePad.append(CQLSyntax.ifNotExists)
-      .forcePad.append(QueryBuilder.keyspace(keySpace.name, table.tableName))
+      .forcePad.append(QueryBuilder.table(keySpace.name, table.tableName).toCql())
       .forcePad.append(CQLSyntax.Symbols.`(`)
       .append(QueryBuilder.Utils.join(table.columns.map(_.qb): _*))
       .append(CQLSyntax.Symbols.`,`)
@@ -175,15 +177,15 @@ class CreateQuery[
     (withClause merge WithPart.empty) build init
   }
 
-  private[phantom] def indexList(name: String): ExecutableStatementList = {
+  private[phantom] def indexList(tableRef: TableReference): ExecutableStatementList = {
     new ExecutableStatementList(table.secondaryKeys map {
       key => {
         if (key.isMapKeyIndex) {
-          QueryBuilder.Create.mapIndex(table.tableName, name, key.name)
+          QueryBuilder.Create.mapIndex(tableRef, key.name)
         } else if (key.isMapEntryIndex) {
-          QueryBuilder.Create.mapEntries(table.tableName, name, key.name)
+          QueryBuilder.Create.mapEntries(tableRef, key.name)
         } else {
-          QueryBuilder.Create.index(table.tableName, name, key.name)
+          QueryBuilder.Create.index(tableRef, key.name)
         }
       }
     })
@@ -199,9 +201,9 @@ class CreateQuery[
     } else {
       super.future() flatMap {
         res => {
-          indexList(keySpace.name).future() map {
+          indexList(QueryBuilder.table(keySpace.name, table.tableName)).future() map {
             _ => {
-              Manager.logger.debug(s"Creating secondary indexes on ${QueryBuilder.keyspace(keySpace.name, table.tableName).queryString}")
+              Manager.logger.debug(s"Creating secondary indexes on ${QueryBuilder.table(keySpace.name, table.tableName)}")
               res
             }
           }
@@ -220,9 +222,9 @@ private[phantom] trait CreateImplicits extends TablePropertyClauses {
   val Cache = Caching
 
   implicit def rootCreateQueryToCreateQuery[
-  T <: CassandraTable[T, _],
-  R]
-  (root: RootCreateQuery[T, R])(implicit keySpace: KeySpace): CreateQuery.Default[T, R] = {
+    T <: CassandraTable[T, _],
+    R
+  ](root: RootCreateQuery[T, R])(implicit keySpace: KeySpace): CreateQuery.Default[T, R] = {
 
     if (root.table.clusteringColumns.nonEmpty) {
       new CreateQuery(root.table, root.default, WithPart.empty).withClustering()

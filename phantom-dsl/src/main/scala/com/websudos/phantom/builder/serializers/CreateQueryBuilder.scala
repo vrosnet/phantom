@@ -29,7 +29,6 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.QueryBuilder.Utils
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
@@ -148,53 +147,53 @@ private[builder] class CreateTableBuilder extends
   object Caching extends CachingQueryBuilder
 
   def read_repair_chance(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.read_repair_chance, st)
+    Utils.option(CQLSyntax.CreateOptions.read_repair_chance, st)
   }
 
   def dclocal_read_repair_chance(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.dclocal_read_repair_chance, st)
+    Utils.option(CQLSyntax.CreateOptions.dclocal_read_repair_chance, st)
   }
 
   def default_time_to_live(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.default_time_to_live, st)
+    Utils.option(CQLSyntax.CreateOptions.default_time_to_live, st)
   }
 
   def gc_grace_seconds(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.gc_grace_seconds, st)
+    Utils.option(CQLSyntax.CreateOptions.gc_grace_seconds, st)
   }
 
   def populate_io_cache_on_flush(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.populate_io_cache_on_flush, st)
+    Utils.option(CQLSyntax.CreateOptions.populate_io_cache_on_flush, st)
   }
 
   def bloom_filter_fp_chance(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.bloom_filter_fp_chance, st)
+    Utils.option(CQLSyntax.CreateOptions.bloom_filter_fp_chance, st)
   }
 
   def replicate_on_write(st: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.replicate_on_write, st)
+    Utils.option(CQLSyntax.CreateOptions.replicate_on_write, st)
   }
 
   def compression(qb: CQLQuery) : CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.compression, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
+    Utils.option(CQLSyntax.CreateOptions.compression, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
   }
 
   def compaction(qb: CQLQuery) : CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.compaction, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
+    Utils.option(CQLSyntax.CreateOptions.compaction, qb).pad.appendIfAbsent(CQLSyntax.Symbols.`}`)
   }
 
   def comment(qb: String): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.comment, CQLQuery.empty.appendSingleQuote(qb))
+    Utils.option(CQLSyntax.CreateOptions.comment, CQLQuery.empty.appendSingleQuote(qb))
   }
 
   def caching(qb: String, wrapped: Boolean): CQLQuery = {
     if (wrapped) {
-      Utils.tableOption(
+      Utils.option(
         CQLSyntax.CreateOptions.caching,
         CQLQuery.empty.append(Utils.curlyWrap(qb))
       )
     } else {
-      Utils.tableOption(
+      Utils.option(
         CQLSyntax.CreateOptions.caching,
         CQLQuery.empty.appendSingleQuote(qb)
       )
@@ -202,29 +201,27 @@ private[builder] class CreateTableBuilder extends
   }
 
   def caching(qb: CQLQuery): CQLQuery = {
-    Utils.tableOption(CQLSyntax.CreateOptions.caching, CQLQuery.empty.append(qb))
+    Utils.option(CQLSyntax.CreateOptions.caching, CQLQuery.empty.append(qb))
   }
 
   def `with`(clause: CQLQuery): CQLQuery = {
     CQLQuery(CQLSyntax.With).pad.append(clause)
   }
 
-
   /**
     * Creates an index on the keys on any column except for a Map column which requires special handling.
     * By default, mixing an index in a column will result in an index created on the values of the column.
     *
     * @param table The name of the table to create the index on.
-    * @param keySpace The keyspace to whom the table belongs to.
     * @param column The name of the column to create the secondary index on.
     * @return A CQLQuery containing the valid CQL of creating a secondary index on a Cassandra column.
     */
-  def index(table: String, keySpace: String, column: String): CQLQuery = {
+  def index(table: TableReference, column: String): CQLQuery = {
     CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.index)
       .forcePad.append(CQLSyntax.ifNotExists)
-      .forcePad.append(s"${table}_${column}_idx")
+      .forcePad.append(s"${table.name}_${column}_idx")
       .forcePad.append(CQLSyntax.On)
-      .forcePad.append(QueryBuilder.keyspace(keySpace, table))
+      .forcePad.append(table.toCql())
       .wrapn(column)
   }
 
@@ -234,16 +231,15 @@ private[builder] class CreateTableBuilder extends
    * To allow secondary indexing on Keys, Cassandra appends a KEYS($column) wrapper to the CQL query.
    *
    * @param table The name of the table to create the index on.
-   * @param keySpace The keyspace to whom the table belongs to.
    * @param column The name of the column to create the secondary index on.
    * @return A CQLQuery containing the valid CQL of creating a secondary index for the keys of a Map column.
    */
-  def mapIndex(table: String, keySpace: String, column: String): CQLQuery = {
+  def mapIndex(table: TableReference, column: String): CQLQuery = {
     CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.index)
       .forcePad.append(CQLSyntax.ifNotExists)
-      .forcePad.append(s"${table}_${column}_idx")
+      .forcePad.append(s"${table.name}_${column}_idx")
       .forcePad.append(CQLSyntax.On)
-      .forcePad.append(QueryBuilder.keyspace(keySpace, table))
+      .forcePad.append(table.toCql())
       .wrapn(CQLQuery(CQLSyntax.Keys).wrapn(column))
   }
 
@@ -253,16 +249,15 @@ private[builder] class CreateTableBuilder extends
     * To allow secondary indexing on entries, Cassandra appends a ENTRIES($column) wrapper to the CQL query.
     *
     * @param table The name of the table to create the index on.
-    * @param keySpace The keyspace to whom the table belongs to.
     * @param column The name of the column to create the secondary index on.
     * @return A CQLQuery containing the valid CQL of creating a secondary index for the entries of a Map column.
     */
-  def mapEntries(table: String, keySpace: String, column: String): CQLQuery = {
+  def mapEntries(table: TableReference, column: String): CQLQuery = {
     CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.index)
       .forcePad.append(CQLSyntax.ifNotExists)
-      .forcePad.append(s"${table}_${column}_idx")
+      .forcePad.append(s"${table.name}_${column}_idx")
       .forcePad.append(CQLSyntax.On)
-      .forcePad.append(QueryBuilder.keyspace(keySpace, table))
+      .forcePad.append(table.toCql())
       .wrapn(CQLQuery(CQLSyntax.Entries).wrapn(column))
   }
 

@@ -497,9 +497,7 @@ object UpdateQuery {
   def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): UpdateQuery.Default[T, R] = {
     new UpdateQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil](
       table,
-      QueryBuilder.Update.update(
-        QueryBuilder.keyspace(keySpace.name, table.tableName).queryString
-      )
+      QueryBuilder.Update.update(QueryBuilder.table(keySpace.name, table.tableName))
     )
   }
 

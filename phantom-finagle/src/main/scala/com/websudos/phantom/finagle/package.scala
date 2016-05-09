@@ -329,9 +329,11 @@ package object finagle {
       } else {
         query.execute() flatMap {
           res => {
-            query.indexList(keySpace.name).execute() map {
+            val tableRef = QueryBuilder.table(keySpace.name, query.table.tableName)
+
+            query.indexList(tableRef).execute() map {
               _ => {
-                Manager.logger.debug(s"Creating secondary indexes on ${QueryBuilder.keyspace(keySpace.name, query.table.tableName).queryString}")
+                Manager.logger.debug(s"Creating secondary indexes on ${tableRef.toCqlString()}")
                 res
               }
             }
