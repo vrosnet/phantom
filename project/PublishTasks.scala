@@ -118,6 +118,8 @@ object PublishTasks {
   )
 
   val RunningUnderCi = Option(System.getenv("CI")).isDefined || Option(System.getenv("TRAVIS")).isDefined
+  println(s"CI STATUS $RunningUnderCi")
 
-  lazy val effectivePublishingSettings = if (RunningUnderCi) bintrayPublishSettings else mavenPublishingSettings
+  // lazy val effectivePublishingSettings = if (RunningUnderCi) bintrayPublishSettings else mavenPublishingSettings
+  lazy val effectivePublishingSettings = bintrayPublishSettings
 }

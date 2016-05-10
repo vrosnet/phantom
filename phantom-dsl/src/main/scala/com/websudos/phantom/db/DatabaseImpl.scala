@@ -71,6 +71,10 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
     new ExecutableCreateStatementsList(tables)
   }
 
+  def create()(implicit ex: ExecutionContextExecutor): Future[Seq[ResultSet]] = {
+    autocreate().future()(connector.session, KeySpace(connector.name), ex)
+  }
+
   /**
    * Returns a list of executable statements that will be parallelized with futures
    * to drop the entire database schema in a single call.
@@ -89,6 +93,10 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
     })
   }
 
+  def dropAll()(implicit ex: ExecutionContextExecutor): Future[Seq[ResultSet]] = {
+    autodrop().future()(connector.session, KeySpace(connector.name), ex)
+  }
+
   /**
    * Returns a list of executable statements that will be parallelized with futures
    * to truncate the entire database schema in a single call.
@@ -105,6 +113,10 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
     new ExecutableStatementList(tables.toSeq.map {
       table => table.truncate().qb
     })
+  }
+
+  def truncateAll()(implicit ex: ExecutionContextExecutor): Future[Seq[ResultSet]] = {
+    autotruncate().future()(connector.session, KeySpace(connector.name), ex)
   }
 }
 

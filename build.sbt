@@ -286,17 +286,32 @@ lazy val phantomSbtPlugin = (project in file("phantom-sbt"))
   ).settings(
   name := "phantom-sbt",
   moduleName := "phantom-sbt",
-  scalaVersion := "2.10.5",
+  skip in compile :=  {
+    CrossVersion.partialVersion((scalaVersion in Global).value) match {
+      // if scala 2.11+ is used, quasiquotes are merged into scala-reflect
+      case Some((2, scalaMajor)) if scalaMajor >= 11 => {
+        println("Excluding all files from compilation")
+        true
+      }
+      case _ => false
+    }
+  },
   publish := {
-    CrossVersion.partialVersion(scalaVersion.value).map {
+
+    println((scalaVersion in Global).value)
+    CrossVersion.partialVersion((scalaVersion in Global).value).map {
       case (2, scalaMajor) if scalaMajor >= 11 => false
       case _ => true
     }
   },
   excludeFilter := {
-    CrossVersion.partialVersion(scalaVersion.value) match {
+    println((scalaVersion in Global).value)
+    CrossVersion.partialVersion((scalaVersion in Global).value) match {
       // if scala 2.11+ is used, quasiquotes are merged into scala-reflect
-      case Some((2, scalaMajor)) if scalaMajor >= 11 => NothingFilter
+      case Some((2, scalaMajor)) if scalaMajor >= 11 => {
+        println("Excluding all files from compilation")
+        NothingFilter
+      }
       case _ => AllPassFilter
     }
   },
