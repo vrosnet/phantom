@@ -120,6 +120,10 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
   }
 }
 
+trait DatabaseProvider {
+  def database: DatabaseImpl
+}
+
 sealed class ExecutableCreateStatementsList(val tables: Set[CassandraTable[_, _]]) {
 
   def future()(
