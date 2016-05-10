@@ -202,7 +202,7 @@ object InsertQuery {
   def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): InsertQuery.Default[T, R] = {
     new InsertQuery(
       table,
-      QueryBuilder.Insert.insert(QueryBuilder.keyspace(keySpace.name, table.tableName))
+      QueryBuilder.Insert.insert(QueryBuilder.table(keySpace.name, table.tableName))
     )
   }
 }

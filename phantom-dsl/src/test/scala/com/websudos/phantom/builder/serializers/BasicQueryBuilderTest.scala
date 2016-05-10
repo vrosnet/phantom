@@ -37,18 +37,18 @@ class BasicQueryBuilderTest extends QueryBuilderTest {
 
     "should append a keySpace string to a table name string with a dot separator" - {
       "should append the keyspace name if the table string name doesn't already contain it" in {
-        val qb = QueryBuilder.keyspace("k", "t").queryString
+        val qb = QueryBuilder.table("k", "t").queryString
 
         qb shouldEqual "k.t"
       }
 
       "should append the keyspace name if the table string name starts with the keyspace name" in {
-        val qb = QueryBuilder.keyspace("recipes", "recipes_main").queryString
+        val qb = QueryBuilder.table("recipes", "recipes_main").queryString
         qb shouldEqual "recipes.recipes_main"
       }
 
       "should not append the keyspace name if the table string already contains the keyspace definition" in {
-        val qb = QueryBuilder.keyspace("recipes", "recipes.recipes_main").queryString
+        val qb = QueryBuilder.table("recipes", "recipes.recipes_main").queryString
 
         qb shouldEqual "recipes.recipes_main"
       }
@@ -56,18 +56,18 @@ class BasicQueryBuilderTest extends QueryBuilderTest {
 
     "should append a keyspace CQLQuery to a table name string with a dot separator" - {
       "should append the keyspace query if the table string name doesn't already contain it" in {
-        val qb = QueryBuilder.keyspace("k", CQLQuery("t")).queryString
+        val qb = QueryBuilder.table("k", CQLQuery("t")).queryString
 
         qb shouldEqual "k.t"
       }
 
       "should append the keyspace query if the table string name starts with the keyspace name" in {
-        val qb = QueryBuilder.keyspace("recipes", CQLQuery("recipes_main")).queryString
+        val qb = QueryBuilder.table("recipes", CQLQuery("recipes_main")).queryString
         qb shouldEqual "recipes.recipes_main"
       }
 
       "should not append the keyspace query if the table string already contains the keyspace definition" in {
-        val qb = QueryBuilder.keyspace("recipes", CQLQuery("recipes.recipes_main")).queryString
+        val qb = QueryBuilder.table("recipes", CQLQuery("recipes.recipes_main")).queryString
 
         qb shouldEqual "recipes.recipes_main"
       }

@@ -222,11 +222,11 @@ object DeleteQuery {
   type Default[T <: CassandraTable[T, _], R] = DeleteQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil]
 
   def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = {
-    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.keyspace(keySpace.name, table.tableName).queryString))
+    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.table(keySpace.name, table.tableName)))
   }
 
   def apply[T <: CassandraTable[T, _], R](table: T, cond: CQLQuery)(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = {
-    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.keyspace(keySpace.name, table.tableName).queryString, cond))
+    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.table(keySpace.name, table.tableName), cond))
   }
 }
 

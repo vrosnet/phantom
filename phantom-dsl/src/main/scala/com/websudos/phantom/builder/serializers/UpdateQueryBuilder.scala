@@ -29,11 +29,11 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder.Utils
+import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-private[builder] class UpdateQueryBuilder {
+private[builder] class UpdateQueryBuilder(qb: QueryBuilder) {
 
   def onlyIf(clause: CQLQuery): CQLQuery = {
     CQLQuery(CQLSyntax.IF).forcePad.append(clause)
@@ -59,7 +59,7 @@ private[builder] class UpdateQueryBuilder {
   }
 
   def setTo(column: String, value: String): CQLQuery = {
-    Utils.concat(column, CQLSyntax.Symbols.`=`, value)
+    qb.Utils.concat(column, CQLSyntax.Symbols.`=`, value)
   }
 
   def set(clause: CQLQuery): CQLQuery = {
@@ -67,11 +67,11 @@ private[builder] class UpdateQueryBuilder {
   }
 
   def where(condition: CQLQuery): CQLQuery = {
-   Utils.operator(CQLSyntax.where, condition)
+    qb.Utils.operator(CQLSyntax.where, condition)
   }
 
   def and(condition: CQLQuery): CQLQuery = {
-    Utils.operator(CQLSyntax.and, condition)
+    qb.Utils.operator(CQLSyntax.and, condition)
   }
 
   def clauses(clauses: List[CQLQuery], sep: String = " "): CQLQuery = {
@@ -92,9 +92,8 @@ private[builder] class UpdateQueryBuilder {
     clauses(CQLSyntax.using, queries)
   }
 
-  def update(tableName: String): CQLQuery = {
-    CQLQuery(CQLSyntax.update)
-      .forcePad.append(tableName)
+  def update(table: TableReference): CQLQuery = {
+    CQLQuery(CQLSyntax.update).forcePad.append(table.toCql())
   }
 
   def updateMapColumn(column: String, key: String, value: String): CQLQuery = {

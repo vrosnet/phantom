@@ -39,25 +39,30 @@ class SelectQueryBuilderTest extends QueryBuilderTest {
     "should allow serialising SELECT query clauses" - {
 
       "should allow selecting a sequence of columns" in {
-        val qb = QueryBuilder.Select.select("t", "k", "test", "test2", "test3").queryString
+        val qb = QueryBuilder.Select.select(
+          QueryBuilder.table("t", "k"),
+          "test",
+          "test2",
+          "test3"
+        ).queryString
 
         qb shouldEqual "SELECT test, test2, test3 FROM k.t"
       }
 
       "should create a SELECT * query if no specific columns are selected" in {
-        val qb = QueryBuilder.Select.select("t", "k").queryString
+        val qb = QueryBuilder.Select.select(QueryBuilder.table("t", "k")).queryString
 
         qb shouldEqual "SELECT * FROM k.t"
       }
 
       "should serialize a SELECT COUNT query given a table name and a keyspace" in {
-        val qb = QueryBuilder.Select.count("t", "k").queryString
+        val qb = QueryBuilder.Select.count(QueryBuilder.table("t", "k")).queryString
 
         qb shouldEqual "SELECT COUNT(*) FROM k.t"
       }
 
       "should serialise a SELECT DISTINCT query from a table, keyspace and column sequence" in {
-        val qb = QueryBuilder.Select.distinct("t", "k", "test", "test1").queryString
+        val qb = QueryBuilder.Select.distinct(QueryBuilder.table("t", "k"), "test", "test1").queryString
 
         qb shouldEqual "SELECT DISTINCT test, test1 FROM k.t"
       }

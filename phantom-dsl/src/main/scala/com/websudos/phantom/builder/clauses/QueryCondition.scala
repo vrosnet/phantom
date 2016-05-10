@@ -122,10 +122,10 @@ object DeleteClause extends Clause {
   class Condition(override val qb: CQLQuery) extends QueryCondition(qb)
 }
 
-private[phantom] class OrderingColumn[RR](col: AbstractColumn[RR]) {
+private[phantom] class OrderingColumn[RR](col: AbstractColumn[RR])(implicit builder: QueryBuilder) {
 
-  def asc: OrderingClause.Condition = new OrderingClause.Condition(QueryBuilder.Select.Ordering.ascending(col.name))
-  def ascending: OrderingClause.Condition = new OrderingClause.Condition(QueryBuilder.Select.Ordering.ascending(col.name))
-  def desc: OrderingClause.Condition = new OrderingClause.Condition(QueryBuilder.Select.Ordering.descending(col.name))
-  def descending: OrderingClause.Condition = new OrderingClause.Condition(QueryBuilder.Select.Ordering.descending(col.name))
+  def asc: OrderingClause.Condition = new OrderingClause.Condition(builder.Select.Ordering.ascending(col.name))
+  def ascending: OrderingClause.Condition = new OrderingClause.Condition(builder.Select.Ordering.ascending(col.name))
+  def desc: OrderingClause.Condition = new OrderingClause.Condition(builder.Select.Ordering.descending(col.name))
+  def descending: OrderingClause.Condition = new OrderingClause.Condition(builder.Select.Ordering.descending(col.name))
 }

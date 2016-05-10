@@ -30,6 +30,7 @@
 package com.websudos.phantom
 
 import com.datastax.driver.core.{Row, Session}
+import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.clauses.DeleteClause
 import com.websudos.phantom.builder.query._
 import com.websudos.phantom.column.AbstractColumn
@@ -60,7 +61,8 @@ abstract class CassandraTable[T <: CassandraTable[T, R], R] extends SelectTable[
   private[phantom] def insertSchema()(
     implicit session: Session,
     keySpace: KeySpace,
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): Unit = {
     Await.result(create.ifNotExists().future(), 10.seconds)
   }
@@ -82,11 +84,17 @@ abstract class CassandraTable[T <: CassandraTable[T, R], R] extends SelectTable[
    * This uses the phantom proprietary QueryBuilder instead of the already available one in the underlying Java Driver.
    * @return A root create block, with full support for all CQL Create query options.
    */
-  final def create: RootCreateQuery[T, R] = new RootCreateQuery(this.asInstanceOf[T])
+  final def create()(implicit builder: QueryBuilder): RootCreateQuery[T, R] = {
+    new RootCreateQuery(this.asInstanceOf[T])
+  }
 
-  final def alter()(implicit keySpace: KeySpace): AlterQuery.Default[T, R] = AlterQuery(this.asInstanceOf[T])
+  final def alter()(implicit keySpace: KeySpace, builder: QueryBuilder): AlterQuery.Default[T, R] = {
+    AlterQuery(this.asInstanceOf[T])
+  }
 
-  final def update()(implicit keySpace: KeySpace): UpdateQuery.Default[T, R] = UpdateQuery(this.asInstanceOf[T])
+  final def update()(implicit keySpace: KeySpace, builder: QueryBuilder): UpdateQuery.Default[T, R] = {
+    UpdateQuery(this.asInstanceOf[T])
+  }
 
   final def insert()(implicit keySpace: KeySpace): InsertQuery.Default[T, R] = InsertQuery(this.asInstanceOf[T])
 

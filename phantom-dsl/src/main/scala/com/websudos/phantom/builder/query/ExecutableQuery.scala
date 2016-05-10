@@ -33,7 +33,7 @@ import java.util.{List => JavaList}
 
 import com.datastax.driver.core._
 import com.websudos.phantom.CassandraTable
-import com.websudos.phantom.builder.{LimitBound, Unlimited}
+import com.websudos.phantom.builder.{LimitBound, QueryBuilder, Unlimited}
 import com.websudos.phantom.connectors.KeySpace
 
 import scala.collection.JavaConverters._
@@ -193,7 +193,8 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound]
     implicit session: Session,
     keySpace: KeySpace,
     ev: Limit =:= Unlimited,
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): ScalaFuture[Option[R]]
 
   /**

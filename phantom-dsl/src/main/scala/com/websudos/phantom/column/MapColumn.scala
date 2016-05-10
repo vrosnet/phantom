@@ -40,7 +40,12 @@ import scala.annotation.implicitNotFound
 import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
-private[phantom] abstract class AbstractMapColumn[Owner <: CassandraTable[Owner, Record], Record, K, V](table: CassandraTable[Owner, Record])
+private[phantom] abstract class AbstractMapColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  K,
+  V
+](table: CassandraTable[Owner, Record])(implicit builder: QueryBuilder)
   extends Column[Owner, Record, Map[K, V]](table) with CollectionValueDefinition[V] {
 
   def keyAsCql(v: K): String
@@ -49,7 +54,7 @@ private[phantom] abstract class AbstractMapColumn[Owner <: CassandraTable[Owner,
 
   override def fromString(c: String): V
 
-  def asCql(v: Map[K, V]): String = QueryBuilder.Collections.serialize(v.map {
+  def asCql(v: Map[K, V]): String = builder.Collections.serialize(v.map {
     case (a, b) => (keyAsCql(a), valueAsCql(b))
   }).queryString
 
@@ -67,7 +72,12 @@ private[phantom] abstract class AbstractMapColumn[Owner <: CassandraTable[Owner,
 }
 
 @implicitNotFound(msg = "Type ${K} and ${V} must be Cassandra primitives")
-class MapColumn[Owner <: CassandraTable[Owner, Record], Record, K : Primitive, V : Primitive](table: CassandraTable[Owner, Record])
+class MapColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  K : Primitive,
+  V : Primitive
+](table: CassandraTable[Owner, Record])(implicit builder: QueryBuilder)
     extends AbstractMapColumn[Owner, Record, K, V](table) with PrimitiveCollectionValue[V] {
 
   val keyPrimitive = Primitive[K]
@@ -76,7 +86,7 @@ class MapColumn[Owner <: CassandraTable[Owner, Record], Record, K : Primitive, V
 
   override val valuePrimitive = Primitive[V]
 
-  override val cassandraType = QueryBuilder.Collections.mapType(keyPrimitive.cassandraType, valuePrimitive.cassandraType).queryString
+  override val cassandraType = builder.Collections.mapType(keyPrimitive.cassandraType, valuePrimitive.cassandraType).queryString
 
   override def qb: CQLQuery = CQLQuery(name).forcePad.append(cassandraType)
 

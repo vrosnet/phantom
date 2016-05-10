@@ -29,7 +29,6 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
@@ -133,24 +132,24 @@ private[phantom] trait AlterQueryBuilder {
   }
 
 
-  def dropTable(table: String, keyspace: String): CQLQuery = {
+  def dropTable(table: TableReference): CQLQuery = {
     CQLQuery(CQLSyntax.Alter.Drop)
       .forcePad.append(CQLSyntax.table)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, table))
+      .forcePad.append(table.toCql())
   }
 
-  def dropTableIfExist(table: String, keyspace: String): CQLQuery = {
+  def dropTableIfExist(table: TableReference): CQLQuery = {
     CQLQuery(CQLSyntax.Alter.Drop)
       .forcePad.append(CQLSyntax.table)
       .forcePad.append(CQLSyntax.ifExists)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, table))
+      .forcePad.append(table.toCql())
   }
 
 
-  def alter(tableName: String): CQLQuery = {
+  def alter(table: TableReference): CQLQuery = {
     CQLQuery(CQLSyntax.alter)
       .forcePad.append(CQLSyntax.table)
-      .forcePad.append(tableName)
+      .forcePad.append(table.toCql())
   }
 
 }
