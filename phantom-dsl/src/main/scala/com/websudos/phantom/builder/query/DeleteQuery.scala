@@ -52,11 +52,17 @@ class DeleteQuery[
   PS <: HList
 ](table: Table,
   init: CQLQuery,
-  wherePart : WherePart = WherePart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
-  usingPart: UsingPart = UsingPart.empty,
+  wherePart : WherePart,
+  casPart : CompareAndSetPart,
+  usingPart: UsingPart,
   override val options: QueryOptions = QueryOptions.empty
-) extends Query[Table, Record, Limit, Order, Status, Chain, PS](table, init, None.orNull, usingPart, options) with Batchable {
+)(implicit builder: QueryBuilder) extends Query[Table, Record, Limit, Order, Status, Chain, PS](
+  table,
+  init,
+  None.orNull,
+  usingPart,
+  options
+) with Batchable {
 
   override protected[this] type QueryType[
     T <: CassandraTable[T, _],
@@ -96,12 +102,15 @@ class DeleteQuery[
    * @return
    */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  override def where(condition: Table => WhereClause.Condition)(implicit ev: Chain =:= Unchainned): DeleteQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  override def where(condition: Table => WhereClause.Condition)(
+    implicit ev: Chain =:= Unchainned
+  ): DeleteQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
     new DeleteQuery(
       table = table,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.where(condition(table).qb),
+      wherePart = wherePart append builder.Update.where(condition(table).qb),
       casPart = casPart,
+      usingPart = usingPart,
       options = options
     )
   }
@@ -118,8 +127,9 @@ class DeleteQuery[
     new DeleteQuery(
       table = table,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.where(condition(table).qb),
+      wherePart = wherePart append builder.Update.where(condition(table).qb),
       casPart = casPart,
+      usingPart = usingPart,
       options = options
     )
   }
@@ -131,13 +141,16 @@ class DeleteQuery[
    * @return A SelectCountWhere.
    */
   @implicitNotFound("You have to use an where clause before using an AND clause")
-  override def and(condition: Table => WhereClause.Condition)(implicit ev: Chain =:= Chainned): DeleteQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
-    val query = QueryBuilder.Update.and(condition(table).qb)
+  override def and(condition: Table => WhereClause.Condition)(
+    implicit ev: Chain =:= Chainned
+  ): DeleteQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
+    val query = builder.Update.and(condition(table).qb)
     new DeleteQuery(
       table = table,
       init = init,
       wherePart = wherePart append query,
       casPart = casPart,
+      usingPart = usingPart,
       options = options
     )
   }
@@ -154,8 +167,9 @@ class DeleteQuery[
     new DeleteQuery(
       table = table,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.and(condition(table).qb),
+      wherePart = wherePart append builder.Update.and(condition(table).qb),
       casPart = casPart,
+      usingPart = usingPart,
       options = options
     )
   }
@@ -175,7 +189,7 @@ class DeleteQuery[
       new DeleteQuery(
         table = table,
         init = init,
-        usingPart = usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart = usingPart append builder.consistencyLevel(level.toString),
         wherePart = wherePart,
         casPart = casPart,
         options = options
@@ -195,7 +209,7 @@ class DeleteQuery[
       table = table,
       init = init,
       wherePart = wherePart,
-      casPart = casPart append QueryBuilder.Update.onlyIf(clause(table).qb),
+      casPart = casPart append builder.Update.onlyIf(clause(table).qb),
       options = options
     )
   }
@@ -208,8 +222,10 @@ class DeleteQuery[
 
 
 trait DeleteImplicits {
-  implicit def columnUpdateClauseToDeleteCondition(clause: MapKeyUpdateClause[_, _]): DeleteClause.Condition = {
-    new DeleteClause.Condition(QueryBuilder.Collections.mapColumnType(clause.column, clause.keyName))
+  implicit def columnUpdateClauseToDeleteCondition(clause: MapKeyUpdateClause[_, _])(
+    implicit builder: QueryBuilder
+  ): DeleteClause.Condition = {
+    new DeleteClause.Condition(builder.Collections.mapColumnType(clause.column, clause.keyName))
   }
 
   implicit def columnClauseToDeleteCondition(col: AbstractColumn[_]): DeleteClause.Condition = {
@@ -221,12 +237,30 @@ object DeleteQuery {
 
   type Default[T <: CassandraTable[T, _], R] = DeleteQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil]
 
-  def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = {
-    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.table(keySpace.name, table.tableName)))
+  def apply[T <: CassandraTable[T, _], R](table: T)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): DeleteQuery.Default[T, R] = {
+    new DeleteQuery(
+      table,
+      builder.Delete.delete(builder.table(keySpace.name, table.tableName)),
+      WherePart.empty(),
+      CompareAndSetPart.empty(),
+      UsingPart.empty()
+    )
   }
 
-  def apply[T <: CassandraTable[T, _], R](table: T, cond: CQLQuery)(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = {
-    new DeleteQuery(table, QueryBuilder.Delete.delete(QueryBuilder.table(keySpace.name, table.tableName), cond))
+  def apply[T <: CassandraTable[T, _], R](table: T, cond: CQLQuery)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): DeleteQuery.Default[T, R] = {
+    new DeleteQuery(
+      table,
+      builder.Delete.delete(builder.table(keySpace.name, table.tableName), cond),
+      WherePart.empty(),
+      CompareAndSetPart.empty(),
+      UsingPart.empty()
+    )
   }
 }
 
@@ -240,10 +274,10 @@ sealed class ConditionalDeleteQuery[
   PS <: HList
 ](table: Table,
   val init: CQLQuery,
-  wherePart : WherePart = WherePart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  wherePart : WherePart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions
- ) extends ExecutableStatement with Batchable {
+ )(implicit builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
   override val qb: CQLQuery = {
     (wherePart merge casPart) build init
@@ -254,7 +288,7 @@ sealed class ConditionalDeleteQuery[
       table,
       init,
       wherePart,
-      casPart append QueryBuilder.Update.and(clause(table).qb),
+      casPart append builder.Update.and(clause(table).qb),
       options
     )
   }

@@ -40,7 +40,11 @@ import scala.annotation.implicitNotFound
 import scala.util.{Try, Failure, Success}
 
 
-abstract class AbstractSetColumn[Owner <: CassandraTable[Owner, Record], Record, RR](table: CassandraTable[Owner, Record])
+abstract class AbstractSetColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  RR
+](table: CassandraTable[Owner, Record])(implicit builder: QueryBuilder)
   extends Column[Owner, Record, Set[RR]](table) with CollectionValueDefinition[RR] {
 
   def valuesToCType(values: Iterable[RR]): Set[String] = values.map(valueAsCql).toSet
@@ -57,17 +61,21 @@ abstract class AbstractSetColumn[Owner <: CassandraTable[Owner, Record], Record,
     }
   }
 
-  override def asCql(v: Set[RR]): String = QueryBuilder.Collections.serialize(valuesToCType(v)).queryString
+  override def asCql(v: Set[RR]): String = builder.Collections.serialize(valuesToCType(v)).queryString
 }
 
 
 @implicitNotFound(msg = "Type ${RR} must be a Cassandra primitive")
-class SetColumn[Owner <: CassandraTable[Owner, Record], Record, RR : Primitive](table: CassandraTable[Owner, Record])
+class SetColumn[
+  Owner <: CassandraTable[Owner, Record],
+  Record,
+  RR : Primitive
+](table: CassandraTable[Owner, Record])(implicit builder: QueryBuilder)
     extends AbstractSetColumn[Owner, Record, RR](table) with PrimitiveCollectionValue[RR] {
 
   override val valuePrimitive = Primitive[RR]
 
-  val cassandraType = QueryBuilder.Collections.setType(valuePrimitive.cassandraType).queryString
+  val cassandraType = builder.Collections.setType(valuePrimitive.cassandraType).queryString
 
   override def qb: CQLQuery = CQLQuery(name).forcePad.append(cassandraType)
 

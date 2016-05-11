@@ -30,11 +30,10 @@
 package com.websudos.phantom.builder.serializers
 
 import com.websudos.phantom.builder.QueryBuilder
-import com.websudos.phantom.builder.QueryBuilder.Utils
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-private[builder] class IndexModifiers extends BaseModifiers {
+private[builder] class IndexModifiers()(implicit builder: QueryBuilder) extends BaseModifiers {
 
   def eqs(column: String, value: String): CQLQuery = {
     modifier(column, CQLSyntax.Operators.eqs, value)
@@ -65,23 +64,23 @@ private[builder] class IndexModifiers extends BaseModifiers {
   }
 
   def in(column: String, values: String*): CQLQuery = {
-    modifier(column, CQLSyntax.Operators.in, Utils.join(values))
+    modifier(column, CQLSyntax.Operators.in, builder.Utils.join(values))
   }
 
   def in(column: String, values: List[String]): CQLQuery = {
-    modifier(column, CQLSyntax.Operators.in, Utils.join(values))
+    modifier(column, CQLSyntax.Operators.in, builder.Utils.join(values))
   }
 
   def fcall(name: String, params: String*): CQLQuery = {
-    CQLQuery(name).append(Utils.join(params))
+    CQLQuery(name).append(builder.Utils.join(params))
   }
 
   def where(qb: CQLQuery, condition: CQLQuery): CQLQuery = {
-    Utils.concat(qb, CQLSyntax.where, condition)
+    builder.Utils.concat(qb, CQLSyntax.where, condition)
   }
 
   def and(qb: CQLQuery, clause: CQLQuery): CQLQuery = {
-    Utils.concat(qb, CQLSyntax.and, clause)
+    builder.Utils.concat(qb, CQLSyntax.and, clause)
   }
 
   def token(clause: String): CQLQuery = {
@@ -119,7 +118,7 @@ private[builder] class IndexModifiers extends BaseModifiers {
     * @return A CQL Query wrapping the contains clause.
     */
   def containsEntry(column: String, key: String, value: String): CQLQuery = {
-    modifier(QueryBuilder.Utils.mapKey(column, key).queryString, CQLSyntax.Operators.eqs, value)
+    modifier(builder.Utils.mapKey(column, key).queryString, CQLSyntax.Operators.eqs, value)
   }
 
 }

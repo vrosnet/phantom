@@ -38,13 +38,17 @@ class TruncateQuery[
   Table <: CassandraTable[Table, _],
   Record,
   Status <: ConsistencyBound
-](table: Table, val qb: CQLQuery, override val options: QueryOptions) extends ExecutableStatement {
+](
+  table: Table,
+  val qb: CQLQuery,
+  override val options: QueryOptions
+)(implicit builder: QueryBuilder) extends ExecutableStatement {
 
   def consistencyLevel_=(level: ConsistencyLevel)(implicit session: Session): TruncateQuery[Table, Record, Specified] = {
     if (session.v3orNewer) {
       new TruncateQuery(table, qb, options.consistencyLevel_=(level))
     } else {
-      new TruncateQuery(table, QueryBuilder.consistencyLevel(qb, level.toString), options)
+      new TruncateQuery(table, builder.consistencyLevel(qb, level.toString), options)
     }
   }
 }
@@ -54,10 +58,13 @@ object TruncateQuery {
 
   type Default[T <: CassandraTable[T, _], R] = TruncateQuery[T, R, Unspecified]
 
-  def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): TruncateQuery.Default[T, R] = {
+  def apply[T <: CassandraTable[T, _], R](table: T)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): TruncateQuery.Default[T, R] = {
     new TruncateQuery(
       table,
-      QueryBuilder.truncate(QueryBuilder.table(keySpace.name, table.tableName)),
+      builder.truncate(builder.table(keySpace.name, table.tableName)),
       QueryOptions.empty
     )
   }

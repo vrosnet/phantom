@@ -96,15 +96,24 @@ abstract class CassandraTable[T <: CassandraTable[T, R], R] extends SelectTable[
     UpdateQuery(this.asInstanceOf[T])
   }
 
-  final def insert()(implicit keySpace: KeySpace): InsertQuery.Default[T, R] = InsertQuery(this.asInstanceOf[T])
+  final def insert()(implicit keySpace: KeySpace, builder: QueryBuilder): InsertQuery.Default[T, R] = {
+    InsertQuery(this.asInstanceOf[T])
+  }
 
-  final def delete()(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = DeleteQuery[T, R](this.asInstanceOf[T])
+  final def delete()(implicit keySpace: KeySpace, builder: QueryBuilder): DeleteQuery.Default[T, R] = {
+    DeleteQuery[T, R](this.asInstanceOf[T])
+  }
 
-  final def delete(condition: T => DeleteClause.Condition)(implicit keySpace: KeySpace): DeleteQuery.Default[T, R] = {
+  final def delete(condition: T => DeleteClause.Condition)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): DeleteQuery.Default[T, R] = {
     DeleteQuery[T, R](this.asInstanceOf[T], condition(this.asInstanceOf[T]).qb)
   }
 
-  final def truncate()(implicit keySpace: KeySpace): TruncateQuery.Default[T, R] = TruncateQuery[T, R](this.asInstanceOf[T])
+  final def truncate()(implicit keySpace: KeySpace, builder: QueryBuilder): TruncateQuery.Default[T, R] = {
+    TruncateQuery[T, R](this.asInstanceOf[T])
+  }
 
   def secondaryKeys: Seq[AbstractColumn[_]] = columns.filter(_.isSecondaryKey)
 

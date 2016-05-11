@@ -48,17 +48,17 @@ class InsertQuery[
 ](
   table: Table,
   val init: CQLQuery,
-  columnsPart: ColumnsPart = ColumnsPart.empty,
-  valuePart: ValuePart = ValuePart.empty,
-  usingPart: UsingPart = UsingPart.empty,
-  lightweightPart: LightweightPart = LightweightPart.empty,
+  columnsPart: ColumnsPart,
+  valuePart: ValuePart,
+  usingPart: UsingPart,
+  lightweightPart: LightweightPart,
   override val options: QueryOptions = QueryOptions.empty
-) extends ExecutableStatement with Batchable {
+)(implicit builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
   final def json(value: String): InsertJsonQuery[Table, Record, Status, PS] = {
     new InsertJsonQuery(
       table = table,
-      init = QueryBuilder.Insert.json(init, value),
+      init = builder.Insert.json(init, value),
       usingPart = usingPart,
       lightweightPart = lightweightPart,
       options = options
@@ -68,7 +68,7 @@ class InsertQuery[
   final def json(value: PrepareMark): InsertJsonQuery[Table, Record, Status, String :: PS] = {
     new InsertJsonQuery(
       table = table,
-      init = QueryBuilder.Insert.json(init, value.qb.queryString),
+      init = builder.Insert.json(init, value.qb.queryString),
       usingPart = usingPart,
       lightweightPart = lightweightPart,
       options = options
@@ -132,7 +132,7 @@ class InsertQuery[
       init,
       columnsPart,
       valuePart,
-      usingPart append QueryBuilder.ttl(seconds.toString),
+      usingPart append builder.ttl(seconds.toString),
       lightweightPart,
       options
     )
@@ -148,7 +148,7 @@ class InsertQuery[
       init,
       columnsPart,
       valuePart,
-      usingPart append QueryBuilder.timestamp(value.toString),
+      usingPart append builder.timestamp(value.toString),
       lightweightPart,
       options
     )
@@ -171,7 +171,7 @@ class InsertQuery[
         init,
         columnsPart,
         valuePart,
-        usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart append builder.consistencyLevel(level.toString),
         lightweightPart,
         options
       )
@@ -199,10 +199,17 @@ object InsertQuery {
 
   type Default[T <: CassandraTable[T, _], R] = InsertQuery[T, R, Unspecified, HNil]
 
-  def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): InsertQuery.Default[T, R] = {
+  def apply[T <: CassandraTable[T, _], R](table: T)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): InsertQuery.Default[T, R] = {
     new InsertQuery(
       table,
-      QueryBuilder.Insert.insert(QueryBuilder.table(keySpace.name, table.tableName))
+      builder.Insert.insert(builder.table(keySpace.name, table.tableName)),
+      ColumnsPart.empty(),
+      ValuePart.empty(),
+      UsingPart.empty(),
+      LightweightPart.empty()
     )
   }
 }
@@ -215,8 +222,8 @@ class InsertJsonQuery[
 ](
   table: Table,
   val init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  lightweightPart: LightweightPart = LightweightPart.empty,
+  usingPart: UsingPart,
+  lightweightPart: LightweightPart,
   override val options: QueryOptions
 ) extends ExecutableStatement with Batchable {
 

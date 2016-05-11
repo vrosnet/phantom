@@ -50,10 +50,10 @@ class UpdateQuery[
   PS <: HList
 ](table: Table,
   init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions = QueryOptions.empty
 )(implicit val builder: QueryBuilder) extends
   Query[Table, Record, Limit, Order, Status, Chain, PS](table, init, None.orNull, usingPart, options) with Batchable {
@@ -259,10 +259,10 @@ sealed class AssignmentsQuery[
   ModifyPrepared <: HList
 ](table: Table,
   val init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions
 )(implicit val builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
@@ -421,10 +421,10 @@ sealed class ConditionalQuery[
   ModifyPrepared <: HList
 ](table: Table,
   val init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions
 )(implicit val builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
@@ -513,7 +513,11 @@ object UpdateQuery {
   ): UpdateQuery.Default[T, R] = {
     new UpdateQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil](
       table,
-      builder.Update.update(builder.table(keySpace.name, table.tableName))
+      builder.Update.update(builder.table(keySpace.name, table.tableName)),
+      UsingPart.empty(),
+      WherePart.empty(),
+      SetPart.empty(),
+      CompareAndSetPart.empty()
     )
   }
 

@@ -55,7 +55,7 @@ private[phantom] class QueryBuilder(val config: QueryBuilderConfig = QueryBuilde
 
   case object Collections extends CollectionModifiers(this)
 
-  case object Where extends IndexModifiers
+  case object Where extends IndexModifiers()(this)
 
   case object Select extends SelectQueryBuilder
 
@@ -107,7 +107,7 @@ private[phantom] class QueryBuilder(val config: QueryBuilderConfig = QueryBuilde
     table(space, tableQuery.queryString)
   }
 
-  def table(keySpace: String, table: String): TableReference = TableReference(keySpace, table)
+  def table(keySpace: String, table: String): TableReference = TableReference(keySpace, table)(this)
 
   def limit(value: Int): CQLQuery = {
     CQLQuery(CQLSyntax.limit)

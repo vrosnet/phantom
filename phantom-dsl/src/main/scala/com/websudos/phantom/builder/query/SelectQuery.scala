@@ -54,11 +54,11 @@ class SelectQuery[
   protected[phantom] val table: Table,
   protected[phantom] val rowFunc: Row => Record,
   val init: CQLQuery,
-  protected[phantom] val wherePart: WherePart = WherePart.empty,
-  protected[phantom] val orderPart: OrderPart = OrderPart.empty,
-  protected[phantom] val limitedPart: LimitedPart = LimitedPart.empty,
-  protected[phantom] val filteringPart: FilteringPart = FilteringPart.empty,
-  protected[phantom] val usingPart: UsingPart = UsingPart.empty,
+  protected[phantom] val wherePart: WherePart,
+  protected[phantom] val orderPart: OrderPart,
+  protected[phantom] val limitedPart: LimitedPart,
+  protected[phantom] val filteringPart: FilteringPart,
+  protected[phantom] val usingPart: UsingPart,
   protected[phantom] val count: Boolean = false,
   override val options: QueryOptions = QueryOptions.empty
 )(implicit builder: QueryBuilder) extends Query[Table, Record, Limit, Order, Status, Chain, PS](
@@ -349,14 +349,24 @@ private[phantom] class RootSelectBlock[
         new SelectQuery(
           table,
           rowFunc,
-          builder.Select.select(builder.table(keySpace.name, table.tableName), opt)
+          builder.Select.select(builder.table(keySpace.name, table.tableName), opt),
+          WherePart.empty(),
+          OrderPart.empty(),
+          LimitedPart.empty(),
+          FilteringPart.empty(),
+          UsingPart.empty()
         )
       }
       case None => {
         new SelectQuery(
           table,
           rowFunc,
-          builder.Select.select(builder.table(keySpace.name, table.tableName), columns: _*)
+          builder.Select.select(builder.table(keySpace.name, table.tableName), columns: _*),
+          WherePart.empty(),
+          OrderPart.empty(),
+          LimitedPart.empty(),
+          FilteringPart.empty(),
+          UsingPart.empty()
         )
       }
     }
@@ -367,7 +377,12 @@ private[phantom] class RootSelectBlock[
     new SelectQuery(
       table,
       rowFunc,
-      builder.Select.distinct(builder.table(keySpace.name, table.tableName), columns: _*)
+      builder.Select.distinct(builder.table(keySpace.name, table.tableName), columns: _*),
+      WherePart.empty(),
+      OrderPart.empty(),
+      LimitedPart.empty(),
+      FilteringPart.empty(),
+      UsingPart.empty()
     )
   }
 
@@ -433,7 +448,16 @@ object SelectQuery {
     qb: CQLQuery,
     row: Row => R
   )(implicit builder: QueryBuilder): SelectQuery.Default[T, R] = {
-    new SelectQuery(table, row, qb)
+    new SelectQuery(
+      table,
+      row,
+      qb,
+      WherePart.empty(),
+      OrderPart.empty(),
+      LimitedPart.empty(),
+      FilteringPart.empty(),
+      UsingPart.empty()
+    )
   }
 }
 

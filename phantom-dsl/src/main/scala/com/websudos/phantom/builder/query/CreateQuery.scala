@@ -57,7 +57,12 @@ class RootCreateQuery[
   }
 
   private[phantom] def toQuery()(implicit keySpace: KeySpace): CreateQuery.Default[Table, Record] = {
-    new CreateQuery[Table, Record, Unspecified](table, default, WithPart.empty)
+    new CreateQuery[Table, Record, Unspecified](
+      table,
+      default,
+      WithPart.empty(),
+      UsingPart.empty()
+    )
   }
 
 
@@ -83,9 +88,9 @@ class RootCreateQuery[
    */
   def ifNotExists()(implicit keySpace: KeySpace): CreateQuery.Default[Table, Record] = {
     if (table.clusteringColumns.nonEmpty) {
-      new CreateQuery(table, lightweight(), WithPart.empty).withClustering()
+      new CreateQuery(table, lightweight(), WithPart.empty, UsingPart.empty()).withClustering()
     } else {
-      new CreateQuery(table, lightweight(), WithPart.empty)
+      new CreateQuery(table, lightweight(), WithPart.empty, UsingPart.empty())
     }
   }
 }
@@ -98,8 +103,8 @@ class CreateQuery[
 ](
   val table: Table,
   val init: CQLQuery,
-  val withClause: WithPart = WithPart.empty,
-  val usingPart: UsingPart = UsingPart.empty,
+  val withClause: WithPart,
+  val usingPart: UsingPart,
   override val options: QueryOptions = QueryOptions.empty
 )(implicit builder: QueryBuilder) extends ExecutableStatement {
 
@@ -230,9 +235,9 @@ private[phantom] trait CreateImplicits extends TablePropertyClauses {
   ): CreateQuery.Default[T, R] = {
 
     if (root.table.clusteringColumns.nonEmpty) {
-      new CreateQuery(root.table, root.default, WithPart.empty).withClustering()
+      new CreateQuery(root.table, root.default, WithPart.empty, UsingPart.empty()).withClustering()
     } else {
-      new CreateQuery(root.table, root.default, WithPart.empty)
+      new CreateQuery(root.table, root.default, WithPart.empty, UsingPart.empty())
     }
   }
 }

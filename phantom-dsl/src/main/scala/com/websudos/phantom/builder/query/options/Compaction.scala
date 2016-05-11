@@ -36,6 +36,8 @@ import com.websudos.phantom.builder.syntax.CQLSyntax
 sealed abstract class CompactionStrategy(override val qb: CQLQuery) extends TablePropertyClause(qb)
 
 private[phantom] trait CompactionStrategies {
+  
+  implicit def builder: QueryBuilder
 
   private[this] def strategy(strategy: String) = {
     CQLQuery(CQLSyntax.Symbols.`{`).forcePad
@@ -52,19 +54,19 @@ private[phantom] trait CompactionStrategies {
     protected[this] def instance(qb: CQLQuery): T
 
     def enabled(flag: Boolean): T = {
-      instance(QueryBuilder.Create.enabled(qb, flag))
+      instance(builder.Create.enabled(qb, flag))
     }
 
     def tombstone_compaction_interval(interval: Long): T = {
-      instance(QueryBuilder.Create.tombstone_compaction_interval(qb, interval.toString))
+      instance(builder.Create.tombstone_compaction_interval(qb, interval.toString))
     }
 
     def tombstone_threshold(value: Double): T = {
-      instance(QueryBuilder.Create.tombstone_threshold(qb, value))
+      instance(builder.Create.tombstone_threshold(qb, value))
     }
 
     def unchecked_tombstone_compaction(value: Double): T = {
-      instance(QueryBuilder.Create.unchecked_tombstone_compaction(qb, value))
+      instance(builder.Create.unchecked_tombstone_compaction(qb, value))
     }
 
   }
@@ -74,7 +76,7 @@ private[phantom] trait CompactionStrategies {
 
     def min_sstable_size(unit: Int): SizeTieredCompactionStrategy = {
       new SizeTieredCompactionStrategy(
-        QueryBuilder.Create.min_sstable_size(
+        builder.Create.min_sstable_size(
           qb,
           unit
         )
@@ -82,23 +84,23 @@ private[phantom] trait CompactionStrategies {
     }
 
     def max_threshold(value: Int): SizeTieredCompactionStrategy = {
-      new SizeTieredCompactionStrategy(QueryBuilder.Create.max_threshold(qb, value))
+      new SizeTieredCompactionStrategy(builder.Create.max_threshold(qb, value))
     }
 
     def min_threshold(value: Int): SizeTieredCompactionStrategy = {
-      new SizeTieredCompactionStrategy(QueryBuilder.Create.min_threshold(qb, value))
+      new SizeTieredCompactionStrategy(builder.Create.min_threshold(qb, value))
     }
 
     def bucket_high(size: Double): SizeTieredCompactionStrategy = {
-      new SizeTieredCompactionStrategy(QueryBuilder.Create.bucket_high(qb, size))
+      new SizeTieredCompactionStrategy(builder.Create.bucket_high(qb, size))
     }
 
     def cold_reads_to_omit(value: Double): SizeTieredCompactionStrategy = {
-      new SizeTieredCompactionStrategy(QueryBuilder.Create.cold_reads_to_omit(qb, value))
+      new SizeTieredCompactionStrategy(builder.Create.cold_reads_to_omit(qb, value))
     }
 
     def bucket_low(size: Double): SizeTieredCompactionStrategy = {
-      new SizeTieredCompactionStrategy(QueryBuilder.Create.bucket_low(qb, size))
+      new SizeTieredCompactionStrategy(builder.Create.bucket_low(qb, size))
     }
 
     override protected[this] def instance(qb: CQLQuery): SizeTieredCompactionStrategy = {
@@ -111,7 +113,7 @@ private[phantom] trait CompactionStrategies {
 
     def sstable_size_in_mb(unit: Int): LeveledCompactionStrategy = {
       new LeveledCompactionStrategy(
-        QueryBuilder.Create.sstable_size_in_mb(qb, unit)
+        builder.Create.sstable_size_in_mb(qb, unit)
       )
     }
 
@@ -127,19 +129,19 @@ private[phantom] trait CompactionStrategies {
     }
 
     def base_time_seconds(value: Long): DateTieredCompactionStrategy = {
-      new DateTieredCompactionStrategy(QueryBuilder.Create.base_time_seconds(qb, value))
+      new DateTieredCompactionStrategy(builder.Create.base_time_seconds(qb, value))
     }
 
     def max_sstable_age_days(value: Long): DateTieredCompactionStrategy = {
-      new DateTieredCompactionStrategy(QueryBuilder.Create.max_sstable_age_days(qb, value))
+      new DateTieredCompactionStrategy(builder.Create.max_sstable_age_days(qb, value))
     }
 
     def max_threshold(value: Int): DateTieredCompactionStrategy = {
-      new DateTieredCompactionStrategy(QueryBuilder.Create.max_threshold(qb, value))
+      new DateTieredCompactionStrategy(builder.Create.max_threshold(qb, value))
     }
 
     def min_threshold(value: Int): DateTieredCompactionStrategy = {
-      new DateTieredCompactionStrategy(QueryBuilder.Create.min_threshold(qb, value))
+      new DateTieredCompactionStrategy(builder.Create.min_threshold(qb, value))
     }
 
   }
@@ -149,8 +151,8 @@ private[phantom] trait CompactionStrategies {
   case object DateTieredCompactionStrategy extends DateTieredCompactionStrategy(strategy(CQLSyntax.CompactionStrategies.DateTieredCompactionStrategy))
 }
 
-private[phantom] class CompactionBuilder extends TableProperty {
+private[phantom] class CompactionBuilder()(implicit val builder: QueryBuilder) extends TableProperty {
   def eqs(clause: CompactionStrategy): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.compaction(clause.qb))
+    new TablePropertyClause(builder.Create.compaction(clause.qb))
   }
 }

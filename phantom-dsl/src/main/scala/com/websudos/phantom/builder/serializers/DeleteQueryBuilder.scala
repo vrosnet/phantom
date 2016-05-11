@@ -33,7 +33,7 @@ import com.websudos.phantom.builder.{QueryBuilder, QueryBuilderConfig}
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-case class TableReference(space: String, name: String) {
+case class TableReference(space: String, name: String)(implicit builder: QueryBuilder) {
 
   def tableDef(config: QueryBuilderConfig, tableName: String): CQLQuery = {
     if (config.caseSensitiveTables) {
@@ -55,12 +55,12 @@ case class TableReference(space: String, name: String) {
     }
   }
 
-  def toCql(config: QueryBuilderConfig = QueryBuilder.config): CQLQuery = {
-    keyspace(config, space, name)
+  def toCql(): CQLQuery = {
+    keyspace(builder.config, space, name)
   }
 
-  def toCqlString(config: QueryBuilderConfig = QueryBuilder.config): String = {
-    keyspace(config, space, name).toString
+  def toCqlString(): String = {
+    keyspace(builder.config, space, name).toString
   }
 
   protected[phantom] def queryString: String = toCqlString()

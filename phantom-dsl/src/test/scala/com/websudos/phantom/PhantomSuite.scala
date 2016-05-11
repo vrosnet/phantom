@@ -36,6 +36,7 @@ import com.websudos.phantom.tables.TestDatabase
 import com.websudos.util.lift.{DateTimeSerializer, UUIDSerializer}
 import org.scalatest._
 import org.scalatest.concurrent.{PatienceConfiguration, ScalaFutures}
+import language.implicitConversions
 
 import scala.concurrent.duration._
 
@@ -54,7 +55,7 @@ trait PhantomBaseSuite extends Suite with Matchers
   implicit val defaultTimeout: PatienceConfiguration.Timeout = timeout(defaultScalaTimeoutSeconds.seconds)
 
   override implicit val patienceConfig = PatienceConfig(
-    timeout = defaultScalaTimeoutSeconds.seconds,
+    timeout = 10.seconds,
     interval = 50.millis
   )
 }

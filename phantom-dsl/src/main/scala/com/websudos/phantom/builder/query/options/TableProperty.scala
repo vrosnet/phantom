@@ -54,10 +54,10 @@ sealed trait CompactionBound
 sealed trait SpecifiedCompaction extends CompactionBound
 sealed trait UnspecifiedCompaction extends CompactionBound
 
-private[phantom] class TimeToLiveBuilder extends TableProperty {
+private[phantom] class TimeToLiveBuilder()(implicit builder: QueryBuilder) extends TableProperty {
 
   def eqs(time: Long): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.default_time_to_live(time.toString))
+    new TablePropertyClause(builder.Create.default_time_to_live(time.toString))
   }
 
   def eqs(duration: Seconds): TablePropertyClause = eqs(duration.getSeconds.toLong)
@@ -65,44 +65,44 @@ private[phantom] class TimeToLiveBuilder extends TableProperty {
   def eqs(duration: FiniteDuration): TablePropertyClause = eqs(duration.toSeconds)
 }
 
-private[phantom] class GcGraceSecondsBuilder extends TableProperty {
+private[phantom] class GcGraceSecondsBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: Seconds): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.gc_grace_seconds(clause.getSeconds.toString))
+    new TablePropertyClause(builder.Create.gc_grace_seconds(clause.getSeconds.toString))
   }
 
   def eqs(duration: FiniteDuration): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.gc_grace_seconds(duration.toSeconds.toString))
+    new TablePropertyClause(builder.Create.gc_grace_seconds(duration.toSeconds.toString))
   }
 }
 
-private[phantom] class ReadRepairChanceBuilder extends TableProperty {
+private[phantom] class ReadRepairChanceBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: Double): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.read_repair_chance(clause.toString))
+    new TablePropertyClause(builder.Create.read_repair_chance(clause.toString))
   }
 }
 
-private[phantom] class ReplicateOnWriteBuilder extends TableProperty {
+private[phantom] class ReplicateOnWriteBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def apply(clause: Boolean): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.replicate_on_write(clause.toString))
+    new TablePropertyClause(builder.Create.replicate_on_write(clause.toString))
   }
 
   def eqs(clause: Boolean): TablePropertyClause = apply(clause)
 }
 
-private[phantom] class BloomFilterFpChanceBuilder extends TableProperty {
+private[phantom] class BloomFilterFpChanceBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: Double): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.bloom_filter_fp_chance(clause.toString))
+    new TablePropertyClause(builder.Create.bloom_filter_fp_chance(clause.toString))
   }
 }
 
-private[phantom] class DcLocalReadRepairChanceBuilder extends TableProperty {
+private[phantom] class DcLocalReadRepairChanceBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: Double): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.dclocal_read_repair_chance(clause.toString))
+    new TablePropertyClause(builder.Create.dclocal_read_repair_chance(clause.toString))
   }
 }
 
-private[phantom] class CommentClauseBuilder extends TableProperty {
+private[phantom] class CommentClauseBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: String): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.comment(clause))
+    new TablePropertyClause(builder.Create.comment(clause))
   }
 }

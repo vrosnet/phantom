@@ -89,7 +89,7 @@ abstract class Query[
   table: Table,
   override val qb: CQLQuery,
   row: Row => Record,
-  usingPart: UsingPart = UsingPart.empty,
+  usingPart: UsingPart,
   override val options: QueryOptions
 )(implicit builder: QueryBuilder) extends ExecutableStatement {
 

@@ -44,10 +44,11 @@ sealed abstract class CQLQueryPart[Part <: CQLQueryPart[Part]](override val list
   override def mergeList(list: List[CQLQuery]): MergedQueryList[CQLQuery] = new CQLMergeList(list)
 }
 
-sealed class UsingPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[UsingPart](list) {
+sealed class UsingPart(override val list: List[CQLQuery] = Nil)
+  (implicit builder: QueryBuilder) extends CQLQueryPart[UsingPart](list) {
 
   override def qb: CQLQuery = list match {
-    case head :: tail => QueryBuilder.Update.usingPart(list)
+    case head :: tail => builder.Update.usingPart(list)
     case Nil => CQLQuery.empty
   }
 
@@ -55,32 +56,38 @@ sealed class UsingPart(override val list: List[CQLQuery] = Nil) extends CQLQuery
 }
 
 object UsingPart {
-  def empty: UsingPart = new UsingPart()
+  def empty()(implicit builder: QueryBuilder): UsingPart = new UsingPart()
 }
 
-sealed class WherePart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[WherePart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class WherePart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[WherePart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(list: List[CQLQuery]): WherePart = new WherePart(list)
 }
 
 object WherePart {
-  def empty: WherePart = new WherePart(Nil)
+  def empty()(implicit builder: QueryBuilder): WherePart = new WherePart(Nil)
 }
 
-sealed class LimitedPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[LimitedPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class LimitedPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[LimitedPart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(l: List[CQLQuery]): LimitedPart = new LimitedPart(l)
 }
 
 object LimitedPart {
-  def empty: LimitedPart = new LimitedPart(Nil)
+  def empty()(implicit builder: QueryBuilder): LimitedPart = new LimitedPart(Nil)
 }
 
-sealed class OrderPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[OrderPart](list) {
+sealed class OrderPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[OrderPart](list) {
   override def qb: CQLQuery = list match {
-    case head :: tail => QueryBuilder.Select.Ordering.orderBy(list: _*)
+    case head :: tail => builder.Select.Ordering.orderBy(list: _*)
     case Nil => CQLQuery.empty
   }
 
@@ -88,75 +95,89 @@ sealed class OrderPart(override val list: List[CQLQuery] = Nil) extends CQLQuery
 }
 
 object OrderPart {
-  def empty: OrderPart = new OrderPart(Nil)
+  def empty()(implicit builder: QueryBuilder): OrderPart = new OrderPart(Nil)
 }
 
-sealed class FilteringPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[FilteringPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class FilteringPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[FilteringPart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(l: List[CQLQuery]): FilteringPart = new FilteringPart(l)
 }
 
 object FilteringPart {
-  def empty: FilteringPart = new FilteringPart()
+  def empty()(implicit builder: QueryBuilder): FilteringPart = new FilteringPart()
 }
 
-sealed class SetPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[SetPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.chain(list)
+sealed class SetPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[SetPart](list) {
+  override def qb: CQLQuery = builder.Update.chain(list)
 
   override def instance(l: List[CQLQuery]): SetPart = new SetPart(l)
 }
 
 object SetPart {
-  def empty: SetPart = new SetPart()
+  def empty()(implicit builder: QueryBuilder): SetPart = new SetPart()
 }
 
-sealed class CompareAndSetPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[CompareAndSetPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class CompareAndSetPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[CompareAndSetPart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(l: List[CQLQuery]): CompareAndSetPart = new CompareAndSetPart(l)
 }
 
 object CompareAndSetPart {
-  def empty: CompareAndSetPart = new CompareAndSetPart()
+  def empty()(implicit builder: QueryBuilder): CompareAndSetPart = new CompareAndSetPart()
 }
 
-sealed class ColumnsPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[ColumnsPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Insert.columns(list)
+sealed class ColumnsPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[ColumnsPart](list) {
+  override def qb: CQLQuery = builder.Insert.columns(list)
 
   override def instance(l: List[CQLQuery]): ColumnsPart = new ColumnsPart(l)
 }
 
 object ColumnsPart {
-  def empty: ColumnsPart = new ColumnsPart()
+  def empty()(implicit builder: QueryBuilder): ColumnsPart = new ColumnsPart()
 }
 
-sealed class ValuePart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[ValuePart](list) {
-  override def qb: CQLQuery = QueryBuilder.Insert.values(list)
+sealed class ValuePart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[ValuePart](list) {
+  override def qb: CQLQuery = builder.Insert.values(list)
 
   override def instance(l: List[CQLQuery]): ValuePart = new ValuePart(l)
 }
 
 object ValuePart {
-  def empty: ValuePart = new ValuePart()
+  def empty()(implicit builder: QueryBuilder): ValuePart = new ValuePart()
 }
 
-sealed class LightweightPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[LightweightPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class LightweightPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[LightweightPart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(l: List[CQLQuery]): LightweightPart = new LightweightPart(l)
 }
 
 object LightweightPart {
-  def empty: LightweightPart = new LightweightPart()
+  def empty()(implicit builder: QueryBuilder): LightweightPart = new LightweightPart()
 }
 
-sealed class WithPart(override val list: List[CQLQuery] = Nil) extends CQLQueryPart[WithPart](list) {
-  override def qb: CQLQuery = QueryBuilder.Update.clauses(list)
+sealed class WithPart(override val list: List[CQLQuery] = Nil)(
+  implicit builder: QueryBuilder
+) extends CQLQueryPart[WithPart](list) {
+  override def qb: CQLQuery = builder.Update.clauses(list)
 
   override def instance(l: List[CQLQuery]): WithPart = new WithPart(l)
 }
 
 object WithPart {
-  def empty: WithPart = new WithPart()
+  def empty()(implicit builder: QueryBuilder): WithPart = new WithPart()
 }

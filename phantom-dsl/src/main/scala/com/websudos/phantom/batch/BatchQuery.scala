@@ -50,7 +50,7 @@ object BatchType {
 sealed class BatchQuery[Status <: ConsistencyBound](
   val iterator: Iterator[_ <: Statement],
   batchType: BatchType,
-  usingPart: UsingPart = UsingPart.empty,
+  usingPart: UsingPart,
   added: Boolean = false,
   override val options: QueryOptions
 ) extends ExecutableStatement {
@@ -169,11 +169,11 @@ sealed class BatchQuery[Status <: ConsistencyBound](
 
 private[phantom] trait Batcher {
 
-  def apply(batchType: String = CQLSyntax.Batch.Logged): BatchQuery[Unspecified] = {
+  def apply(batchType: String = CQLSyntax.Batch.Logged)(implicit builder: QueryBuilder): BatchQuery[Unspecified] = {
     new BatchQuery(Iterator.empty, BatchType.Logged, UsingPart.empty, false, QueryOptions.empty)
   }
 
-  def logged: BatchQuery[Unspecified] = {
+  def logged()(implicit builder: QueryBuilder): BatchQuery[Unspecified] = {
     new BatchQuery(Iterator.empty, BatchType.Logged, UsingPart.empty, false, QueryOptions.empty)
   }
 
@@ -181,11 +181,11 @@ private[phantom] trait Batcher {
     apply().timestamp(stamp)
   }
 
-  def unlogged: BatchQuery[Unspecified] = {
+  def unlogged()(implicit builder: QueryBuilder): BatchQuery[Unspecified] = {
     new BatchQuery(Iterator.empty, BatchType.Unlogged, UsingPart.empty, false, QueryOptions.empty)
   }
 
-  def counter: BatchQuery[Unspecified] = {
+  def counter()(implicit builder: QueryBuilder): BatchQuery[Unspecified] = {
     new BatchQuery(Iterator.empty, BatchType.Counter, UsingPart.empty, false, QueryOptions.empty)
   }
 }

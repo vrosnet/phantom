@@ -34,7 +34,7 @@ import java.util.concurrent.Executor
 import com.datastax.driver.core.{QueryOptions => _, _}
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.builder.query._
-import com.websudos.phantom.builder.{LimitBound, Unlimited}
+import com.websudos.phantom.builder.{LimitBound, QueryBuilder, Unlimited}
 import com.websudos.phantom.connectors.KeySpace
 import org.joda.time.DateTime
 import shapeless.HList
@@ -90,7 +90,8 @@ class ExecutablePreparedSelectQuery[
     implicit session: Session,
     keySpace: KeySpace,
     ev: =:=[Limit, Unlimited],
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): ScalaFuture[Option[R]] = {
     singleFetch()
   }
