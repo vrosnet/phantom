@@ -56,7 +56,9 @@ package object dsl extends ImplicitMechanism with CreateImplicits
 
   val QueryBuilderHolder = new QueryBuilderHolder(new QueryBuilder(QueryBuilderConfig.Default))
 
-  implicit def builder: QueryBuilder = QueryBuilderHolder.builder
+  override def builder: QueryBuilder = QueryBuilderHolder.builder
+
+  implicit def QueryBuilder: QueryBuilder = new QueryBuilder(QueryBuilderConfig.Default)
 
   type CassandraTable[Owner <: CassandraTable[Owner, Record], Record] = com.websudos.phantom.CassandraTable[Owner, Record]
 
@@ -153,6 +155,7 @@ package object dsl extends ImplicitMechanism with CreateImplicits
   val ContactPoint = com.websudos.phantom.connectors.ContactPoint
   val ContactPoints = com.websudos.phantom.connectors.ContactPoints
 
+  @deprecated("Use implicit val enumPrimitive = Primitive.apply(Enum) instead", "1.26.2")
   implicit def enumToQueryConditionPrimitive[T <: Enumeration](enum: T): Primitive[T#Value] = {
     new Primitive[T#Value] {
 

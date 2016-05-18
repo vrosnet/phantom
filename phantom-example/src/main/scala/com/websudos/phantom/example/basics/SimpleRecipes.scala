@@ -166,7 +166,6 @@ abstract class ConcreteRecipes extends Recipes with RootConnector {
     select.fetchEnumerator() run Iteratee.slice(start, limit)
   }
 
-
   // Updating records is also really easy.
   // Updating one record is done like this
   def updateRecipeAuthor(id: UUID, author: String): ScalaFuture[ResultSet] = {

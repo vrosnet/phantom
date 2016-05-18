@@ -37,7 +37,9 @@ sealed abstract class CompactionStrategy(override val qb: CQLQuery) extends Tabl
 
 private[phantom] trait CompactionStrategies {
   
-  implicit def builder: QueryBuilder
+  def builder: QueryBuilder
+
+  private[this] implicit val queryBuilder: QueryBuilder = builder
 
   private[this] def strategy(strategy: String) = {
     CQLQuery(CQLSyntax.Symbols.`{`).forcePad

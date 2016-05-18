@@ -46,7 +46,9 @@ sealed class CompressionStrategy(override val qb: CQLQuery)(implicit builder: Qu
 
 private[phantom] trait CompressionStrategies {
 
-  implicit def builder: QueryBuilder
+  def builder: QueryBuilder
+
+  private[this] implicit val queryBuilder: QueryBuilder = builder
 
   private[this] def strategy(strategy: String) = {
     CQLQuery(CQLSyntax.Symbols.`{`).forcePad

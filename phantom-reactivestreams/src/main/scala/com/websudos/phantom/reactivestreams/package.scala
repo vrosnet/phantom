@@ -32,7 +32,7 @@ package com.websudos.phantom
 import akka.actor.ActorSystem
 import com.datastax.driver.core.Session
 import com.websudos.phantom.batch.BatchType
-import com.websudos.phantom.builder.LimitBound
+import com.websudos.phantom.builder.{LimitBound, QueryBuilder}
 import com.websudos.phantom.builder.query.{ExecutableQuery, RootSelectBlock}
 import com.websudos.phantom.connectors.KeySpace
 import com.websudos.phantom.dsl.{context => _, _}
@@ -110,7 +110,8 @@ package object reactivestreams {
       system: ActorSystem,
       session: Session,
       space: KeySpace,
-      ev: Manifest[T]
+      ev: Manifest[T],
+      queryBuilder: QueryBuilder
     ): BatchSubscriber[CT, T] = {
       new BatchSubscriber[CT, T](
         ct.asInstanceOf[CT],
@@ -135,7 +136,8 @@ package object reactivestreams {
     def publisher()(
       implicit session: Session,
       keySpace: KeySpace,
-      ctx: ExecutionContextExecutor
+      ctx: ExecutionContextExecutor,
+      builder: QueryBuilder
     ): Publisher[T] = {
       Streams.enumeratorToPublisher(ct.select.all().fetchEnumerator())
     }
@@ -188,7 +190,8 @@ package object reactivestreams {
     def fetchEnumerator()(
       implicit session: Session,
       keySpace: KeySpace,
-      ctx: ExecutionContextExecutor
+      ctx: ExecutionContextExecutor,
+      builder: QueryBuilder
     ): PlayEnumerator[R] = {
       val eventualEnum = block.all().future() map {
         resultSet => Enumerator.enumerator(resultSet) through Enumeratee.map(block.fromRow)

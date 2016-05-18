@@ -34,7 +34,6 @@ import scala.collection.JavaConverters._
 import scala.util.{Success, Try}
 
 import com.websudos.phantom.builder.QueryBuilder
-import com.websudos.phantom.builder.QueryBuilder.Utils
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
@@ -69,11 +68,11 @@ trait ThriftColumnDefinition[ValueType <: ThriftStruct] {
   val primitive = implicitly[Primitive[String]]
 }
 
-trait CollectionThriftColumnDefinition[ValueType <: ThriftStruct] extends ThriftColumnDefinition[ValueType] with CollectionValueDefinition[ValueType] {
+trait CollectionThriftColumnDefinition[ValueType <: ThriftStruct] extends
+  ThriftColumnDefinition[ValueType] with CollectionValueDefinition[ValueType] {
 
   def fromString(c: String): ValueType = serializer.fromString(c)
 }
-
 
 abstract class ThriftColumn[T <: CassandraTable[T, R], R, ValueType <: ThriftStruct](table: CassandraTable[T, R])
   extends Column[T, R, ValueType](table) with ThriftColumnDefinition[ValueType] {
@@ -101,12 +100,16 @@ abstract class OptionalThriftColumn[T <: CassandraTable[T, R], R, ValueType <: T
 
 }
 
-abstract class ThriftSetColumn[T <: CassandraTable[T, R], R, ValueType <: ThriftStruct](table: CassandraTable[T, R])
+abstract class ThriftSetColumn[
+  T <: CassandraTable[T, R],
+  R,
+  ValueType <: ThriftStruct
+](table: CassandraTable[T, R])(implicit builder: QueryBuilder)
     extends AbstractSetColumn[T, R, ValueType](table) with CollectionThriftColumnDefinition[ValueType] {
 
-  override val cassandraType = QueryBuilder.Collections.setType(CQLSyntax.Types.Text).queryString
+  override val cassandraType = builder.Collections.setType(CQLSyntax.Types.Text).queryString
 
-  override def asCql(v: Set[ValueType]): String = Utils.set(v.map(valueAsCql)).queryString
+  override def asCql(v: Set[ValueType]): String = builder.Utils.set(v.map(valueAsCql)).queryString
 
   override def parse(r: Row): Try[Set[ValueType]] = {
     if (r.isNull(name)) {
@@ -118,12 +121,16 @@ abstract class ThriftSetColumn[T <: CassandraTable[T, R], R, ValueType <: Thrift
 }
 
 
-abstract class ThriftListColumn[T <: CassandraTable[T, R], R, ValueType <: ThriftStruct](table: CassandraTable[T, R])
+abstract class ThriftListColumn[
+  T <: CassandraTable[T, R],
+  R,
+  ValueType <: ThriftStruct
+](table: CassandraTable[T, R])(implicit builder: QueryBuilder)
     extends AbstractListColumn[T, R, ValueType](table) with CollectionThriftColumnDefinition[ValueType] {
 
-  override val cassandraType = QueryBuilder.Collections.listType(CQLSyntax.Types.Text).queryString
+  override val cassandraType = builder.Collections.listType(CQLSyntax.Types.Text).queryString
 
-  override def asCql(v: List[ValueType]): String = Utils.collection(v.map(valueAsCql)).queryString
+  override def asCql(v: List[ValueType]): String = builder.Utils.collection(v.map(valueAsCql)).queryString
 
 
   override def parse(r: Row): Try[List[ValueType]] = {
@@ -136,12 +143,17 @@ abstract class ThriftListColumn[T <: CassandraTable[T, R], R, ValueType <: Thrif
 }
 
 @implicitNotFound(msg = "Type ${KeyType} must be a Cassandra primitive")
-abstract class ThriftMapColumn[T <: CassandraTable[T, R], R, KeyType : Primitive, ValueType <: ThriftStruct](table: CassandraTable[T, R])
+abstract class ThriftMapColumn[
+  T <: CassandraTable[T, R],
+  R,
+  KeyType : Primitive,
+  ValueType <: ThriftStruct
+](table: CassandraTable[T, R])(implicit builder: QueryBuilder)
   extends AbstractMapColumn[T, R, KeyType, ValueType](table) with CollectionThriftColumnDefinition[ValueType] {
 
   val keyPrimitive = Primitive[KeyType]
 
-  override val cassandraType = QueryBuilder.Collections.mapType(keyPrimitive.cassandraType, CQLSyntax.Types.Text).queryString
+  override val cassandraType = builder.Collections.mapType(keyPrimitive.cassandraType, CQLSyntax.Types.Text).queryString
 
   override def keyAsCql(v: KeyType): String = keyPrimitive.asCql(v)
 

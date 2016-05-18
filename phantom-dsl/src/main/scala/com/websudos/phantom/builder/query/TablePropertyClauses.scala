@@ -41,7 +41,8 @@ import com.websudos.phantom.builder.syntax.CQLSyntax
 private[phantom] trait TablePropertyClauses extends CompactionStrategies with CompressionStrategies {
   outer =>
 
-  implicit def builder: QueryBuilder
+
+  private[this] implicit val queryBuilder: QueryBuilder = builder
 
   object Storage {
     case object CompactStorage extends TablePropertyClause(CQLQuery(CQLSyntax.StorageMechanisms.CompactStorage))

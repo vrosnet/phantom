@@ -33,7 +33,8 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import com.datastax.driver.core.ResultSet
 import com.websudos.phantom.CassandraTable
 import com.websudos.phantom.batch.{BatchQuery, BatchType}
-import com.websudos.phantom.builder.query.{QueryOptions, Batchable, ExecutableStatement, UsingPart}
+import com.websudos.phantom.builder.QueryBuilder
+import com.websudos.phantom.builder.query.{Batchable, ExecutableStatement, QueryOptions, UsingPart}
 import com.websudos.phantom.dsl._
 import org.reactivestreams.{Subscriber, Subscription}
 
@@ -55,7 +56,13 @@ class BatchSubscriber[CT <: CassandraTable[CT, T], T] private[reactivestreams] (
   flushInterval: Option[FiniteDuration],
   completionFn: () => Unit,
   errorFn: Throwable => Unit
-)(implicit system: ActorSystem, session: Session, space: KeySpace, ev: Manifest[T]) extends Subscriber[T] {
+)(
+  implicit system: ActorSystem,
+  queryBuilder: QueryBuilder,
+  session: Session,
+  space: KeySpace,
+  ev: Manifest[T]
+) extends Subscriber[T] {
 
   private[this] var actor: Option[ActorRef] = None
 
@@ -123,7 +130,11 @@ class BatchActor[CT <: CassandraTable[CT, T], T](
   flushInterval: Option[FiniteDuration],
   completionFn: () => Unit,
   errorFn: Throwable => Unit
-)(implicit session: Session, space: KeySpace, ev: Manifest[T]) extends Actor {
+)(
+  implicit session: Session,
+  queryBuilder: QueryBuilder,
+  space: KeySpace, ev: Manifest[T]
+) extends Actor {
 
   import context.{dispatcher, system}
 
@@ -187,11 +198,11 @@ class BatchActor[CT <: CassandraTable[CT, T], T](
     context.stop(self)
   }
 
-  private[this] def executeStatements(): Unit = {
+  private[this] def executeStatements()(implicit queryBuilder: QueryBuilder): Unit = {
     val query = new BatchQuery(
       buffer.map(r => builder.request(table, r).statement()).toIterator,
       batchType,
-      UsingPart.empty,
+      UsingPart.empty(),
       false,
       QueryOptions.empty
     )

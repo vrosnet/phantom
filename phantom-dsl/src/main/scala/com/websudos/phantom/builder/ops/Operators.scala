@@ -190,7 +190,7 @@ sealed class TokenCqlFunction extends CqlFunction with TokenComparisonOps
 
 trait Operators {
 
-  implicit def builder: QueryBuilder
+  implicit def QueryBuilder: QueryBuilder
 
   object dateOf extends DateOfCqlFunction
   object unixTimestampOf extends UnixTimestampOfCqlFunction
