@@ -104,6 +104,8 @@ object PublishTasks {
     state
   }
 
+  println("Build running under CI")
+
   lazy val effectivePublishingSettings = if (RunningUnderCi) bintrayPublishSettings else mavenPublishingSettings
   //lazy val effectivePublishingSettings = mavenPublishingSettings
 }
