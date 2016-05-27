@@ -138,7 +138,7 @@ val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
     "-unchecked"
   ),
   logLevel in ThisBuild := {
-    if(PublishTasks.RunningUnderCi) Level.Error else Level.Debug
+    if(PublishTasks.RunningUnderCi) Level.Error else Level.Warn
   },
   libraryDependencies ++= Seq(
     "ch.qos.logback"               % "logback-classic"                    % Versions.logback,
