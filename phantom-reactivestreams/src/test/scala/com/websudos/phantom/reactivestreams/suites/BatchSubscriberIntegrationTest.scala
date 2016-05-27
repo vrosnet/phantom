@@ -37,6 +37,7 @@ import com.websudos.phantom.reactivestreams._
 import com.websudos.phantom.reactivestreams.suites.iteratee.OperaPublisher
 import org.scalatest.FlatSpec
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.tagobjects.Retryable
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -50,7 +51,8 @@ class BatchSubscriberIntegrationTest extends FlatSpec with StreamTest with Scala
     Await.result(StreamDatabase.autotruncate().future(), 5.seconds)
   }
 
-  it should "persist all data" in {
+
+  it should "persist all data" taggedAs Retryable in {
     val completionLatch = new CountDownLatch(1)
 
     val subscriber = StreamDatabase.operaTable.subscriber(
