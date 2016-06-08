@@ -33,18 +33,22 @@ import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-sealed class CompressionStrategy(override val qb: CQLQuery) extends TablePropertyClause(qb) {
+sealed class CompressionStrategy(override val qb: CQLQuery)(implicit builder: QueryBuilder) extends TablePropertyClause(qb) {
 
   def chunk_length_kb(unit: Int): CompressionStrategy = {
-    new CompressionStrategy(QueryBuilder.Create.chunk_length_kb(qb, unit + "KB"))
+    new CompressionStrategy(builder.Create.chunk_length_kb(qb, unit + "KB"))
   }
 
   def crc_check_chance(size: Double): CompressionStrategy = {
-    new CompressionStrategy(QueryBuilder.Create.crc_check_chance(qb, size))
+    new CompressionStrategy(builder.Create.crc_check_chance(qb, size))
   }
 }
 
 private[phantom] trait CompressionStrategies {
+
+  def builder: QueryBuilder
+
+  private[this] implicit val queryBuilder: QueryBuilder = builder
 
   private[this] def strategy(strategy: String) = {
     CQLQuery(CQLSyntax.Symbols.`{`).forcePad
@@ -60,8 +64,8 @@ private[phantom] trait CompressionStrategies {
 
 
 
-private[phantom] class CompressionBuilder extends TableProperty {
+private[phantom] class CompressionBuilder()(implicit builder: QueryBuilder) extends TableProperty {
   def eqs(clause: CompressionStrategy): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.compression(clause.qb))
+    new TablePropertyClause(builder.Create.compression(clause.qb))
   }
 }

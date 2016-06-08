@@ -29,12 +29,11 @@
  */
 package com.websudos.phantom.builder.query
 
-import java.util.concurrent.Executor
 import java.util.{List => JavaList}
 
 import com.datastax.driver.core._
 import com.websudos.phantom.CassandraTable
-import com.websudos.phantom.builder.{LimitBound, Unlimited}
+import com.websudos.phantom.builder.{LimitBound, QueryBuilder, Unlimited}
 import com.websudos.phantom.connectors.KeySpace
 
 import scala.collection.JavaConverters._
@@ -140,7 +139,6 @@ private[phantom] class ExecutableStatementList(val queries: Seq[CQLQuery]) exten
   def future()(
     implicit session: Session,
     keySpace: KeySpace,
-    executor: Executor,
     ec: ExecutionContextExecutor
   ): ScalaFuture[Seq[ResultSet]] = {
     ScalaFuture.sequence(queries.map(item => {
@@ -195,7 +193,8 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound]
     implicit session: Session,
     keySpace: KeySpace,
     ev: Limit =:= Unlimited,
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): ScalaFuture[Option[R]]
 
   /**

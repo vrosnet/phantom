@@ -67,6 +67,6 @@ abstract class ConcreteAdvancedRecipesByTitle extends AdvancedRecipesByTitle wit
   // now you can have the tile in a where clause
   // without the performance impact of a secondary index.
   def getRecipeByTitle(title: String): ScalaFuture[Option[(String, UUID)]] = {
-    select.where(_.title eqs title).one()
+    select()(builder).where(_.title eqs title).one()
   }
 }

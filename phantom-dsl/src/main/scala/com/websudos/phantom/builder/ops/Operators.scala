@@ -45,10 +45,10 @@ import shapeless.{=:!=, HList}
 
 sealed class CqlFunction extends SessionAugmenterImplicits
 
-sealed class UnixTimestampOfCqlFunction extends CqlFunction {
+sealed class UnixTimestampOfCqlFunction()(implicit builder: QueryBuilder) extends CqlFunction {
 
   def apply(pf: TimeUUIDColumn[_, _])(implicit ev: Primitive[Long], session: Session): TypedClause.Condition[Option[Long]] = {
-    new TypedClause.Condition(QueryBuilder.Select.unixTimestampOf(pf.name), row => {
+    new TypedClause.Condition(builder.Select.unixTimestampOf(pf.name), row => {
       if (session.v3orNewer) {
         ev.fromRow(s"system.unixtimestampof(${pf.name})", row).toOption
       } else {
@@ -69,7 +69,7 @@ sealed class TTLOfFunction extends CqlFunction {
 sealed class DateOfCqlFunction extends CqlFunction {
 
   def apply(pf: TimeUUIDColumn[_, _])(implicit ev: Primitive[DateTime], session: Session): TypedClause.Condition[Option[DateTime]] = {
-    new TypedClause.Condition(QueryBuilder.Select.dateOf(pf.name), row => {
+    new TypedClause.Condition(builder.Select.dateOf(pf.name), row => {
       if (session.v3orNewer) {
 
         ev.fromRow(s"system.dateof(${pf.name})", row).toOption
@@ -82,7 +82,7 @@ sealed class DateOfCqlFunction extends CqlFunction {
   def apply(op: OperatorClause.Condition)(implicit ev: Primitive[DateTime], session: Session): TypedClause.Condition[Option[DateTime]] = {
     val pf = op.qb.queryString
 
-    new TypedClause.Condition(QueryBuilder.Select.dateOf(pf), row => {
+    new TypedClause.Condition(builder.Select.dateOf(pf), row => {
       if (session.v3orNewer) {
         ev.fromRow(s"system.dateof($pf)", row).toOption
       } else {
@@ -92,17 +92,17 @@ sealed class DateOfCqlFunction extends CqlFunction {
   }
 }
 
-sealed class NowCqlFunction extends CqlFunction {
+sealed class NowCqlFunction()(implicit builder: QueryBuilder) extends CqlFunction {
   def apply(): OperatorClause.Condition = {
-    new OperatorClause.Condition(QueryBuilder.Select.now())
+    new OperatorClause.Condition(builder.Select.now())
   }
 }
 
-sealed class MaxTimeUUID extends CqlFunction with DefaultPrimitives {
+sealed class MaxTimeUUID()(implicit builder: QueryBuilder) extends CqlFunction with DefaultPrimitives {
 
   def apply(date: Date): OperatorClause.Condition = {
     new Condition(
-      QueryBuilder.Select.maxTimeuuid(
+      builder.Select.maxTimeuuid(
         CQLQuery.escape(new DateTime(date).toString())
       )
     )
@@ -110,18 +110,18 @@ sealed class MaxTimeUUID extends CqlFunction with DefaultPrimitives {
 
   def apply(date: DateTime): OperatorClause.Condition = {
     new Condition(
-      QueryBuilder.Select.maxTimeuuid(
+      builder.Select.maxTimeuuid(
         CQLQuery.escape(new DateTime(date).toString())
       )
     )
   }
 }
 
-sealed class MinTimeUUID extends CqlFunction with DefaultPrimitives {
+sealed class MinTimeUUID()(implicit builder: QueryBuilder) extends CqlFunction with DefaultPrimitives {
 
   def apply(date: Date): OperatorClause.Condition = {
     new Condition(
-      QueryBuilder.Select.minTimeuuid(
+      builder.Select.minTimeuuid(
         CQLQuery.escape(new DateTime(date).toString())
       )
     )
@@ -129,7 +129,7 @@ sealed class MinTimeUUID extends CqlFunction with DefaultPrimitives {
 
   def apply(date: DateTime): OperatorClause.Condition = {
     new Condition(
-      QueryBuilder.Select.minTimeuuid(
+      builder.Select.minTimeuuid(
         CQLQuery.escape(date.toString())
       )
     )
@@ -137,8 +137,11 @@ sealed class MinTimeUUID extends CqlFunction with DefaultPrimitives {
 }
 
 sealed class WritetimeCqlFunction extends CqlFunction {
-  def apply(col: AbstractColumn[_])(implicit ev: Primitive[BigDecimal]): TypedClause.Condition[Long] = {
-    val qb = QueryBuilder.Select.writetime(col.name)
+  def apply(col: AbstractColumn[_])(
+    implicit ev: Primitive[BigDecimal],
+    builder: QueryBuilder
+  ): TypedClause.Condition[Long] = {
+    val qb = builder.Select.writetime(col.name)
 
     new TypedClause.Condition(qb, row => {
       row.getLong(qb.queryString)
@@ -146,16 +149,20 @@ sealed class WritetimeCqlFunction extends CqlFunction {
   }
 }
 
-sealed class TokenConstructor[P <: HList, TP <: TokenTypes.Root](val mapper : Seq[String]) {
+sealed class TokenConstructor[P <: HList, TP <: TokenTypes.Root](
+  val mapper : Seq[String]
+)(implicit builder: QueryBuilder) {
 
   type Out = P
 
-  private[this] def joinOp(comp: Seq[String], op: String): WhereClause.Condition = {
-    val qb = QueryBuilder.Where.token(mapper: _*)
+  private[this] def joinOp(comp: Seq[String], op: String)(
+    implicit builder: QueryBuilder
+  ): WhereClause.Condition = {
+    val qb = builder.Where.token(mapper: _*)
       .pad
       .append(op)
       .pad
-      .append(QueryBuilder.Where.token(comp: _*))
+      .append(builder.Where.token(comp: _*))
 
     new WhereClause.Condition(qb)
   }
@@ -191,6 +198,9 @@ sealed class TokenConstructor[P <: HList, TP <: TokenTypes.Root](val mapper : Se
 sealed class TokenCqlFunction extends CqlFunction with TokenComparisonOps
 
 trait Operators {
+
+  implicit def QueryBuilder: QueryBuilder
+
   object dateOf extends DateOfCqlFunction
   object unixTimestampOf extends UnixTimestampOfCqlFunction
 

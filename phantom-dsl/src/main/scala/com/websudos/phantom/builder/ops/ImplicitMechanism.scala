@@ -41,7 +41,7 @@ import scala.annotation.implicitNotFound
 
 sealed class DropColumn[RR](val column: AbstractColumn[RR])
 
-sealed class CasConditionalOperators[RR](col: AbstractColumn[RR]) {
+sealed class CasConditionalOperators[RR](col: AbstractColumn[RR])(implicit builder: QueryBuilder) {
 
   /**
    * DSL method used to chain "is" clauses in Compare-And-Set operations.
@@ -60,27 +60,27 @@ sealed class CasConditionalOperators[RR](col: AbstractColumn[RR]) {
    * @return A compare and set clause usable in an "onlyIf" condition.
    */
   final def is(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.eqs(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.eqs(col.name, col.asCql(value)))
   }
 
   final def isNot(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.notEqs(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.notEqs(col.name, col.asCql(value)))
   }
 
   final def isGt(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.gt(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.gt(col.name, col.asCql(value)))
   }
 
   final def isGte(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.gte(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.gte(col.name, col.asCql(value)))
   }
 
   final def isLt(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.lt(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.lt(col.name, col.asCql(value)))
   }
 
   final def isLte(value: RR): CompareAndSetClause.Condition = {
-    new CompareAndSetClause.Condition(QueryBuilder.Where.lte(col.name, col.asCql(value)))
+    new CompareAndSetClause.Condition(builder.Where.lte(col.name, col.asCql(value)))
   }
 }
 
@@ -93,7 +93,7 @@ sealed class SetConditionals[T <: CassandraTable[T, R], R, RR](val col: Abstract
    */
   final def contains(elem: RR): WhereClause.Condition = {
     new WhereClause.Condition(
-      QueryBuilder.Where.contains(col.name, col.valueAsCql(elem))
+      builder.Where.contains(col.name, col.valueAsCql(elem))
     )
   }
 }
@@ -113,7 +113,7 @@ sealed class MapEntriesConditionals[K : Primitive, V : Primitive](val col: MapKe
     */
   final def eqs(entry: V): WhereClause.Condition = {
     new WhereClause.Condition(
-      QueryBuilder.Where.containsEntry(col.column, col.keyName, Primitive[V].asCql(entry))
+      builder.Where.containsEntry(col.column, col.keyName, Primitive[V].asCql(entry))
     )
   }
 }
@@ -133,7 +133,7 @@ sealed class MapKeyConditionals[T <: CassandraTable[T, R], R, K, V](val col: Abs
    */
   final def containsKey(elem: K): WhereClause.Condition = {
     new WhereClause.Condition(
-      QueryBuilder.Where.containsKey(col.name, col.keyAsCql(elem))
+      builder.Where.containsKey(col.name, col.keyAsCql(elem))
     )
   }
 }
@@ -149,7 +149,7 @@ sealed class MapConditionals[T <: CassandraTable[T, R], R, K, V](val col: Abstra
    */
   final def contains(elem: K): WhereClause.Condition = {
     new WhereClause.Condition(
-      QueryBuilder.Where.contains(col.name, col.keyAsCql(elem))
+      builder.Where.contains(col.name, col.keyAsCql(elem))
     )
   }
 }
@@ -158,12 +158,20 @@ sealed class MapConditionals[T <: CassandraTable[T, R], R, K, V](val col: Abstra
 private[phantom] trait ImplicitMechanism extends ModifyMechanism {
 
   @implicitNotFound(msg = "Compare-and-set queries can only be applied to non indexed primitive columns.")
-  implicit final def columnToCasCompareColumn[RR](col: AbstractColumn[RR])(implicit ev: col.type <:!< Indexed): CasConditionalOperators[RR] = {
+  implicit final def columnToCasCompareColumn[RR](
+    col: AbstractColumn[RR]
+  )(
+    implicit ev: col.type <:!< Indexed,
+    builder: QueryBuilder
+  ): CasConditionalOperators[RR] = {
     new CasConditionalOperators[RR](col)
   }
 
   @implicitNotFound(msg = "Index columns and counters cannot be dropped!")
-  implicit final def columnToDropColumn[T](col: AbstractColumn[T])(implicit ev: col.type <:!< Undroppable): DropColumn[T] = new DropColumn[T](col)
+  implicit final def columnToDropColumn[T](col: AbstractColumn[T])(
+    implicit ev: col.type <:!< Undroppable,
+    builder: QueryBuilder
+  ): DropColumn[T] = new DropColumn[T](col)
 
   implicit def indexedToQueryColumn[T : Primitive](col: AbstractColumn[T] with Indexed): QueryColumn[T] = new QueryColumn(col.name)
 

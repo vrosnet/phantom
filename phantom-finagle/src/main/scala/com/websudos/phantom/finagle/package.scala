@@ -323,15 +323,22 @@ package object finagle {
     Status <: ConsistencyBound
   ](val query: CreateQuery[Table, Record, Status]) extends AnyVal {
 
-    def execute()(implicit session: Session, keySpace: KeySpace, executor: Executor): Future[ResultSet] = {
+    def execute()(
+      implicit session: Session,
+      keySpace: KeySpace,
+      executor: Executor,
+      builder: QueryBuilder
+    ): Future[ResultSet] = {
       if (query.table.secondaryKeys.isEmpty) {
         twitterQueryStringExecuteToFuture(new SimpleStatement(query.qb.terminate().queryString))
       } else {
         query.execute() flatMap {
           res => {
-            query.indexList(keySpace.name).execute() map {
+            val tableRef = builder.table(keySpace.name, query.table.tableName)
+
+            query.indexList(tableRef).execute() map {
               _ => {
-                Manager.logger.debug(s"Creating secondary indexes on ${QueryBuilder.keyspace(keySpace.name, query.table.tableName).queryString}")
+                Manager.logger.debug(s"Creating secondary indexes on ${tableRef.toCqlString()}")
                 res
               }
             }
@@ -342,7 +349,12 @@ package object finagle {
   }
 
   implicit class ExecutableCreateStatementsListAugmenter(val list: ExecutableCreateStatementsList) extends AnyVal {
-    def execute()(implicit session: Session, keySpace: KeySpace, executor: Executor): Future[Seq[ResultSet]] = {
+    def execute()(
+      implicit session: Session,
+      keySpace: KeySpace,
+      executor: Executor,
+      builder: QueryBuilder
+    ): Future[Seq[ResultSet]] = {
       Future.collect(list.tables.toSeq.map(_.create.ifNotExists().execute()))
     }
   }
@@ -380,9 +392,10 @@ package object finagle {
       implicit session: Session,
       keySpace: KeySpace,
       ev: Limit =:= Unlimited,
-      executor: Executor
+      executor: Executor,
+      builder: QueryBuilder
     ): Future[Option[Record]] = {
-      val enforceLimit = if (select.count) LimitedPart.empty else select.limitedPart append QueryBuilder.limit(1)
+      val enforceLimit = if (select.count) LimitedPart.empty else select.limitedPart append builder.limit(1)
 
       new SelectQuery(
         table = select.table,
@@ -498,8 +511,8 @@ package object finagle {
   }
 
   implicit class CompressionStrategyAugmenter(val strategy: CompressionStrategy) extends AnyVal {
-    def chunk_length_kb(unit: StorageUnit): CompressionStrategy = {
-      new CompressionStrategy(QueryBuilder.Create.chunk_length_kb(strategy.qb, unit.inKilobytes + "KB"))
+    def chunk_length_kb(unit: StorageUnit)(implicit builder: QueryBuilder): CompressionStrategy = {
+      new CompressionStrategy(builder.Create.chunk_length_kb(strategy.qb, unit.inKilobytes + "KB"))
     }
   }
 }

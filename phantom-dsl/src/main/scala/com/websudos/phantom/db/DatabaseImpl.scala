@@ -32,6 +32,7 @@ package com.websudos.phantom.db
 import com.datastax.driver.core.{ResultSet, Session}
 import com.websudos.diesel.engine.reflection.EarlyInit
 import com.websudos.phantom.CassandraTable
+import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.ExecutableStatementList
 import com.websudos.phantom.connectors.{KeySpace, KeySpaceDef}
 
@@ -67,8 +68,12 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
    * @return An executable statement list that can be used with Scala or Twitter futures to simultaneously
    *         execute an entire sequence of queries.
    */
-  def autocreate(): ExecutableCreateStatementsList = {
+  final def autocreate()(implicit builder: QueryBuilder): ExecutableCreateStatementsList = {
     new ExecutableCreateStatementsList(tables)
+  }
+
+  final def create()(implicit ex: ExecutionContextExecutor, builder: QueryBuilder): Future[Seq[ResultSet]] = {
+    autocreate().future()(connector.session, KeySpace(connector.name), ex, builder)
   }
 
   /**
@@ -83,10 +88,14 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
    * @return An executable statement list that can be used with Scala or Twitter futures to simultaneously
    *         execute an entire sequence of queries.
    */
-  def autodrop(): ExecutableStatementList = {
+  final def autodrop()(implicit builder: QueryBuilder): ExecutableStatementList = {
     new ExecutableStatementList(tables.toSeq.map {
       table => table.alter().drop().qb
     })
+  }
+
+  final def dropAll()(implicit ex: ExecutionContextExecutor, builder: QueryBuilder): Future[Seq[ResultSet]] = {
+    autodrop().future()(connector.session, KeySpace(connector.name), ex)
   }
 
   /**
@@ -101,11 +110,19 @@ abstract class DatabaseImpl(val connector: KeySpaceDef) extends EarlyInit[Cassan
    * @return An executable statement list that can be used with Scala or Twitter futures to simultaneously
    *         execute an entire sequence of queries.
    */
-  def autotruncate(): ExecutableStatementList = {
+  final def autotruncate()(implicit builder: QueryBuilder): ExecutableStatementList = {
     new ExecutableStatementList(tables.toSeq.map {
       table => table.truncate().qb
     })
   }
+
+  final def truncateAll()(implicit ex: ExecutionContextExecutor, builder: QueryBuilder): Future[Seq[ResultSet]] = {
+    autotruncate().future()(connector.session, KeySpace(connector.name), ex)
+  }
+}
+
+trait DatabaseProvider {
+  def database: DatabaseImpl
 }
 
 sealed class ExecutableCreateStatementsList(val tables: Set[CassandraTable[_, _]]) {
@@ -113,7 +130,8 @@ sealed class ExecutableCreateStatementsList(val tables: Set[CassandraTable[_, _]
   def future()(
     implicit session: Session,
     keySpace: KeySpace,
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): Future[Seq[ResultSet]] = {
     Future.sequence(tables.toSeq.map(_.create.ifNotExists().future()))
   }

@@ -307,7 +307,9 @@ lazy val phantomSbtPlugin = (project in file("phantom-sbt"))
   moduleName := "phantom-sbt",
   scalaVersion := "2.10.6",
   publish := {
-    CrossVersion.partialVersion(scalaVersion.value).map {
+
+    println((scalaVersion in Global).value)
+    CrossVersion.partialVersion((scalaVersion in Global).value).map {
       case (2, scalaMajor) if scalaMajor >= 11 => false
       case _ => true
     }

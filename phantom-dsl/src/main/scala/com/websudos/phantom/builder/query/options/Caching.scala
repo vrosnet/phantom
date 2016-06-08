@@ -39,6 +39,9 @@ import com.websudos.phantom.connectors.SessionAugmenterImplicits
 sealed abstract class CacheProperty(override val qb: CQLQuery) extends TablePropertyClause(qb)
 
 private[phantom] trait CachingStrategies {
+  
+  implicit def builder: QueryBuilder
+  
   private[this] def caching(strategy: String) = {
     CQLQuery(CQLSyntax.Symbols.`{`).forcePad
       .appendSingleQuote(CQLSyntax.CacheStrategies.Caching)
@@ -52,15 +55,15 @@ private[phantom] trait CachingStrategies {
     def instance(qb: CQLQuery): QType
 
     def keys(value: String = "ALL"): QType = {
-      instance(QueryBuilder.Create.Caching.keys(qb, value))
+      instance(builder.Create.Caching.keys(qb, value))
     }
 
     def rows(value: String = "ALL"): QType = {
-      instance(QueryBuilder.Create.Caching.keys(qb, value))
+      instance(builder.Create.Caching.keys(qb, value))
     }
 
     def rows_per_partition(value: String = "NONE"): QType = {
-      instance(QueryBuilder.Create.Caching.rowsPerPartition(qb, value))
+      instance(builder.Create.Caching.rowsPerPartition(qb, value))
     }
   }
 
@@ -137,12 +140,12 @@ private[phantom] trait CachingStrategies {
   //case object All extends CacheProperty(CQLQuery(CQLSyntax.CacheStrategies.All))
 }
 
-object Caching extends CachingStrategies
+class Caching()(implicit val builder: QueryBuilder) extends CachingStrategies
 
-class CachingBuilder extends TableProperty {
+class CachingBuilder()(implicit val builder: QueryBuilder) extends TableProperty {
 
   def eqs(strategy: CacheProperty): TablePropertyClause = {
-    new TablePropertyClause(QueryBuilder.Create.caching(strategy.qb.queryString, strategy.escaped))
+    new TablePropertyClause(builder.Create.caching(strategy.qb.queryString, strategy.escaped))
   }
 
 }

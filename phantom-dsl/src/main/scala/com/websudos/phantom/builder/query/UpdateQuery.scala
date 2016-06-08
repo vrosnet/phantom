@@ -50,12 +50,13 @@ class UpdateQuery[
   PS <: HList
 ](table: Table,
   init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions = QueryOptions.empty
-) extends Query[Table, Record, Limit, Order, Status, Chain, PS](table, init, None.orNull, usingPart, options) with Batchable {
+)(implicit val builder: QueryBuilder) extends
+  Query[Table, Record, Limit, Order, Status, Chain, PS](table, init, None.orNull, usingPart, options) with Batchable {
 
   override val qb: CQLQuery = {
     usingPart merge setPart merge wherePart build init
@@ -100,7 +101,7 @@ class UpdateQuery[
       table,
       init, usingPart,
       wherePart,
-      setPart append QueryBuilder.ttl(seconds.toString),
+      setPart append builder.ttl(seconds.toString),
       casPart,
       options
     )
@@ -113,13 +114,14 @@ class UpdateQuery[
    * @return
    */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  override def where(condition: Table => WhereClause.Condition)
-    (implicit ev: Chain =:= Unchainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  override def where(
+    condition: Table => WhereClause.Condition
+  )(implicit ev: Chain =:= Unchainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
     new UpdateQuery(
       table,
       init,
       usingPart,
-      wherePart append QueryBuilder.Update.where(condition(table).qb),
+      wherePart append builder.Update.where(condition(table).qb),
       setPart,
       casPart,
       options
@@ -133,13 +135,14 @@ class UpdateQuery[
    * @return A SelectCountWhere.
    */
   @implicitNotFound("You have to use an where clause before using an AND clause")
-  override def and(condition: Table => WhereClause.Condition)
-    (implicit ev: Chain =:= Chainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  override def and(
+    condition: Table => WhereClause.Condition
+  )(implicit ev: Chain =:= Chainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
     new UpdateQuery(
       table,
       init,
       usingPart,
-      wherePart append QueryBuilder.Update.and(condition(table).qb),
+      wherePart append builder.Update.and(condition(table).qb),
       setPart,
       casPart,
       options
@@ -153,13 +156,17 @@ class UpdateQuery[
     * @return
     */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  def p_where[RR](condition: Table => PreparedWhereClause.ParametricCondition[RR])
-    (implicit ev: Chain =:= Unchainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
+  def p_where[RR](
+    condition: Table => PreparedWhereClause.ParametricCondition[RR]
+  )(
+    implicit ev: Chain =:= Unchainned,
+    builder: QueryBuilder
+  ): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
     new UpdateQuery(
       table,
       init,
       usingPart,
-      wherePart append QueryBuilder.Update.where(condition(table).qb),
+      wherePart append builder.Update.where(condition(table).qb),
       setPart,
       casPart,
       options
@@ -174,13 +181,17 @@ class UpdateQuery[
     * @return
     */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  def p_and[RR](condition: Table => PreparedWhereClause.ParametricCondition[RR])
-    (implicit ev: Chain =:= Chainned): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
+  def p_and[RR](
+    condition: Table => PreparedWhereClause.ParametricCondition[RR]
+  )(
+    implicit ev: Chain =:= Chainned,
+    builder: QueryBuilder
+  ): UpdateQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
     new UpdateQuery(
       table,
       init,
       usingPart,
-      wherePart append QueryBuilder.Update.and(condition(table).qb),
+      wherePart append builder.Update.and(condition(table).qb),
       setPart,
       casPart,
       options
@@ -188,13 +199,15 @@ class UpdateQuery[
   }
 
 
-  final def modify(clause: Table => UpdateClause.Condition): AssignmentsQuery[Table, Record, Limit, Order, Status, Chain, PS, HNil] = {
+  final def modify(
+    clause: Table => UpdateClause.Condition
+  ): AssignmentsQuery[Table, Record, Limit, Order, Status, Chain, PS, HNil] = {
     new AssignmentsQuery(
       table = table,
       init = init,
       usingPart = usingPart,
       wherePart = wherePart,
-      setPart = setPart append QueryBuilder.Update.set(clause(table).qb),
+      setPart = setPart append builder.Update.set(clause(table).qb),
       casPart = casPart,
       options = options
     )
@@ -208,7 +221,7 @@ class UpdateQuery[
       init = init,
       usingPart = usingPart,
       wherePart = wherePart,
-      setPart = setPart append QueryBuilder.Update.set(clause(table).qb),
+      setPart = setPart append builder.Update.set(clause(table).qb),
       casPart = casPart,
       options = options
     )
@@ -229,7 +242,7 @@ class UpdateQuery[
       usingPart,
       wherePart,
       setPart,
-      casPart append QueryBuilder.Update.onlyIf(clause(table).qb),
+      casPart append builder.Update.onlyIf(clause(table).qb),
       options
     )
   }
@@ -246,12 +259,12 @@ sealed class AssignmentsQuery[
   ModifyPrepared <: HList
 ](table: Table,
   val init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions
-) extends ExecutableStatement with Batchable {
+)(implicit val builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
   val qb: CQLQuery = {
     usingPart merge setPart merge wherePart merge casPart build init
@@ -287,7 +300,7 @@ sealed class AssignmentsQuery[
     new AssignmentsQuery(
       table = table,
       init = init,
-      usingPart = usingPart append QueryBuilder.timestamp(init, value.toString),
+      usingPart = usingPart append builder.timestamp(init, value.toString),
       wherePart = wherePart,
       setPart = setPart,
       casPart = casPart,
@@ -299,7 +312,7 @@ sealed class AssignmentsQuery[
     new AssignmentsQuery(
       table = table,
       init = init,
-      usingPart = usingPart append QueryBuilder.ttl(mark.qb.queryString),
+      usingPart = usingPart append builder.ttl(mark.qb.queryString),
       wherePart = wherePart,
       setPart = setPart,
       casPart = casPart,
@@ -312,7 +325,7 @@ sealed class AssignmentsQuery[
     new AssignmentsQuery(
       table = table,
       init = init,
-      usingPart = usingPart append QueryBuilder.ttl(seconds.toString),
+      usingPart = usingPart append builder.ttl(seconds.toString),
       wherePart = wherePart,
       setPart = setPart,
       casPart = casPart,
@@ -353,7 +366,7 @@ sealed class AssignmentsQuery[
       usingPart,
       wherePart,
       setPart,
-      casPart append QueryBuilder.Update.onlyIf(clause(table).qb),
+      casPart append builder.Update.onlyIf(clause(table).qb),
       options
     )
   }
@@ -365,7 +378,7 @@ sealed class AssignmentsQuery[
       usingPart,
       wherePart,
       setPart,
-      casPart append QueryBuilder.Update.ifExists,
+      casPart append builder.Update.ifExists,
       options
     )
   }
@@ -386,7 +399,7 @@ sealed class AssignmentsQuery[
       new AssignmentsQuery(
         table,
         init,
-        usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart append builder.consistencyLevel(level.toString),
         wherePart,
         setPart,
         casPart,
@@ -408,12 +421,12 @@ sealed class ConditionalQuery[
   ModifyPrepared <: HList
 ](table: Table,
   val init: CQLQuery,
-  usingPart: UsingPart = UsingPart.empty,
-  wherePart : WherePart = WherePart.empty,
-  setPart : SetPart = SetPart.empty,
-  casPart : CompareAndSetPart = CompareAndSetPart.empty,
+  usingPart: UsingPart,
+  wherePart : WherePart,
+  setPart : SetPart,
+  casPart : CompareAndSetPart,
   override val options: QueryOptions
-) extends ExecutableStatement with Batchable {
+)(implicit val builder: QueryBuilder) extends ExecutableStatement with Batchable {
 
   val qb: CQLQuery = {
     usingPart merge setPart merge wherePart merge casPart build init
@@ -422,7 +435,7 @@ sealed class ConditionalQuery[
   final def and(
     clause: Table => CompareAndSetClause.Condition
   ): ConditionalQuery[Table, Record, Limit, Order, Status, Chain, PS, ModifyPrepared] = {
-    val query = QueryBuilder.Update.and(clause(table).qb)
+    val query = builder.Update.and(clause(table).qb)
 
     new ConditionalQuery(
       table,
@@ -452,7 +465,7 @@ sealed class ConditionalQuery[
       new ConditionalQuery(
         table = table,
         init = init,
-        usingPart = usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart = usingPart append builder.consistencyLevel(level.toString),
         wherePart = wherePart,
         setPart = setPart,
         casPart = casPart,
@@ -467,7 +480,7 @@ sealed class ConditionalQuery[
       init,
       usingPart,
       wherePart,
-      setPart append QueryBuilder.ttl(seconds.toString),
+      setPart append builder.ttl(seconds.toString),
       casPart,
       options
     )
@@ -494,12 +507,17 @@ object UpdateQuery {
 
   type Default[T <: CassandraTable[T, _], R] = UpdateQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil]
 
-  def apply[T <: CassandraTable[T, _], R](table: T)(implicit keySpace: KeySpace): UpdateQuery.Default[T, R] = {
+  def apply[T <: CassandraTable[T, _], R](table: T)(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): UpdateQuery.Default[T, R] = {
     new UpdateQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil](
       table,
-      QueryBuilder.Update.update(
-        QueryBuilder.keyspace(keySpace.name, table.tableName).queryString
-      )
+      builder.Update.update(builder.table(keySpace.name, table.tableName)),
+      UsingPart.empty(),
+      WherePart.empty(),
+      SetPart.empty(),
+      CompareAndSetPart.empty()
     )
   }
 

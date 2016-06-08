@@ -54,14 +54,14 @@ class SelectQuery[
   protected[phantom] val table: Table,
   protected[phantom] val rowFunc: Row => Record,
   val init: CQLQuery,
-  protected[phantom] val wherePart: WherePart = WherePart.empty,
-  protected[phantom] val orderPart: OrderPart = OrderPart.empty,
-  protected[phantom] val limitedPart: LimitedPart = LimitedPart.empty,
-  protected[phantom] val filteringPart: FilteringPart = FilteringPart.empty,
-  protected[phantom] val usingPart: UsingPart = UsingPart.empty,
+  protected[phantom] val wherePart: WherePart,
+  protected[phantom] val orderPart: OrderPart,
+  protected[phantom] val limitedPart: LimitedPart,
+  protected[phantom] val filteringPart: FilteringPart,
+  protected[phantom] val usingPart: UsingPart,
   protected[phantom] val count: Boolean = false,
   override val options: QueryOptions = QueryOptions.empty
-) extends Query[Table, Record, Limit, Order, Status, Chain, PS](
+)(implicit builder: QueryBuilder) extends Query[Table, Record, Limit, Order, Status, Chain, PS](
   table, qb = init,
   rowFunc,
   usingPart,
@@ -115,7 +115,7 @@ class SelectQuery[
       wherePart = wherePart,
       orderPart = orderPart,
       limitedPart = limitedPart,
-      filteringPart = filteringPart append QueryBuilder.Select.allowFiltering(),
+      filteringPart = filteringPart append builder.Select.allowFiltering(),
       usingPart = usingPart,
       count = count,
       options = options
@@ -133,18 +133,18 @@ class SelectQuery[
 
   /**
    * The where method of a select query.
-   * @param condition A where clause condition restricted by path dependant types.
+   * @param cond A where clause condition restricted by path dependant types.
    * @param ev An evidence request guaranteeing the user cannot chain multiple where clauses on the same query.
    * @return
    */
-  override def where(condition: Table => WhereClause.Condition)(
-    implicit ev: Chain =:= Unchainned
-  ): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  override def where(
+    cond: Table => WhereClause.Condition
+  )(implicit ev: Chain =:= Unchainned): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
     new SelectQuery(
       table = table,
       rowFunc = rowFunc,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.where(condition(table).qb),
+      wherePart = wherePart append builder.Update.where(cond(table).qb),
       orderPart = orderPart,
       limitedPart = limitedPart,
       filteringPart = filteringPart,
@@ -154,14 +154,14 @@ class SelectQuery[
     )
   }
 
-  override def and(condition: Table => WhereClause.Condition)(
-    implicit ev: Chain =:= Chainned
-  ): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  override def and(
+    condition: Table => WhereClause.Condition
+  )(implicit ev: Chain =:= Chainned): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
     new SelectQuery(
       table = table,
       rowFunc = rowFunc,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.and(condition(table).qb),
+      wherePart = wherePart append builder.Update.and(condition(table).qb),
       orderPart = orderPart,
       limitedPart = limitedPart,
       filteringPart = filteringPart,
@@ -178,14 +178,16 @@ class SelectQuery[
    * @return
    */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  def p_where[RR](condition: Table => PreparedWhereClause.ParametricCondition[RR])(
+  def p_where[RR](
+    condition: Table => PreparedWhereClause.ParametricCondition[RR]
+  )(
     implicit ev: Chain =:= Unchainned
   ): SelectQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
     new SelectQuery(
        table = table,
        rowFunc = rowFunc,
        init = init,
-       wherePart = wherePart append QueryBuilder.Update.where(condition(table).qb),
+       wherePart = wherePart append builder.Update.where(condition(table).qb),
        orderPart = orderPart,
        limitedPart = limitedPart,
        filteringPart = filteringPart,
@@ -203,14 +205,16 @@ class SelectQuery[
    * @return
    */
   @implicitNotFound("You cannot add condition in this place of the query")
-  def p_and[RR](condition: Table => PreparedWhereClause.ParametricCondition[RR])(
+  def p_and[RR](
+    condition: Table => PreparedWhereClause.ParametricCondition[RR]
+  )(
     implicit ev: Chain =:= Chainned
   ): SelectQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
     new SelectQuery(
       table = table,
       rowFunc = rowFunc,
       init = init,
-      wherePart = wherePart append QueryBuilder.Update.and(condition(table).qb),
+      wherePart = wherePart append builder.Update.and(condition(table).qb),
       orderPart = orderPart,
       limitedPart = limitedPart,
       filteringPart = filteringPart,
@@ -220,22 +224,9 @@ class SelectQuery[
     )
   }
 
-  def using(clause: UsingClause.Condition): SelectQuery[Table, Record, Limit, Order, Status, Chainned, PS] = {
-    new SelectQuery(
-      table = table,
-      rowFunc = rowFunc,
-      init = init,
-      wherePart = wherePart,
-      orderPart = orderPart,
-      limitedPart = limitedPart,
-      filteringPart = filteringPart,
-      usingPart = usingPart append clause.qb,
-      count = count,
-      options = options
-    )
-  }
-
-  override def consistencyLevel_=(level: ConsistencyLevel)(
+  override def consistencyLevel_=(
+    level: ConsistencyLevel
+  )(
     implicit ev: Status =:= Unspecified,
     session: Session
   ): SelectQuery[Table, Record, Limit, Order, Specified, Chain, PS] = {
@@ -261,7 +252,7 @@ class SelectQuery[
         orderPart = orderPart,
         limitedPart = limitedPart,
         filteringPart = filteringPart,
-        usingPart = usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart = usingPart append builder.consistencyLevel(level.toString),
         count = count,
         options = options
       )
@@ -270,16 +261,16 @@ class SelectQuery[
 
 
   @implicitNotFound("A limit was already specified for this query.")
-  override def limit(limit: Int)(
-    implicit ev: Limit =:= Unlimited
-  ): QueryType[Table, Record, Limited, Order, Status, Chain, PS] = {
+  override def limit(
+    limit: Int
+  )(implicit ev: Limit =:= Unlimited): QueryType[Table, Record, Limited, Order, Status, Chain, PS] = {
     new SelectQuery(
       table = table,
       rowFunc = rowFunc,
       init = init,
       wherePart = wherePart,
       orderPart = orderPart,
-      limitedPart = limitedPart append QueryBuilder.limit(limit),
+      limitedPart = limitedPart append builder.limit(limit),
       filteringPart = filteringPart,
       usingPart = usingPart,
       count = count,
@@ -319,9 +310,10 @@ class SelectQuery[
     implicit session: Session,
     keySpace: KeySpace,
     ev: Limit =:= Unlimited,
-    ec: ExecutionContextExecutor
+    ec: ExecutionContextExecutor,
+    builder: QueryBuilder
   ): ScalaFuture[Option[Record]] = {
-    val enforceLimit = if (count) LimitedPart.empty else limitedPart append QueryBuilder.limit(1)
+    val enforceLimit = if (count) LimitedPart.empty else limitedPart append builder.limit(1)
 
     new SelectQuery(
       table = table,
@@ -342,7 +334,13 @@ class SelectQuery[
 private[phantom] class RootSelectBlock[
   T <: CassandraTable[T, _],
   R
-](table: T, val rowFunc: Row => R, columns: List[String], clause: Option[CQLQuery] = None) {
+](
+  table: T,
+  val rowFunc: Row => R,
+  columns: List[String],
+  clause: Option[CQLQuery] = None)(
+  implicit builder: QueryBuilder
+) {
 
   @implicitNotFound("You haven't provided a KeySpace in scope. Use a Connector to automatically inject one.")
   private[phantom] def all()(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = {
@@ -352,14 +350,24 @@ private[phantom] class RootSelectBlock[
         new SelectQuery(
           table,
           rowFunc,
-          QueryBuilder.Select.select(table.tableName, keySpace.name, opt)
+          builder.Select.select(builder.table(keySpace.name, table.tableName), opt),
+          WherePart.empty(),
+          OrderPart.empty(),
+          LimitedPart.empty(),
+          FilteringPart.empty(),
+          UsingPart.empty()
         )
       }
       case None => {
         new SelectQuery(
           table,
           rowFunc,
-          QueryBuilder.Select.select(table.tableName, keySpace.name, columns: _*)
+          builder.Select.select(builder.table(keySpace.name, table.tableName), columns: _*),
+          WherePart.empty(),
+          OrderPart.empty(),
+          LimitedPart.empty(),
+          FilteringPart.empty(),
+          UsingPart.empty()
         )
       }
     }
@@ -367,7 +375,16 @@ private[phantom] class RootSelectBlock[
 
   @implicitNotFound("You haven't provided a KeySpace in scope. Use a Connector to automatically inject one.")
   def distinct()(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = {
-    new SelectQuery(table, rowFunc, QueryBuilder.Select.distinct(table.tableName, keySpace.name, columns: _*))
+    new SelectQuery(
+      table,
+      rowFunc,
+      builder.Select.distinct(builder.table(keySpace.name, table.tableName), columns: _*),
+      WherePart.empty(),
+      OrderPart.empty(),
+      LimitedPart.empty(),
+      FilteringPart.empty(),
+      UsingPart.empty()
+    )
   }
 
   private[this] def extractCount(r: Row): Long = {
@@ -383,7 +400,7 @@ private[phantom] class RootSelectBlock[
     new SelectQuery(
       table,
       f1(table).extractor,
-      QueryBuilder.Select.select(table.tableName, keySpace.name, f1(table).qb),
+      builder.Select.select(builder.table(keySpace.name, table.tableName)),
       WherePart.empty,
       OrderPart.empty,
       LimitedPart.empty,
@@ -398,7 +415,7 @@ private[phantom] class RootSelectBlock[
     new SelectQuery(
       table,
       extractCount,
-      QueryBuilder.Select.count(table.tableName, keySpace.name),
+      builder.Select.count(builder.table(keySpace.name, table.tableName)),
       WherePart.empty,
       OrderPart.empty,
       LimitedPart.empty,
@@ -411,7 +428,14 @@ private[phantom] class RootSelectBlock[
 
 object RootSelectBlock {
 
-  def apply[T <: CassandraTable[T, _], R](table: T, columns: List[String], row: Row => R): RootSelectBlock[T, R] = {
+  def apply[
+    T <: CassandraTable[T, _],
+    R
+  ](
+    table: T,
+    columns: List[String],
+    row: Row => R
+  )(implicit builder: QueryBuilder): RootSelectBlock[T, R] = {
     new RootSelectBlock(table, row, columns)
   }
 }
@@ -420,8 +444,21 @@ object SelectQuery {
 
   type Default[T <: CassandraTable[T, _], R] = SelectQuery[T, R, Unlimited, Unordered, Unspecified, Unchainned, HNil]
 
-  def apply[T <: CassandraTable[T, _], R](table: T, qb: CQLQuery, row: Row => R): SelectQuery.Default[T, R] = {
-    new SelectQuery(table, row, qb)
+  def apply[T <: CassandraTable[T, _], R](
+    table: T,
+    qb: CQLQuery,
+    row: Row => R
+  )(implicit builder: QueryBuilder): SelectQuery.Default[T, R] = {
+    new SelectQuery(
+      table,
+      row,
+      qb,
+      WherePart.empty(),
+      OrderPart.empty(),
+      LimitedPart.empty(),
+      FilteringPart.empty(),
+      UsingPart.empty()
+    )
   }
 }
 
@@ -431,7 +468,8 @@ private[phantom] trait SelectImplicits {
   final implicit def rootSelectBlockToSelectQuery[
     T <: CassandraTable[T, _],
     R
-  ]( root: RootSelectBlock[T, R])(implicit keySpace: KeySpace): SelectQuery.Default[T, R] = {
-    root.all
-  }
+  ](root: RootSelectBlock[T, R])(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): SelectQuery.Default[T, R] = root.all
 }

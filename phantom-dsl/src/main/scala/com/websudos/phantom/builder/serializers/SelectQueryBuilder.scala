@@ -29,14 +29,12 @@
  */
 package com.websudos.phantom.builder.serializers
 
-import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
 sealed class OrderingModifier {
 
   def ascending(column: String): CQLQuery = {
-
     CQLQuery(column).forcePad.append(CQLSyntax.Ordering.asc)
   }
 
@@ -87,15 +85,14 @@ private[builder] class SelectQueryBuilder {
    *   SELECT * FROM $keyspace.$tableName
    * }}}
    *
-   * @param tableName The name of the table.
-   * @param keyspace The name of the keyspace.
+   * @param table The name of the table.
    * @return A CQLQuery matching the described pattern.
    */
-  def select(tableName: String, keyspace: String): CQLQuery = {
+  def select(table: TableReference): CQLQuery = {
     CQLQuery(CQLSyntax.select)
       .pad.append(CQLSyntax.Symbols.`*`).forcePad
       .append(CQLSyntax.from)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, tableName))
+      .forcePad.append(table.toCql())
   }
 
   /**
@@ -106,19 +103,18 @@ private[builder] class SelectQueryBuilder {
    *   SELECT ($name1, $name2, ..) FROM $keyspace.$tableName
    * }}}
    *
-   * @param tableName The name of the table.
-   * @param keyspace The name of the keyspace.
+   * @param table The name of the table.
    * @param names The names of the columns to include in the select.
    * @return A CQLQuery matching the described pattern.
    */
-  def select(tableName: String, keyspace: String, names: String*): CQLQuery = {
+  def select(table: TableReference, names: String*): CQLQuery = {
 
     val cols = if (names.nonEmpty) CQLQuery(names) else CQLQuery(CQLSyntax.Symbols.`*`)
 
     CQLQuery(CQLSyntax.select)
       .pad.append(cols)
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, tableName))
+      .forcePad.append(table.toCql())
   }
 
   /**
@@ -131,16 +127,16 @@ private[builder] class SelectQueryBuilder {
    * {{{
    *   SELECT COUNT(*) FROM $keyspace.$tableName
    * }}}
-   * @param tableName The name of the table.
-   * @param keyspace The name of the keyspace.
+ *
+   * @param table The name of the table.
    * @return
    */
-  def count(tableName: String, keyspace: String): CQLQuery = {
+  def count(table: TableReference): CQLQuery = {
     CQLQuery(CQLSyntax.select)
       .forcePad.append(CQLSyntax.count)
       .wrapn(CQLSyntax.Symbols.`*`)
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, tableName))
+      .forcePad.append(table.toCql())
   }
 
   /**
@@ -150,19 +146,18 @@ private[builder] class SelectQueryBuilder {
    * {{{
    *   SELECT DISTINCT ($name1, $name2, ..) FROM $keyspace.$tableName
    * }}}
-   * @param tableName The name of the table.
-   * @param keyspace The name of the keyspace.
+   *
    * @param names The names of the columns to include in the select.
    * @return
    */
-  def distinct(tableName: String, keyspace: String, names: String*): CQLQuery = {
+  def distinct(table: TableReference, names: String*): CQLQuery = {
     val cols = if (names.nonEmpty) CQLQuery(names) else CQLQuery(CQLSyntax.Symbols.`*`)
 
     CQLQuery(CQLSyntax.select)
       .forcePad.append(CQLSyntax.distinct)
       .forcePad.append(cols)
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(QueryBuilder.keyspace(keyspace, tableName))
+      .forcePad.append(table.toCql())
   }
 
 
@@ -174,16 +169,16 @@ private[builder] class SelectQueryBuilder {
    * {{{
    *   SELECT $clause FROM $keyspace.$tableName
    * }}}
-   * @param tableName The name of the table.
-   * @param keyspace The name of the keyspace.
+   *
+   * @param table A reference to a table definition.
    * @param clause The CQL clause to use as the select list value.
    * @return
    */
-  def select(tableName: String, keyspace: String, clause: CQLQuery): CQLQuery = {
+  def select(table: TableReference, clause: CQLQuery): CQLQuery = {
     CQLQuery(CQLSyntax.select)
       .pad.append(clause)
       .pad.append(CQLSyntax.from)
-      .pad.append(QueryBuilder.keyspace(keyspace, tableName))
+      .pad.append(table.toCql())
   }
 
   def allowFiltering(): CQLQuery = {

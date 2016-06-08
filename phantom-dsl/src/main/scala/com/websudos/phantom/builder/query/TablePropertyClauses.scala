@@ -29,6 +29,7 @@
  */
 package com.websudos.phantom.builder.query
 
+import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.options._
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
@@ -38,6 +39,11 @@ import com.websudos.phantom.builder.syntax.CQLSyntax
   * This serves as a helper trait for [[com.websudos.phantom.dsl]] and brings all the relevant options into scope.
   */
 private[phantom] trait TablePropertyClauses extends CompactionStrategies with CompressionStrategies {
+  outer =>
+
+
+  private[this] implicit val queryBuilder: QueryBuilder = builder
+
   object Storage {
     case object CompactStorage extends TablePropertyClause(CQLQuery(CQLSyntax.StorageMechanisms.CompactStorage))
   }
@@ -92,7 +98,9 @@ private[phantom] trait TablePropertyClauses extends CompactionStrategies with Co
 
   final val caching = new CachingBuilder
 
-  object Caching extends CachingStrategies
+  object Caching extends CachingStrategies {
+    override implicit def builder: QueryBuilder = outer.builder
+  }
 
   final val default_time_to_live = new TimeToLiveBuilder
 

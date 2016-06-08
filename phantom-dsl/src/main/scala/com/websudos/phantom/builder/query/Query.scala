@@ -36,12 +36,17 @@ import com.websudos.phantom.builder.clauses.WhereClause
 import shapeless.HList
 
 import scala.annotation.implicitNotFound
+import scala.concurrent.duration.FiniteDuration
 
 abstract class RootQuery[
   Table <: CassandraTable[Table, _],
   Record,
   Status <: ConsistencyBound
-](table: Table, val qb: CQLQuery, override val options: QueryOptions) extends ExecutableStatement {
+](
+  table: Table,
+  val qb: CQLQuery,
+  override val options: QueryOptions
+)(implicit builder: QueryBuilder) extends ExecutableStatement {
 
   protected[this] type QueryType[
     T <: CassandraTable[T, _],
@@ -57,11 +62,16 @@ abstract class RootQuery[
 
 
   @implicitNotFound("You have already specified a ConsistencyLevel for this query")
-  def consistencyLevel_=(level: ConsistencyLevel)(implicit ev: Status =:= Unspecified, session: Session): QueryType[Table, Record, Specified] = {
+  def consistencyLevel_=(
+    level: ConsistencyLevel
+  )(
+    implicit ev: Status =:= Unspecified,
+    session: Session
+  ): QueryType[Table, Record, Specified] = {
     if (session.v3orNewer) {
       create(table, qb, options.consistencyLevel_=(level))
     } else {
-      create(table, QueryBuilder.consistencyLevel(qb, level.toString), options)
+      create(table, builder.consistencyLevel(qb, level.toString), options)
     }
   }
 }
@@ -79,9 +89,9 @@ abstract class Query[
   table: Table,
   override val qb: CQLQuery,
   row: Row => Record,
-  usingPart: UsingPart = UsingPart.empty,
+  usingPart: UsingPart,
   override val options: QueryOptions
-) extends ExecutableStatement {
+)(implicit builder: QueryBuilder) extends ExecutableStatement {
 
   protected[this] type QueryType[
     T <: CassandraTable[T, _],
@@ -104,8 +114,12 @@ abstract class Query[
   ](t: T, q: CQLQuery, r: Row => R, usingPart: UsingPart, options: QueryOptions): QueryType[T, R, L, O, S, C, P]
 
   @implicitNotFound("A ConsistencyLevel was already specified for this query.")
-  def consistencyLevel_=(level: ConsistencyLevel)
-    (implicit ev: Status =:= Unspecified, session: Session): QueryType[Table, Record, Limit, Order, Specified, Chain, PS] = {
+  def consistencyLevel_=(
+    level: ConsistencyLevel
+  )(
+    implicit ev: Status =:= Unspecified,
+    session: Session
+  ): QueryType[Table, Record, Limit, Order, Specified, Chain, PS] = {
     if (session.v3orNewer) {
       create[Table, Record, Limit, Order, Specified, Chain, PS](
         table,
@@ -119,7 +133,7 @@ abstract class Query[
         table,
         CQLQuery.empty,
         row,
-        usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart append builder.consistencyLevel(level.toString),
         options
       )
     }
@@ -129,7 +143,7 @@ abstract class Query[
   def limit(limit: Int)(implicit ev: Limit =:= Unlimited): QueryType[Table, Record, Limited, Order, Status, Chain, PS] = {
     create[Table, Record, Limited, Order, Status, Chain, PS](
       table,
-      QueryBuilder.limit(qb, limit),
+      builder.limit(qb, limit),
       row,
       usingPart,
       options
@@ -143,10 +157,12 @@ abstract class Query[
    * @return
    */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  def where(condition: Table => WhereClause.Condition)(implicit ev: Chain =:= Unchainned): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  def where(condition: Table => WhereClause.Condition)(
+    implicit ev: Chain =:= Unchainned
+  ): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
     create[Table, Record, Limit, Order, Status, Chainned, PS](
       table,
-      QueryBuilder.Where.where(qb, condition(table).qb),
+      builder.Where.where(qb, condition(table).qb),
       row,
       usingPart,
       options
@@ -160,10 +176,12 @@ abstract class Query[
    * @return A SelectCountWhere.
    */
   @implicitNotFound("You have to use an where clause before using an AND clause")
-  def and(condition: Table => WhereClause.Condition)(implicit ev: Chain =:= Chainned): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
+  def and(condition: Table => WhereClause.Condition)(
+    implicit ev: Chain =:= Chainned
+  ): QueryType[Table, Record, Limit, Order, Status, Chainned, PS] = {
     create[Table, Record, Limit, Order, Status, Chainned, PS](
       table,
-      QueryBuilder.Where.and(qb, condition(table).qb),
+      builder.Where.and(qb, condition(table).qb),
       row,
       usingPart,
       options
@@ -174,14 +192,14 @@ abstract class Query[
   def ttl(seconds: Long): QueryType[Table, Record, Limit, Order, Status, Chain, PS] = {
     create[Table, Record, Limit, Order, Status, Chain, PS](
       table,
-      QueryBuilder.ttl(qb, seconds.toString),
+      builder.ttl(qb, seconds.toString),
       row,
       usingPart,
       options
     )
   }
 
-  def ttl(duration: scala.concurrent.duration.FiniteDuration): QueryType[Table, Record, Limit, Order, Status, Chain, PS] = {
+  def ttl(duration: FiniteDuration): QueryType[Table, Record, Limit, Order, Status, Chain, PS] = {
     ttl(duration.toSeconds)
   }
 }

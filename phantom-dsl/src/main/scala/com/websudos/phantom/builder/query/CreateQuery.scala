@@ -32,6 +32,7 @@ package com.websudos.phantom.builder.query
 import com.datastax.driver.core._
 import com.websudos.phantom.builder._
 import com.websudos.phantom.builder.query.options.TablePropertyClause
+import com.websudos.phantom.builder.serializers.TableReference
 import com.websudos.phantom.builder.syntax.CQLSyntax
 import com.websudos.phantom.connectors.KeySpace
 import com.websudos.phantom.{CassandraTable, Manager}
@@ -42,29 +43,35 @@ import scala.concurrent.{ExecutionContextExecutor, Future => ScalaFuture}
 class RootCreateQuery[
   Table <: CassandraTable[Table, _],
   Record
-](val table: Table) {
+](val table: Table)(implicit builder: QueryBuilder) {
 
   private[phantom] def default()(implicit keySpace: KeySpace): CQLQuery = {
-    CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.table)
-      .forcePad.append(QueryBuilder.keyspace(keySpace.name, table.tableName)).forcePad
+    CQLQuery(CQLSyntax.create)
+      .forcePad.append(CQLSyntax.table).forcePad
+      .append(builder.table(keySpace.name, table.tableName).toCql()).forcePad
       .append(CQLSyntax.Symbols.`(`)
-      .append(QueryBuilder.Utils.join(table.columns.map(_.qb): _*))
+      .append(builder.Utils.join(table.columns.map(_.qb): _*))
       .append(CQLSyntax.Symbols.`,`)
       .forcePad.append(table.defineTableKey())
       .append(CQLSyntax.Symbols.`)`)
   }
 
   private[phantom] def toQuery()(implicit keySpace: KeySpace): CreateQuery.Default[Table, Record] = {
-    new CreateQuery[Table, Record, Unspecified](table, default, WithPart.empty)
+    new CreateQuery[Table, Record, Unspecified](
+      table,
+      default,
+      WithPart.empty(),
+      UsingPart.empty()
+    )
   }
 
 
   private[this] def lightweight()(implicit keySpace: KeySpace): CQLQuery = {
     CQLQuery(CQLSyntax.create).forcePad.append(CQLSyntax.table)
       .forcePad.append(CQLSyntax.ifNotExists)
-      .forcePad.append(QueryBuilder.keyspace(keySpace.name, table.tableName))
+      .forcePad.append(builder.table(keySpace.name, table.tableName).toCql())
       .forcePad.append(CQLSyntax.Symbols.`(`)
-      .append(QueryBuilder.Utils.join(table.columns.map(_.qb): _*))
+      .append(builder.Utils.join(table.columns.map(_.qb): _*))
       .append(CQLSyntax.Symbols.`,`)
       .forcePad.append(table.defineTableKey())
       .append(CQLSyntax.Symbols.`)`)
@@ -81,9 +88,9 @@ class RootCreateQuery[
    */
   def ifNotExists()(implicit keySpace: KeySpace): CreateQuery.Default[Table, Record] = {
     if (table.clusteringColumns.nonEmpty) {
-      new CreateQuery(table, lightweight(), WithPart.empty).withClustering()
+      new CreateQuery(table, lightweight(), WithPart.empty, UsingPart.empty()).withClustering()
     } else {
-      new CreateQuery(table, lightweight(), WithPart.empty)
+      new CreateQuery(table, lightweight(), WithPart.empty, UsingPart.empty())
     }
   }
 }
@@ -96,10 +103,10 @@ class CreateQuery[
 ](
   val table: Table,
   val init: CQLQuery,
-  val withClause: WithPart = WithPart.empty,
-  val usingPart: UsingPart = UsingPart.empty,
+  val withClause: WithPart,
+  val usingPart: UsingPart,
   override val options: QueryOptions = QueryOptions.empty
-) extends ExecutableStatement {
+)(implicit builder: QueryBuilder) extends ExecutableStatement {
 
   def consistencyLevel_=(level: ConsistencyLevel)(implicit session: Session): CreateQuery[Table, Record, Specified] = {
     if (session.v3orNewer) {
@@ -115,7 +122,7 @@ class CreateQuery[
         table,
         init,
         withClause,
-        usingPart append QueryBuilder.consistencyLevel(level.toString),
+        usingPart append builder.consistencyLevel(level.toString),
         options
       )
     }
@@ -127,7 +134,7 @@ class CreateQuery[
       new CreateQuery(
         table,
         init,
-        withClause append QueryBuilder.Create.`with`(clause.qb),
+        withClause append builder.Create.`with`(clause.qb),
         usingPart,
         options
       )
@@ -135,7 +142,7 @@ class CreateQuery[
       new CreateQuery(
         table,
         init,
-        withClause append QueryBuilder.Update.and(clause.qb),
+        withClause append builder.Update.and(clause.qb),
         usingPart,
         options
       )
@@ -158,7 +165,7 @@ class CreateQuery[
       }
     }.toList
 
-    `with`(new TablePropertyClause(QueryBuilder.Create.clusteringOrder(clusteringPairs)))
+    `with`(new TablePropertyClause(builder.Create.clusteringOrder(clusteringPairs)))
   }
 
   @implicitNotFound("You cannot use 2 `with` clauses on the same create query. Use `and` instead.")
@@ -175,15 +182,15 @@ class CreateQuery[
     (withClause merge WithPart.empty) build init
   }
 
-  private[phantom] def indexList(name: String): ExecutableStatementList = {
+  private[phantom] def indexList(tableRef: TableReference): ExecutableStatementList = {
     new ExecutableStatementList(table.secondaryKeys map {
       key => {
         if (key.isMapKeyIndex) {
-          QueryBuilder.Create.mapIndex(table.tableName, name, key.name)
+          builder.Create.mapIndex(tableRef, key.name)
         } else if (key.isMapEntryIndex) {
-          QueryBuilder.Create.mapEntries(table.tableName, name, key.name)
+          builder.Create.mapEntries(tableRef, key.name)
         } else {
-          QueryBuilder.Create.index(table.tableName, name, key.name)
+          builder.Create.index(tableRef, key.name)
         }
       }
     })
@@ -199,9 +206,9 @@ class CreateQuery[
     } else {
       super.future() flatMap {
         res => {
-          indexList(keySpace.name).future() map {
+          indexList(builder.table(keySpace.name, table.tableName)).future() map {
             _ => {
-              Manager.logger.debug(s"Creating secondary indexes on ${QueryBuilder.keyspace(keySpace.name, table.tableName).queryString}")
+              Manager.logger.debug(s"Creating secondary indexes on ${builder.table(keySpace.name, table.tableName)}")
               res
             }
           }
@@ -220,14 +227,17 @@ private[phantom] trait CreateImplicits extends TablePropertyClauses {
   val Cache = Caching
 
   implicit def rootCreateQueryToCreateQuery[
-  T <: CassandraTable[T, _],
-  R]
-  (root: RootCreateQuery[T, R])(implicit keySpace: KeySpace): CreateQuery.Default[T, R] = {
+    T <: CassandraTable[T, _],
+    R
+  ](root: RootCreateQuery[T, R])(
+    implicit keySpace: KeySpace,
+    builder: QueryBuilder
+  ): CreateQuery.Default[T, R] = {
 
     if (root.table.clusteringColumns.nonEmpty) {
-      new CreateQuery(root.table, root.default, WithPart.empty).withClustering()
+      new CreateQuery(root.table, root.default, WithPart.empty, UsingPart.empty()).withClustering()
     } else {
-      new CreateQuery(root.table, root.default, WithPart.empty)
+      new CreateQuery(root.table, root.default, WithPart.empty, UsingPart.empty())
     }
   }
 }

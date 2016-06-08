@@ -34,16 +34,18 @@ import com.websudos.phantom.builder.query.QueryBuilderTest
 
 class DeleteQueryBuilderTest extends QueryBuilderTest {
 
+  val tableReference = QueryBuilder.table("keyspace", "table")
+
   "The DELETE query builder" - {
 
     "should allow specifying column delete queries" - {
-      val qb = QueryBuilder.Delete.deleteColumn("table", "col").queryString
-      qb shouldEqual "DELETE col FROM table"
+      val qb = QueryBuilder.Delete.deleteColumn(tableReference, "col").queryString
+      qb shouldEqual "DELETE col FROM keyspace.table"
     }
 
     "should allow specifying full delete queries" - {
-      val qb = QueryBuilder.Delete.delete("table").queryString
-      qb shouldEqual "DELETE FROM table"
+      val qb = QueryBuilder.Delete.delete(tableReference).queryString
+      qb shouldEqual "DELETE FROM keyspace.table"
     }
   }
 }

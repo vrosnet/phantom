@@ -29,21 +29,57 @@
  */
 package com.websudos.phantom.builder.serializers
 
+import com.websudos.phantom.builder.{QueryBuilder, QueryBuilderConfig}
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 
-private[builder] class DeleteQueryBuilder {
-  def delete(table: String): CQLQuery = {
-    CQLQuery(CQLSyntax.delete)
-      .forcePad.append(CQLSyntax.from)
-      .forcePad.append(table)
+case class TableReference(space: String, name: String)(implicit builder: QueryBuilder) {
+
+  def tableDef(config: QueryBuilderConfig, tableName: String): CQLQuery = {
+    if (config.caseSensitiveTables) {
+      CQLQuery(CQLQuery.doubleQuote(tableName))
+    } else {
+      CQLQuery(tableName)
+    }
   }
 
-  def delete(table: String, cond: CQLQuery): CQLQuery = {
+  def keyspace(config: QueryBuilderConfig, space: String, tableQuery: CQLQuery): CQLQuery = {
+    keyspace(config, space, tableQuery.queryString)
+  }
+
+  def keyspace(config: QueryBuilderConfig, keySpace: String, table: String): CQLQuery = {
+    if (table.startsWith(keySpace + ".")) {
+      tableDef(config, table)
+    }  else {
+      CQLQuery(keySpace).append(CQLSyntax.Symbols.dot).append(tableDef(config, table))
+    }
+  }
+
+  def toCql(): CQLQuery = {
+    keyspace(builder.config, space, name)
+  }
+
+  def toCqlString(): String = {
+    keyspace(builder.config, space, name).toString
+  }
+
+  protected[phantom] def queryString: String = toCqlString()
+
+}
+
+private[builder] class DeleteQueryBuilder {
+
+  def delete(table: TableReference): CQLQuery = {
+    CQLQuery(CQLSyntax.delete)
+      .forcePad.append(CQLSyntax.from)
+      .forcePad.append(table.toCql())
+  }
+
+  def delete(table: TableReference, cond: CQLQuery): CQLQuery = {
     CQLQuery(CQLSyntax.delete)
       .forcePad.append(cond)
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(table)
+      .forcePad.append(table.toCql())
   }
 
   def delete(table: String, conds: Seq[CQLQuery]): CQLQuery = {
@@ -57,13 +93,13 @@ private[builder] class DeleteQueryBuilder {
     CQLQuery(CQLSyntax.delete)
       .forcePad.append(column)
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(table)
+      .forcePad.append(table.toCql())
   }
 
-  def deleteMapColumn(table: String, column: String, key: String): CQLQuery = {
+  def deleteMapColumn(table: TableReference, column: String, key: String): CQLQuery = {
     CQLQuery(CQLSyntax.delete)
       .forcePad.append(qUtils.mapKey(column, key))
       .forcePad.append(CQLSyntax.from)
-      .forcePad.append(table)
+      .forcePad.append(table.toCql())
   }
 }
