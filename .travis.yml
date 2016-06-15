@@ -28,3 +28,12 @@ jdk:
 before_script: travis_retry sbt ++$TRAVIS_SCALA_VERSION update
 script: ./build/run_tests.sh
 after_success: ./build/publish_develop.sh
+
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find $HOME/.sbt -name "*.lock" -delete
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/

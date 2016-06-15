@@ -149,11 +149,15 @@ abstract class ThriftMapColumn[
   KeyType : Primitive,
   ValueType <: ThriftStruct
 ](table: CassandraTable[T, R])(implicit builder: QueryBuilder)
-  extends AbstractMapColumn[T, R, KeyType, ValueType](table) with CollectionThriftColumnDefinition[ValueType] {
+  extends AbstractMapColumn[T, R, KeyType, ValueType](table)
+    with CollectionThriftColumnDefinition[ValueType] {
 
   val keyPrimitive = Primitive[KeyType]
 
-  override val cassandraType = builder.Collections.mapType(keyPrimitive.cassandraType, CQLSyntax.Types.Text).queryString
+  override val cassandraType = builder.Collections.mapType(
+    keyPrimitive.cassandraType,
+    CQLSyntax.Types.Text
+  ).queryString
 
   override def keyAsCql(v: KeyType): String = keyPrimitive.asCql(v)
 

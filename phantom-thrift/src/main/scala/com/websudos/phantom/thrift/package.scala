@@ -30,7 +30,13 @@
 
 package com.websudos.phantom
 
+import com.datastax.driver.core.Row
+import com.twitter.scrooge.{ThriftStruct, ThriftStructSerializer}
+import com.websudos.phantom.builder.primitives.Primitive
+import com.websudos.phantom.builder.syntax.CQLSyntax
 import com.websudos.phantom.thrift.columns.RootThriftPrimitive
+
+import scala.util.Try
 
 package object thrift {
   type ThriftStruct = com.twitter.scrooge.ThriftStruct
@@ -42,6 +48,12 @@ package object thrift {
   type OptionalThriftColumn[T <: CassandraTable[T, R], R, Model <: ThriftStruct] = com.websudos.phantom.thrift.columns.OptionalThriftColumn[T, R, Model]
 
   type ThriftPrimitive[T <: ThriftStruct] = RootThriftPrimitive[T]
+
+  implicit class ThriftStructAugmenter[T <: ThriftStruct](val struct: T) extends AnyVal {
+    def primitive(encoder: ThriftStructSerializer[T]): RootThriftPrimitive[T] = new RootThriftPrimitive[T] {
+      override def serializer: ThriftStructSerializer[T] = encoder
+    }
+  }
 }
 
 
