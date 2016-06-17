@@ -31,7 +31,7 @@ package com.websudos.phantom.builder.serializers
 
 import com.websudos.phantom.builder.query.QueryBuilderTest
 import com.websudos.phantom.tables.{Recipe, TestDatabase}
-import com.websudos.util.testing._
+import com.outworkers.util.testing._
 import com.websudos.phantom.dsl._
 import net.liftweb.json.{ compactRender, Extraction }
 
