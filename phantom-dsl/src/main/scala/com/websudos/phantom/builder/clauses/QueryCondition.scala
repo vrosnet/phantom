@@ -34,6 +34,7 @@ import com.websudos.phantom.builder.QueryBuilder
 import com.websudos.phantom.builder.query.CQLQuery
 import com.websudos.phantom.builder.syntax.CQLSyntax
 import com.websudos.phantom.column.AbstractColumn
+import com.websudos.phantom.dsl.CassandraTable
 
 sealed trait Clause {
   /**
@@ -74,7 +75,9 @@ class PreparedWhereClause extends Clause {
    *
    * @tparam T Type of argument
    */
-  class ParametricCondition[T](override val qb: CQLQuery) extends QueryCondition(qb)
+  class ParametricCondition[
+    Table <: CassandraTable[Table, _], T
+  ](override val qb: CQLQuery) extends QueryCondition(qb)
 }
 
 object PreparedWhereClause extends PreparedWhereClause

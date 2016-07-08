@@ -37,6 +37,7 @@ import com.datastax.driver.core.utils.UUIDs
 import com.datastax.driver.core.{VersionNumber, ConsistencyLevel => CLevel}
 import com.websudos.phantom.batch.Batcher
 import com.websudos.phantom.builder.QueryBuilder
+import com.websudos.phantom.builder.clauses.PreparedWhereClause.ParametricCondition
 import com.websudos.phantom.builder.clauses.{UpdateClause, UsingClauseOperations, WhereClause}
 import com.websudos.phantom.builder.ops._
 import com.websudos.phantom.builder.primitives.{DefaultPrimitives, Primitive}
@@ -54,6 +55,21 @@ package object dsl extends ImplicitMechanism with CreateImplicits
   with Operators
   with UsingClauseOperations
   with DeleteImplicits {
+
+  trait FnSpecializer[T, X] extends ((T) => X)
+
+  implicit def fnToSpecializer[X, T](fn: X => T): FnSpecializer[X, T] = new FnSpecializer[X, T] {
+    override def apply(v1: X): T = fn(v1)
+  }
+
+  implicit def parametricConditionToSpecializer[
+    Table <: CassandraTable[Table, _ ],
+    T
+  ](condition: ParametricCondition[Table, T]): FnSpecializer[Table, ParametricCondition[Table, T]]= {
+    new FnSpecializer[Table, ParametricCondition[Table, T]] {
+      override def apply(v1: Table): ParametricCondition[Table, T] = condition
+    }
+  }
 
   type CassandraTable[Owner <: CassandraTable[Owner, Record], Record] = com.websudos.phantom.CassandraTable[Owner, Record]
 

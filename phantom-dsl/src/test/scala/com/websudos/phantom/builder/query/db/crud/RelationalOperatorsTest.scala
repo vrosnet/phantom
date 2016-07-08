@@ -78,7 +78,7 @@ class RelationalOperatorsTest extends PhantomSuite {
     val maxTimestamp = records(maxIndex).timestamp
 
     val query = TestDatabase.timeSeriesTable.select
-      .p_where(_.timestamp < ?)
+      .where(_.timestamp < ?)
       .allowFiltering()
       .prepare()
 

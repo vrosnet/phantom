@@ -35,6 +35,7 @@ import com.websudos.phantom.builder._
 import com.websudos.phantom.builder.clauses._
 import com.websudos.phantom.builder.query.prepared.PreparedSelectBlock
 import com.websudos.phantom.connectors.KeySpace
+import com.websudos.phantom.dsl.FnSpecializer
 import shapeless.ops.hlist.Reverse
 import shapeless.{::, =:!=, HList, HNil}
 
@@ -171,6 +172,7 @@ class SelectQuery[
     )
   }
 
+
   /**
    * The where method of a select query that takes parametric predicate as an argument.
    * @param condition A where clause condition restricted by path dependant types.
@@ -178,7 +180,7 @@ class SelectQuery[
    * @return
    */
   @implicitNotFound("You cannot use multiple where clauses in the same builder")
-  def p_where[RR](condition: Table => PreparedWhereClause.ParametricCondition[RR])(
+  def where[RR](condition: FnSpecializer[Table, PreparedWhereClause.ParametricCondition[RR]])(
     implicit ev: Chain =:= Unchainned
   ): SelectQuery[Table, Record, Limit, Order, Status, Chainned, RR :: PS] = {
     new SelectQuery(

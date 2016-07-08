@@ -69,8 +69,8 @@ private[phantom] abstract class AbstractModifyColumn[RR](col: AbstractColumn[RR]
     * @param value The prepare mark value to set this to. This is just provided for consnistency with natural CQL.
     * @return The prepared setTo clause part that gets appended to the Set Part of the update query.
     */
-  def setTo(value: PrepareMark): PreparedWhereClause.ParametricCondition[RR] = {
-    new PreparedWhereClause.ParametricCondition[RR](
+  def setTo(value: PrepareMark): PreparedWhereClause.ParametricCondition[_, RR] = {
+    new PreparedWhereClause.ParametricCondition[_, RR](
       QueryBuilder.Update.setTo(col.name, value.qb.queryString)
     )
   }
