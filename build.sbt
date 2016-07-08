@@ -81,12 +81,6 @@ val scalaMacroDependencies: String => Seq[ModuleID] = {
 val PerformanceTest = config("perf").extend(Test)
 lazy val performanceFilter: String => Boolean = _.endsWith("PerformanceTest")
 
-lazy val noPublishSettings = Seq(
-  publish := (),
-  publishLocal := (),
-  publishArtifact := false
-)
-
 lazy val defaultCredentials: Seq[Credentials] = {
   if (!RunningUnderCi) {
     Seq(
@@ -164,10 +158,8 @@ val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
   parallelExecution in ThisBuild := false
 ) ++ graphSettings ++
   VersionManagement.newSettings ++
-  GitProject.gitSettings ++ {
-      println("Using Bintray publishing.")
-      PublishTasks.bintrayPublishSettings
-  }
+  GitProject.gitSettings ++
+  PublishTasks.mavenPublishingSettings
 
 
 lazy val isJdk8: Boolean = sys.props("java.specification.version") == "1.8"
@@ -196,7 +188,7 @@ lazy val phantom = (project in file("."))
   ).settings(
     inConfig(PerformanceTest)(Defaults.testTasks): _*
   ).settings(
-    sharedSettings ++ noPublishSettings
+    sharedSettings
   ).settings(
     name := "phantom",
     moduleName := "phantom"

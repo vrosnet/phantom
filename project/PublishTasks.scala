@@ -39,10 +39,10 @@ object PublishTasks {
     version := "1.27.0"
   )
 
-  lazy val bintrayPublishSettings: Seq[Def.Setting[_]] = Seq(
+  def bintrayPublishSettings: Seq[Def.Setting[_]] = Seq(
     publishMavenStyle := true,
     bintrayOrganization := Some("websudos"),
-    bintrayRepository <<= scalaVersion.apply {
+    bintrayRepository <<= version {
       v => if (v.trim.endsWith("SNAPSHOT")) "oss-snapshots" else "oss-releases"
     },
     bintrayReleaseOnPublish in ThisBuild := true,
@@ -51,9 +51,9 @@ object PublishTasks {
     licenses += ("Apache-2.0", url("https://github.com/outworkers/phantom/blob/develop/LICENSE.txt"))
   ) ++ defaultPublishingSettings
 
-  lazy val pgpPass = Option(System.getenv("maven_password"))
+  def pgpPass: Option[String] = Option(System.getenv("maven_password"))
 
-  lazy val mavenPublishingSettings: Seq[Def.Setting[_]] = Seq(
+  def mavenPublishingSettings: Seq[Def.Setting[_]] = Seq(
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     publishMavenStyle := true,
     pgpPassphrase := {
@@ -67,7 +67,7 @@ object PublishTasks {
         None
       }
     },
-    publishTo <<= version.apply {
+    publishTo <<= version {
       v =>
         val nexus = "https://oss.sonatype.org/"
         if (v.trim.endsWith("SNAPSHOT")) {

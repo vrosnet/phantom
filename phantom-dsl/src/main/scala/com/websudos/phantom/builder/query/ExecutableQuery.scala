@@ -343,4 +343,34 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound]
   ): ScalaFuture[IteratorResult[R]] = {
     future() map { result => IteratorResult(result.iterator().asScala.map(fromRow), result) }
   }
+
+  def iteratorRecord(pagingState: PagingState)(
+    implicit session: Session,
+    keySpace: KeySpace,
+    ec: ExecutionContextExecutor
+  ): ScalaFuture[IteratorResult[R]] = {
+    future(_.setPagingState(pagingState)) map {
+      set =>  IteratorResult(set.iterator().asScala.map(fromRow), set)
+    }
+  }
+
+  def iteratorRecord(pagingState: Option[PagingState])(
+    implicit session: Session,
+    keySpace: KeySpace,
+    ec: ExecutionContextExecutor
+  ): ScalaFuture[IteratorResult[R]] = {
+    pagingState.fold(future().map {
+      set =>  IteratorResult(set.iterator().asScala.map(fromRow), set)
+    })(state => future(_.setPagingState(state)) map {
+      set =>  IteratorResult(set.iterator().asScala.map(fromRow), set)
+    })
+  }
+
+  def iteratorRecord(modifier: Modifier)(
+    implicit session: Session,
+    keySpace: KeySpace,
+    ec: ExecutionContextExecutor
+  ): ScalaFuture[IteratorResult[R]] = {
+    future(modifier) map { result => IteratorResult(result.iterator().asScala.map(fromRow), result) }
+  }
 }
