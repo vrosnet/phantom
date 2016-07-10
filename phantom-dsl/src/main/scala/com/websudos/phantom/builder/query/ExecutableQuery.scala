@@ -243,6 +243,27 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound]
     * @param ec The implicit Scala execution context.
     * @return A Scala future wrapping a list of mapped results.
     */
+  def fetch(pagingState: Option[PagingState])(
+    implicit session: Session,
+    keySpace: KeySpace,
+    ec: ExecutionContextExecutor
+  ): ScalaFuture[List[R]] = {
+    pagingState.fold(future().map {
+      set =>  directMapper(set.all())
+    })(state => future(_.setPagingState(state)) map {
+      set =>  directMapper(set.all())
+    })
+  }
+
+  /**
+    * Returns a parsed sequence of [R]ows
+    * This is not suitable for big results set
+    *
+    * @param session The implicit session provided by a [[com.websudos.phantom.connectors.Connector]].
+    * @param keySpace The implicit keySpace definition provided by a [[com.websudos.phantom.connectors.Connector]].
+    * @param ec The implicit Scala execution context.
+    * @return A Scala future wrapping a list of mapped results.
+    */
   def fetch(modifyStatement : Modifier)(
     implicit session: Session,
     keySpace: KeySpace,
@@ -289,6 +310,16 @@ trait ExecutableQuery[T <: CassandraTable[T, _], R, Limit <: LimitBound]
     }
   }
 
+  /**
+    * Returns a parsed sequence of [R]ows
+    * This is not suitable for big results set
+    *
+    * @param state An optional paging state. If provided, this will be used to paginate the results.
+    * @param session The implicit session provided by a [[com.websudos.phantom.connectors.Connector]].
+    * @param keySpace The implicit keySpace definition provided by a [[com.websudos.phantom.connectors.Connector]].
+    * @param ec The implicit Scala execution context.
+    * @return A Scala future wrapping a list of mapped results.
+    */
   def fetchRecord(state: Option[PagingState])(
     implicit session: Session,
     keySpace: KeySpace,
