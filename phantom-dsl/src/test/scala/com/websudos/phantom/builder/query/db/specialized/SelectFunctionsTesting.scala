@@ -83,6 +83,26 @@ class SelectFunctionsTesting extends PhantomSuite {
     }
   }
 
+  it should "allow using the now() operator as the value of a date or timeuuid column" in {
+    val record = gen[TimeUUIDRecord]
+
+    val chain = for {
+      store <- database.timeuuidTable.store(record).future()
+      timestamp <- database.timeuuidTable.select.function(t => now())
+        .where(_.user eqs record.user)
+        .and(_.id eqs record.id).one()
+    } yield timestamp
+
+    whenReady(chain) {
+      res => {
+        res shouldBe defined
+        shouldNotThrow {
+          info(res.value.toString)
+        }
+      }
+    }
+  }
+
   it should "retrieve the unixTimestamp of a field from Cassandra" in {
     val record = gen[TimeUUIDRecord]
 

@@ -31,7 +31,6 @@
 import sbt.Keys._
 import sbt._
 import com.twitter.sbt._
-import net.virtualvoid.sbt.graph.Plugin.graphSettings
 
 lazy val Versions = new {
   val logback = "1.1.7"
@@ -156,8 +155,7 @@ val sharedSettings: Seq[Def.Setting[_]] = Defaults.coreDefaultSettings ++ Seq(
   testOptions in PerformanceTest := Seq(Tests.Filter(x => performanceFilter(x))),
   fork in PerformanceTest := false,
   parallelExecution in ThisBuild := false
-) ++ graphSettings ++
-  VersionManagement.newSettings ++
+) ++ VersionManagement.newSettings ++
   GitProject.gitSettings ++
   PublishTasks.mavenPublishingSettings
 

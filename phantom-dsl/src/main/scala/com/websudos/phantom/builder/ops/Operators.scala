@@ -92,9 +92,16 @@ sealed class DateOfCqlFunction extends CqlFunction {
   }
 }
 
+
 sealed class NowCqlFunction extends CqlFunction {
-  def apply(): OperatorClause.Condition = {
-    new OperatorClause.Condition(QueryBuilder.Select.now())
+  def apply()(implicit ev: Primitive[Long], session: Session): TypedClause.Condition[Option[Long]] = {
+    new TypedClause.Condition(QueryBuilder.Select.now(), row => {
+      if (session.v3orNewer) {
+        ev.fromRow(s"system.timestamp", row).toOption
+      } else {
+        ev.fromRow(s"timestamp", row).toOption
+      }
+    })
   }
 }
 
@@ -191,6 +198,7 @@ sealed class TokenConstructor[P <: HList, TP <: TokenTypes.Root](val mapper : Se
 sealed class TokenCqlFunction extends CqlFunction with TokenComparisonOps
 
 trait Operators {
+  @deprecated("This is deprecated in Cassandra, use toTimestamp(now()) instead", "Cassandra 2.2.0-rc2")
   object dateOf extends DateOfCqlFunction
   object unixTimestampOf extends UnixTimestampOfCqlFunction
 

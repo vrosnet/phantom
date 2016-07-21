@@ -75,9 +75,7 @@ class PreparedWhereClause extends Clause {
    *
    * @tparam T Type of argument
    */
-  class ParametricCondition[
-    Table <: CassandraTable[Table, _], T
-  ](override val qb: CQLQuery) extends QueryCondition(qb)
+  class ParametricCondition[T](override val qb: CQLQuery) extends QueryCondition(qb)
 }
 
 object PreparedWhereClause extends PreparedWhereClause
