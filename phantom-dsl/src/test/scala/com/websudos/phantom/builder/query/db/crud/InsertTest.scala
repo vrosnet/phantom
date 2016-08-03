@@ -39,13 +39,14 @@ class InsertTest extends PhantomSuite {
 
   override def beforeAll(): Unit = {
     super.beforeAll()
-    TestDatabase.listCollectionTable.insertSchema()
-    TestDatabase.primitives.insertSchema()
-    if(session.v4orNewer) {
-      TestDatabase.primitivesCassandra22.insertSchema()
+    database.listCollectionTable.insertSchema()
+    database.primitives.insertSchema()
+    database.testTable.insertSchema()
+    database.recipes.insertSchema()
+
+    if (session.v4orNewer) {
+      database.primitivesCassandra22.insertSchema()
     }
-    TestDatabase.testTable.insertSchema()
-    TestDatabase.recipes.insertSchema()
   }
 
   "Insert" should "work fine for primitives columns" in {
